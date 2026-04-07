@@ -117,21 +117,10 @@ function LetterHeader() {
       <div style={{ fontSize: 9, letterSpacing: '0.35em', color: 'rgba(139,90,43,0.55)', textTransform: 'uppercase', fontFamily: 'Georgia, serif', marginBottom: 8 }}>
         The Official
       </div>
-      {/* Mobile-friendly header — smaller font that won't wrap */}
       <div style={{ position: 'relative', marginBottom: 10 }}>
-        <div style={{
-          fontFamily: "'Palatino Linotype', Palatino, Georgia, serif",
-          fontSize: 'clamp(14px, 4vw, 24px)',
-          letterSpacing: 'clamp(0.05em, 1vw, 0.2em)',
-          color: 'rgba(80,38,10,0.88)',
-          textTransform: 'uppercase',
-          fontWeight: 400,
-          whiteSpace: 'nowrap',
-          padding: '6px 0',
-        }}>
+        <div style={{ fontFamily: "'Palatino Linotype', Palatino, Georgia, serif", fontSize: 'clamp(14px, 4vw, 24px)', letterSpacing: 'clamp(0.05em, 1vw, 0.2em)', color: 'rgba(80,38,10,0.88)', textTransform: 'uppercase', fontWeight: 400, whiteSpace: 'nowrap', padding: '6px 0' }}>
           North Pole Post Office
         </div>
-        {/* Oval behind text */}
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
           <svg width="100%" height="52" viewBox="0 0 380 52" preserveAspectRatio="none">
             <ellipse cx="190" cy="26" rx="188" ry="24" fill="none" stroke="rgba(139,90,43,0.18)" strokeWidth="1.2" />
@@ -140,9 +129,7 @@ function LetterHeader() {
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 8 }}>
         <div style={{ width: 30, height: 1, background: 'linear-gradient(90deg, transparent, rgba(139,90,43,0.4))' }} />
-        <div style={{ fontSize: 8, letterSpacing: '0.18em', color: 'rgba(120,70,25,0.5)', textTransform: 'uppercase', fontFamily: 'Georgia, serif' }}>
-          Est. Anno Domini CCLXXX
-        </div>
+        <div style={{ fontSize: 8, letterSpacing: '0.18em', color: 'rgba(120,70,25,0.5)', textTransform: 'uppercase', fontFamily: 'Georgia, serif' }}>Est. Anno Domini CCLXXX</div>
         <div style={{ width: 30, height: 1, background: 'linear-gradient(90deg, rgba(139,90,43,0.4), transparent)' }} />
       </div>
       <div style={{ fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: 11, color: 'rgba(139,90,43,0.42)', marginBottom: 18, letterSpacing: '0.04em' }}>
@@ -154,15 +141,24 @@ function LetterHeader() {
   )
 }
 
+const TIER_MAP: Record<string, string> = {
+  'Premium PDF': 'premium',
+  'The bundle': 'bundle',
+  'Real mail': 'physical',
+  'Add a child': 'addChild',
+}
+
 export default function PreviewPage() {
   const router = useRouter()
   const [child, setChild] = useState<ChildInfo | null>(null)
   const [letter, setLetter] = useState('')
+  const [letterId, setLetterId] = useState('')
   const [step, setStep] = useState<'generating' | 'email-gate' | 'done'>('generating')
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
   const [genError, setGenError] = useState(false)
   const [dots, setDots] = useState('.')
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const calledRef = useRef(false)
 
   useEffect(() => {
@@ -193,6 +189,10 @@ export default function PreviewPage() {
       const data = await res.json()
       if (data.error) throw new Error(data.error)
       setLetter(data.letter)
+      if (data.letterId) {
+        setLetterId(data.letterId)
+        sessionStorage.setItem('santaLetterId', data.letterId)
+      }
       setStep('email-gate')
     } catch { setGenError(true) }
   }
@@ -216,16 +216,33 @@ export default function PreviewPage() {
     setStep('done')
   }
 
+  const handleCheckout = async (tier: string) => {
+    if (!child) return
+    setCheckoutLoading(tier)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier,
+          letterId: letterId || sessionStorage.getItem('santaLetterId') || 'unknown',
+          childName: child.name,
+          recipientEmail: email,
+        }),
+      })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+      else throw new Error('No checkout URL returned')
+    } catch (err) {
+      console.error('Checkout failed:', err)
+      setCheckoutLoading(null)
+    }
+  }
+
   const paragraphs = letter.split('\n\n').filter(p => p.trim()).map((p, i) => {
     const clean = p.replace(/\*/g, '').trim()
     return (
-      <p key={i} style={{
-        margin: '0 0 20px',
-        lineHeight: 1.8,
-        color: '#150800',
-        fontSize: 'clamp(14px, 3.5vw, 16px)',
-        fontFamily: "'Lora', Georgia, serif",
-      }}>{clean}</p>
+      <p key={i} style={{ margin: '0 0 20px', lineHeight: 1.8, color: '#150800', fontSize: 'clamp(14px, 3.5vw, 16px)', fontFamily: "'Lora', Georgia, serif" }}>{clean}</p>
     )
   })
 
@@ -328,47 +345,27 @@ export default function PreviewPage() {
               {[{ top: 26, left: 26 }, { top: 26, right: 26 }, { bottom: 26, left: 26 }, { bottom: 26, right: 26 }].map((pos, i) => (
                 <div key={i} style={{ position: 'absolute', ...pos, fontSize: 13, color: 'rgba(139,90,43,0.3)', zIndex: 2, userSelect: 'none', lineHeight: 1 }}>✦</div>
               ))}
-
-              {/* Letter body — responsive padding */}
               <div style={{ padding: 'clamp(24px, 5vw, 44px) clamp(20px, 6vw, 80px) clamp(32px, 5vw, 60px)', position: 'relative', zIndex: 2 }}>
                 <LetterHeader />
-                <div style={{ textAlign: 'right', fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: 13, color: 'rgba(100,55,20,0.48)', marginBottom: 28, letterSpacing: '0.02em' }}>
-                  {today}
-                </div>
-                <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(22px, 5vw, 30px)', color: '#0f0500', marginBottom: 24, lineHeight: 1.2 }}>
-                  Dear {child?.name},
-                </div>
+                <div style={{ textAlign: 'right', fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: 13, color: 'rgba(100,55,20,0.48)', marginBottom: 28, letterSpacing: '0.02em' }}>{today}</div>
+                <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(22px, 5vw, 30px)', color: '#0f0500', marginBottom: 24, lineHeight: 1.2 }}>Dear {child?.name},</div>
                 <div style={{ height: 1, background: 'linear-gradient(90deg, rgba(139,90,43,0.45), rgba(139,90,43,0.15) 70%, transparent)', marginBottom: 24 }} />
                 <div>{paragraphs}</div>
-
-                {/* Signature */}
                 <div style={{ marginTop: 36, paddingTop: 24, borderTop: '1px solid rgba(139,90,43,0.14)' }}>
-                  <div style={{ fontSize: 14, color: 'rgba(60,28,8,0.45)', marginBottom: 4, fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic' }}>
-                    With all the love and magic of Christmas,
-                  </div>
-                  <div style={{ fontFamily: "'Palatino Linotype', Palatino, Georgia, serif", fontStyle: 'italic', fontSize: 'clamp(48px, 10vw, 72px)', color: '#6d0e0e', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '2px 4px 0 rgba(80,10,10,0.14)', transform: 'rotate(-1.5deg)', display: 'inline-block', transformOrigin: 'left center' }}>
-                    Santa Claus
-                  </div>
+                  <div style={{ fontSize: 14, color: 'rgba(60,28,8,0.45)', marginBottom: 4, fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic' }}>With all the love and magic of Christmas,</div>
+                  <div style={{ fontFamily: "'Palatino Linotype', Palatino, Georgia, serif", fontStyle: 'italic', fontSize: 'clamp(48px, 10vw, 72px)', color: '#6d0e0e', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '2px 4px 0 rgba(80,10,10,0.14)', transform: 'rotate(-1.5deg)', display: 'inline-block', transformOrigin: 'left center' }}>Santa Claus</div>
                   <div style={{ marginTop: 6, marginBottom: 12 }}>
                     <svg width="220" height="12" viewBox="0 0 280 12">
                       <path d="M 5,8 Q 50,3 100,7 Q 150,11 200,6 Q 240,2 275,8" fill="none" stroke="rgba(109,14,14,0.4)" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
                   </div>
-                  <div style={{ fontSize: 9, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(44,21,8,0.3)', marginBottom: 2 }}>
-                    Kris Kringle · Father Christmas · St. Nicholas
-                  </div>
-                  <div style={{ fontSize: 9, letterSpacing: '0.14em', color: 'rgba(44,21,8,0.22)', fontStyle: 'italic', marginBottom: 6 }}>
-                    Chief Correspondent, North Pole Post Office
-                  </div>
+                  <div style={{ fontSize: 9, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(44,21,8,0.3)', marginBottom: 2 }}>Kris Kringle · Father Christmas · St. Nicholas</div>
+                  <div style={{ fontSize: 9, letterSpacing: '0.14em', color: 'rgba(44,21,8,0.22)', fontStyle: 'italic', marginBottom: 6 }}>Chief Correspondent, North Pole Post Office</div>
                   <div style={{ display: 'inline-block', border: '1px solid rgba(139,90,43,0.3)', padding: '4px 12px', marginTop: 6 }}>
-                    <div style={{ fontSize: 7, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(100,55,20,0.45)', fontFamily: 'Georgia, serif' }}>
-                      Postmarked · North Pole · {new Date().getFullYear()}
-                    </div>
+                    <div style={{ fontSize: 7, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(100,55,20,0.45)', fontFamily: 'Georgia, serif' }}>Postmarked · North Pole · {new Date().getFullYear()}</div>
                   </div>
                 </div>
-
                 <WaxSeal />
-
                 <div style={{ marginTop: 16 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
                     <div style={{ flex: 1, height: 0.8, background: 'linear-gradient(90deg, transparent, rgba(139,90,43,0.3) 50%, transparent)' }} />
@@ -380,7 +377,6 @@ export default function PreviewPage() {
                   </div>
                 </div>
               </div>
-
               <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, rgba(212,170,90,0.4) 30%, rgba(212,170,90,0.6) 50%, rgba(212,170,90,0.4) 70%, transparent)' }} />
               <div style={{ height: 7, background: 'linear-gradient(90deg, #5a0a0a, #9b1f1f 20%, #c8382b 40%, #d4aa5a 50%, #c8382b 60%, #9b1f1f 80%, #5a0a0a)' }} />
             </div>
@@ -399,29 +395,35 @@ export default function PreviewPage() {
                 </p>
               </div>
 
-              {/* Upsell grid — single column on mobile, 2 col on desktop */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 18 }}>
                 {[
                   { label: 'Premium PDF', price: '$9', emoji: '📄', desc: 'Illustrated parchment design, print-ready at home', highlight: false, cta: 'Select' },
                   { label: 'The bundle', price: '$35', emoji: '🎁', desc: 'Premium PDF + real posted letter — saves $3', highlight: true, cta: '✦ Get the bundle' },
                   { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Printed & posted, arrives in 5–7 days', highlight: false, cta: 'Select' },
                   { label: 'Add a child', price: '+$15', emoji: '⭐', desc: 'Another child gets their own magical letter', highlight: false, cta: 'Select' },
-                ].map(opt => (
-                  <div key={opt.label} style={{ border: `1px solid ${opt.highlight ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.09)'}`, borderRadius: 10, padding: '24px 20px', background: opt.highlight ? 'linear-gradient(145deg, rgba(212,170,90,0.1) 0%, rgba(180,130,50,0.05) 100%)' : 'rgba(255,255,255,0.025)', position: 'relative' }}>
-                    {opt.highlight && (
-                      <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #d4aa5a, #a8802a)', color: '#0d1b2e', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: 20, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(212,170,90,0.4)' }}>
-                        Most popular
-                      </div>
-                    )}
-                    <div style={{ fontSize: 28, marginBottom: 8 }}>{opt.emoji}</div>
-                    <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: opt.highlight ? '#d4aa5a' : '#f5ead8', marginBottom: 3, lineHeight: 1 }}>{opt.price}</div>
-                    <div style={{ fontSize: 13, color: opt.highlight ? 'rgba(245,234,216,0.9)' : 'rgba(245,234,216,0.7)', marginBottom: 6, fontWeight: 500 }}>{opt.label}</div>
-                    <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.4)', marginBottom: 16, lineHeight: 1.55 }}>{opt.desc}</div>
-                    <button style={{ width: '100%', padding: '11px', background: opt.highlight ? 'linear-gradient(135deg, #c8382b 0%, #8B1A1A 100%)' : 'rgba(255,255,255,0.06)', color: opt.highlight ? '#fff' : 'rgba(245,234,216,0.6)', border: opt.highlight ? 'none' : '1px solid rgba(245,234,216,0.14)', borderRadius: 6, cursor: 'pointer', fontFamily: opt.highlight ? "'Playfair Display', Georgia, serif" : 'Georgia, serif', fontSize: opt.highlight ? 14 : 13, boxShadow: opt.highlight ? '0 6px 20px rgba(200,56,43,0.4)' : 'none' }}>
-                      {opt.cta}
-                    </button>
-                  </div>
-                ))}
+                ].map(opt => {
+                  const tier = TIER_MAP[opt.label]
+                  const isLoading = checkoutLoading === tier
+                  return (
+                    <div key={opt.label} style={{ border: `1px solid ${opt.highlight ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.09)'}`, borderRadius: 10, padding: '24px 20px', background: opt.highlight ? 'linear-gradient(145deg, rgba(212,170,90,0.1) 0%, rgba(180,130,50,0.05) 100%)' : 'rgba(255,255,255,0.025)', position: 'relative' }}>
+                      {opt.highlight && (
+                        <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #d4aa5a, #a8802a)', color: '#0d1b2e', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: 20, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(212,170,90,0.4)' }}>
+                          Most popular
+                        </div>
+                      )}
+                      <div style={{ fontSize: 28, marginBottom: 8 }}>{opt.emoji}</div>
+                      <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: opt.highlight ? '#d4aa5a' : '#f5ead8', marginBottom: 3, lineHeight: 1 }}>{opt.price}</div>
+                      <div style={{ fontSize: 13, color: opt.highlight ? 'rgba(245,234,216,0.9)' : 'rgba(245,234,216,0.7)', marginBottom: 6, fontWeight: 500 }}>{opt.label}</div>
+                      <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.4)', marginBottom: 16, lineHeight: 1.55 }}>{opt.desc}</div>
+                      <button
+                        onClick={() => handleCheckout(tier)}
+                        disabled={checkoutLoading !== null}
+                        style={{ width: '100%', padding: '11px', background: opt.highlight ? 'linear-gradient(135deg, #c8382b 0%, #8B1A1A 100%)' : 'rgba(255,255,255,0.06)', color: opt.highlight ? '#fff' : 'rgba(245,234,216,0.6)', border: opt.highlight ? 'none' : '1px solid rgba(245,234,216,0.14)', borderRadius: 6, cursor: checkoutLoading ? 'wait' : 'pointer', fontFamily: opt.highlight ? "'Playfair Display', Georgia, serif" : 'Georgia, serif', fontSize: opt.highlight ? 14 : 13, boxShadow: opt.highlight ? '0 6px 20px rgba(200,56,43,0.4)' : 'none', opacity: checkoutLoading && !isLoading ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+                        {isLoading ? '✦ Loading...' : opt.cta}
+                      </button>
+                    </div>
+                  )
+                })}
               </div>
 
               <div style={{ textAlign: 'center', padding: '12px 0 6px', fontSize: 13, color: 'rgba(245,234,216,0.5)', marginBottom: 8 }}>
