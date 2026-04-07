@@ -96,6 +96,8 @@ export default function CreatePage() {
     const childData: ChildInfo = { ...form, recipientEmail: '' }
     sessionStorage.setItem('santaChildInfo', JSON.stringify(childData))
     sessionStorage.setItem('santaLanguage', language)
+    sessionStorage.removeItem('santaLetterText')
+    sessionStorage.removeItem('santaLetterId')
     router.push('/preview')
   }
 
