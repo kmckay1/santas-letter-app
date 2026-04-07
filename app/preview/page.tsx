@@ -168,7 +168,16 @@ export default function PreviewPage() {
     if (!stored) { router.push('/create'); return }
     const childData = JSON.parse(stored) as ChildInfo
     setChild(childData)
-    generateLetter(childData)
+  
+    const cachedLetter = sessionStorage.getItem('santaLetterText')
+    const cachedLetterId = sessionStorage.getItem('santaLetterId')
+    if (cachedLetter && cachedLetterId) {
+      setLetter(cachedLetter)
+      setLetterId(cachedLetterId)
+      setStep('email-gate')
+    } else {
+      generateLetter(childData)
+    }
   }, [])
 
   useEffect(() => {
@@ -188,7 +197,8 @@ export default function PreviewPage() {
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
-      setLetter(data.letter)
+        setLetter(data.letter)
+      sessionStorage.setItem('santaLetterText', data.letter)
       if (data.letterId) {
         setLetterId(data.letterId)
         sessionStorage.setItem('santaLetterId', data.letterId)

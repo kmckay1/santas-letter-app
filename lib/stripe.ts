@@ -6,22 +6,22 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export const PRICES = {
   premium: {
-    priceId: 'price_1TJcdN7t3jle2KJ5NIUVDKKK',
+    priceId: 'price_1TJe607Eq8l4ZGZZJ8209TWR',
     amount: 900,
     label: 'Premium PDF',
   },
   physical: {
-    priceId: 'price_1TJcdp7t3jle2KJ5RDIRXY3u',
+    priceId: 'price_1TJe617Eq8l4ZGZZPbbuGKqG',
     amount: 2900,
     label: 'Real Mail',
   },
   bundle: {
-    priceId: 'price_1TJceU7t3jle2KJ55lOtdx0c',
+    priceId: 'price_1TJe607Eq8l4ZGZZGZkFItRp',
     amount: 3500,
     label: 'Bundle (PDF + Mail)',
   },
   addChild: {
-    priceId: 'price_1TJceo7t3jle2KJ5NzKKO1le',
+    priceId: 'price_1TJe607Eq8l4ZGZZ44a4C3ad',
     amount: 1500,
     label: 'Add a Child',
   },
