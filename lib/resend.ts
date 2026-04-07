@@ -74,7 +74,7 @@ export async function sendOrderConfirmationEmail(
   email: string,
   childName: string,
   tier: string,
-  letterId: string
+  _letterId: string
 ): Promise<void> {
   const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)

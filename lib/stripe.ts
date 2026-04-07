@@ -16,7 +16,8 @@ export async function createCheckoutSession(
   metadata: { tier: string; letterId: string; childName: string; recipientEmail: string },
   additionalChildren = 0
 ): Promise<string> {
-    const lineItems: any[] = [
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const lineItems: any[] = [
     {
       price_data: {
         currency: 'usd',
