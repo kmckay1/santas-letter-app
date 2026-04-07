@@ -113,3 +113,67 @@ export async function sendOrderConfirmationEmail(
     `,
   })
 }
+export async function sendPremiumPDFEmail(
+  email: string,
+  childName: string,
+  pdfBuffer: Buffer
+): Promise<void> {
+  const { Resend } = await import('resend')
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  await resend.emails.send({
+    from: 'Santa Claus <santa@santasletter.ai>',
+    to: email,
+    subject: `🎁 ${childName}'s official letter from Santa — your PDF is here!`,
+    attachments: [
+      {
+        filename: `Santas-Letter-${childName.replace(/\s+/g, '-')}.pdf`,
+        content: pdfBuffer,
+        contentType: 'application/pdf',
+      },
+    ],
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <body style="margin:0;padding:40px 20px;background:#0d1b2e;font-family:Georgia,serif;">
+        <div style="max-width:540px;margin:0 auto;">
+
+          <!-- Header -->
+          <div style="text-align:center;margin-bottom:32px;">
+            <p style="font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:#d4aa5a;margin:0 0 6px;">SantasLetter.ai</p>
+            <p style="font-size:12px;color:rgba(245,234,216,0.45);margin:0;font-style:italic;">Official North Pole Post Office</p>
+          </div>
+
+          <!-- Main card -->
+          <div style="background:linear-gradient(160deg,#1a2d45,#0f1f33);border:1px solid rgba(212,170,90,0.3);border-radius:6px;padding:36px 40px;text-align:center;margin-bottom:24px;">
+            <div style="font-size:52px;margin-bottom:16px;">📜</div>
+            <h1 style="font-size:22px;color:#f5ead8;font-weight:400;margin:0 0 10px;font-family:Georgia,serif;">
+              ${childName}'s letter is ready!
+            </h1>
+            <p style="font-size:14px;color:rgba(245,234,216,0.6);margin:0 0 24px;line-height:1.7;">
+              Attached is the official premium PDF — beautifully illustrated<br>and ready to print or save forever.
+            </p>
+            <div style="background:rgba(212,170,90,0.08);border:1px solid rgba(212,170,90,0.2);border-radius:4px;padding:14px 20px;display:inline-block;">
+              <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#d4aa5a;margin:0 0 4px;">Attached file</p>
+              <p style="font-size:13px;color:#f5ead8;margin:0;">📎 Santas-Letter-${childName.replace(/\s+/g, '-')}.pdf</p>
+            </div>
+          </div>
+
+          <!-- Tips -->
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:20px 24px;margin-bottom:24px;">
+            <p style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#d4aa5a;margin:0 0 12px;">Tips for maximum magic ✨</p>
+            <p style="font-size:13px;color:rgba(245,234,216,0.6);margin:0 0 8px;">🖨️ <strong style="color:rgba(245,234,216,0.85);">Print it out</strong> — looks stunning on cream or white paper</p>
+            <p style="font-size:13px;color:rgba(245,234,216,0.6);margin:0 0 8px;">📱 <strong style="color:rgba(245,234,216,0.85);">Save it</strong> — a keepsake for years to come</p>
+            <p style="font-size:13px;color:rgba(245,234,216,0.6);margin:0;">🎁 <strong style="color:rgba(245,234,216,0.85);">Share it</strong> — in a frame or tucked under the tree</p>
+          </div>
+
+          <p style="text-align:center;font-size:11px;color:rgba(245,234,216,0.2);margin:0;">
+            SantasLetter.ai · Made with ❤ in Amsterdam<br>
+            Questions? Just reply to this email.
+          </p>
+        </div>
+      </body>
+      </html>
+    `,
+  })
+}

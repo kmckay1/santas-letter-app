@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { sendPhysicalLetter } from '@/lib/lob'
 import { getLetter, markLetterFulfilled } from '@/lib/storage'
-import { sendOrderConfirmationEmail } from '@/lib/resend'
+import { sendOrderConfirmationEmail, sendPremiumPDFEmail } from '@/lib/resend'
+import { generatePremiumPDF } from '@/lib/pdf'
 import Stripe from 'stripe'
 
 export async function POST(req: NextRequest) {
@@ -29,6 +30,15 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true })
       }
 
+      // 1. Generate & email premium PDF for premium and bundle tiers
+      if (tier === 'premium' || tier === 'bundle') {
+        console.log(`Generating premium PDF for ${childName}...`)
+        const pdfBuffer = await generatePremiumPDF(letterData.child, letterData.letterText)
+        await sendPremiumPDFEmail(recipientEmail, childName, pdfBuffer)
+        console.log(`✅ Premium PDF emailed to ${recipientEmail}`)
+      }
+
+      // 2. Send physical letter via Lob for physical and bundle tiers
       if (tier === 'physical' || tier === 'bundle') {
         const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
           expand: ['shipping_details'],
@@ -48,9 +58,13 @@ export async function POST(req: NextRequest) {
             letterData.child,
             { content: letterData.letterText, childName, createdAt: letterData.createdAt }
           )
+          console.log(`✅ Physical letter dispatched via Lob for ${childName}`)
+        } else {
+          console.error('No shipping address found for physical order')
         }
       }
 
+      // 3. Order confirmation for all tiers
       await sendOrderConfirmationEmail(recipientEmail, childName, tier, letterId)
       await markLetterFulfilled(letterId, tier)
       console.log(`✅ Fulfilled ${tier} for ${childName}`)
