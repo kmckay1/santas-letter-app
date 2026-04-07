@@ -351,7 +351,7 @@ export default function PreviewPage() {
         ))}
       </div>
 
-      <div style={{ maxWidth: 700, margin: '0 auto', padding: '44px 20px 100px', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '44px 40px 100px', position: 'relative', zIndex: 10 }}>
 
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <a href="/" style={{ textDecoration: 'none' }}>
@@ -452,7 +452,7 @@ export default function PreviewPage() {
                 <div key={i} style={{ position: 'absolute', ...pos, fontSize: 13, color: 'rgba(139,90,43,0.3)', zIndex: 2, userSelect: 'none', lineHeight: 1 }}>✦</div>
               ))}
 
-              <div style={{ padding: '32px 60px 48px', position: 'relative', zIndex: 2 }}>
+              <div style={{ padding: '44px 80px 60px', position: 'relative', zIndex: 2 }}>
 
                 {/* Official letterhead */}
                 <LetterHeader />
