@@ -28,6 +28,7 @@ export async function generatePremiumPDF(
   const { width, height } = page.getSize()
 
   const fontSerif       = await doc.embedFont(StandardFonts.TimesRoman)
+  const fontSerifBold   = await doc.embedFont(StandardFonts.TimesRomanBold)
   const fontSerifItalic = await doc.embedFont(StandardFonts.TimesRomanItalic)
   const fontSerifBI     = await doc.embedFont(StandardFonts.TimesRomanBoldItalic)
 
@@ -40,11 +41,10 @@ export async function generatePremiumPDF(
   page.drawRectangle({ x: 0, y: height - 80, width, height: 80, color: c.parchmentDk, opacity: 0.5 })
   page.drawRectangle({ x: 0, y: 0, width, height: 80, color: c.parchmentDk, opacity: 0.5 })
 
-  // Outer gold border
+  // Border
   const bp = 24
   page.drawRectangle({ x: bp, y: bp, width: width - bp * 2, height: height - bp * 2,
     borderColor: c.gold, borderWidth: 2, color: rgb(0,0,0), opacity: 0 })
-  // Inner thinner border
   const bp2 = bp + 6
   page.drawRectangle({ x: bp2, y: bp2, width: width - bp2 * 2, height: height - bp2 * 2,
     borderColor: c.goldLight, borderWidth: 0.5, color: rgb(0,0,0), opacity: 0 })
@@ -97,45 +97,61 @@ export async function generatePremiumPDF(
   page.drawLine({ start: { x: ml, y: bodyTop - 22 }, end: { x: width - mr, y: bodyTop - 22 }, thickness: 0.8, color: c.gold, opacity: 0.35 })
 
   // Letter body
-const paragraphs = letterText
-.replace(/^Dear\s+\S.*?,\s*/i, '') // strip salutation — drawn separately above
-.split('\n\n')
-.map(p => p.replace(/\*/g, '').replace(/\n/g, ' ').trim())
-.filter(p => p.length > 0)
+  const paragraphs = letterText
+    .replace(/^Dear\s+\S.*?,\s*/i, '')
+    .split('\n\n')
+    .map(p => p.replace(/\*/g, '').replace(/\n/g, ' ').trim())
+    .filter(p => p.length > 0)
 
   const fontSize = 12
   const lineHeight = fontSize * 1.75
   let curY = bodyTop - 42
 
+  // Multi-page support
+  let currentPage = page
+  const addNewPage = () => {
+    const p = doc.addPage([612, 792])
+    p.drawRectangle({ x: 0, y: 0, width, height, color: c.parchment })
+    const bp = 24
+    p.drawRectangle({ x: bp, y: bp, width: width - bp * 2, height: height - bp * 2,
+      borderColor: c.gold, borderWidth: 1.5, color: rgb(0,0,0), opacity: 0 })
+    return p
+  }
+
   for (const para of paragraphs) {
     const lines = wrapText(para, fontSerif, fontSize, textW)
     for (let i = 0; i < lines.length; i++) {
-      if (curY < 160) break
-      page.drawText(lines[i], {
-        x: ml + (i === 0 ? 24 : 0),
-        y: curY,
-        font: fontSerif, size: fontSize, color: c.inkMid,
-      })
+      if (curY < 160) {
+        currentPage = addNewPage()
+        curY = height - 80
+      }
+      currentPage.drawText(lines[i], { x: ml + (i === 0 ? 24 : 0), y: curY,
+        font: fontSerif, size: fontSize, color: c.inkMid })
       curY -= lineHeight
     }
     curY -= 8
   }
 
-  // Signature
-  const sigY = Math.min(curY - 8, 200)
-  page.drawLine({ start: { x: ml, y: sigY + 14 }, end: { x: width - mr, y: sigY + 14 }, thickness: 0.4, color: c.gold, opacity: 0.2 })
-  page.drawText('With all the love and magic of Christmas,', { x: ml, y: sigY,
+  // Signature — add new page if not enough room
+  if (curY < 220) {
+    currentPage = addNewPage()
+    curY = height - 100
+  }
+  const sigY = curY - 8
+  currentPage.drawLine({ start: { x: ml, y: sigY + 14 }, end: { x: width - mr, y: sigY + 14 }, thickness: 0.4, color: c.gold, opacity: 0.2 })
+  currentPage.drawText('With all the love and magic of Christmas,', { x: ml, y: sigY,
     font: fontSerifItalic, size: 11, color: c.inkLight, opacity: 0.75 })
-  page.drawText('Santa Claus', { x: ml, y: sigY - 38, font: fontSerifBI, size: 40, color: c.crimson })
-  page.drawLine({ start: { x: ml, y: sigY - 44 }, end: { x: ml + 210, y: sigY - 44 }, thickness: 1, color: c.crimson, opacity: 0.3 })
+  currentPage.drawText('Santa Claus', { x: ml, y: sigY - 38, font: fontSerifBI, size: 40, color: c.crimson })
+  currentPage.drawLine({ start: { x: ml, y: sigY - 44 }, end: { x: ml + 210, y: sigY - 44 },
+    thickness: 1, color: c.crimson, opacity: 0.3 })
 
-  // Footer
+  // Footer on last page
   const footerY = 44
-  page.drawLine({ start: { x: ml, y: footerY + 14 }, end: { x: width - mr, y: footerY + 14 }, thickness: 1.5, color: c.gold, opacity: 0.5 })
-  page.drawCircle({ x: width / 2, y: footerY + 4, size: 4, color: c.gold, opacity: 0.55 })
+  currentPage.drawLine({ start: { x: ml, y: footerY + 14 }, end: { x: width - mr, y: footerY + 14 }, thickness: 1.5, color: c.gold, opacity: 0.5 })
+  currentPage.drawCircle({ x: width / 2, y: footerY + 4, size: 4, color: c.gold, opacity: 0.55 })
   const footerText = 'SantasLetter.ai  ~  Official Correspondence of the North Pole Post Office'
   const footerW = fontSerif.widthOfTextAtSize(footerText, 7)
-  page.drawText(footerText, { x: (width - footerW) / 2, y: footerY - 8,
+  currentPage.drawText(footerText, { x: (width - footerW) / 2, y: footerY - 8,
     font: fontSerif, size: 7, color: c.gold, opacity: 0.5 })
 
   const pdfBytes = await doc.save()
