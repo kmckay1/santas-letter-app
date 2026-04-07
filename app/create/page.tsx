@@ -89,7 +89,9 @@ export default function CreatePage() {
     e.preventDefault()
     sessionStorage.removeItem('santaChildInfo')
     if (!form.name.trim()) return setError('Please enter your child\'s name')
-    if (!form.age) return setError('Please select your child\'s age')
+    if (!form.age) return setError('Please enter your child\'s age')
+    const ageNum = Number(form.age)
+    if (isNaN(ageNum) || ageNum < 1 || ageNum > 16) return setError('Please enter a valid age between 1 and 16')
     if (form.wishes.every(w => !w.trim())) return setError('Please add at least one wish')
     const childData: ChildInfo = { ...form, recipientEmail: '' }
     sessionStorage.setItem('santaChildInfo', JSON.stringify(childData))
@@ -171,19 +173,26 @@ export default function CreatePage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: 16, marginBottom: 24 }}>
               <div>
                 <label style={labelStyle}>Child&apos;s name</label>
-                <input type="text" placeholder="Emma" value={form.name}
+                <input
+                  type="text"
+                  placeholder="Emma"
+                  value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
-                  style={inputStyle} maxLength={50} />
+                  style={inputStyle}
+                  maxLength={50}
+                />
               </div>
               <div>
                 <label style={labelStyle}>Age</label>
-                <select value={form.age} onChange={e => setForm({ ...form, age: e.target.value })}
-                  style={{ ...inputStyle, cursor: 'pointer' }}>
-                  <option value="">—</option>
-                  {Array.from({ length: 13 }, (_, i) => i + 2).map(n => (
-                    <option key={n} value={n}>{n}</option>
-                  ))}
-                </select>
+                <input
+                  type="number"
+                  placeholder="7"
+                  min="1"
+                  max="16"
+                  value={form.age}
+                  onChange={e => setForm({ ...form, age: e.target.value })}
+                  style={inputStyle}
+                />
               </div>
             </div>
 
@@ -194,10 +203,21 @@ export default function CreatePage() {
                 <div style={{ textAlign: 'center', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 15, color: '#d4aa5a', marginBottom: 12 }}>
                   {BEHAVIOR_LABELS[form.behaviorRating]}
                 </div>
-                <input type="range" min={1} max={10} value={form.behaviorRating}
+                <input
+                  type="range"
+                  min={1}
+                  max={10}
+                  value={form.behaviorRating}
                   onChange={e => setForm({ ...form, behaviorRating: Number(e.target.value) })}
-                  style={{ width: '100%', accentColor: '#d4aa5a', cursor: 'pointer' }} />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+                  style={{
+                    width: '100%',
+                    accentColor: '#d4aa5a',
+                    cursor: 'pointer',
+                    height: '36px',
+                    touchAction: 'none',
+                  }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
                   <span style={{ fontSize: 10, letterSpacing: '0.1em', color: 'rgba(245,234,216,0.55)' }}>NAUGHTY</span>
                   <span style={{ fontSize: 10, letterSpacing: '0.1em', color: 'rgba(245,234,216,0.55)' }}>NICE</span>
                 </div>

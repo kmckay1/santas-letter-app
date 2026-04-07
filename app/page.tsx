@@ -73,8 +73,8 @@ export default function Home() {
       {/* Ambient glow */}
       <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translateX(-50%)', width: 800, height: 500, background: 'radial-gradient(ellipse, rgba(200,56,43,0.07) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
 
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 10, maxWidth: 620 }}>
+      {/* Content — wider max width */}
+      <div style={{ position: 'relative', zIndex: 10, maxWidth: 900, width: '100%' }}>
 
         {/* Eyebrow */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 28 }}>
@@ -91,7 +91,7 @@ export default function Home() {
           A letter from Santa,<br /><em style={{ color: '#d4aa5a', fontStyle: 'italic' }}>written just for them</em>
         </h1>
 
-        <p style={{ fontSize: 17, color: 'rgba(245,234,216,0.75)', margin: '0 0 40px', lineHeight: 1.75, maxWidth: 440, marginLeft: 'auto', marginRight: 'auto' }}>
+        <p style={{ fontSize: 17, color: 'rgba(245,234,216,0.75)', margin: '0 0 40px', lineHeight: 1.75, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
           Personalised letters from the North Pole — free to read, beautiful to keep, magical to receive.
         </p>
 
@@ -117,27 +117,27 @@ export default function Home() {
           <span>12,847 letters sent to the North Pole this season</span>
         </div>
 
-        {/* Letter preview card */}
+        {/* Letter preview card — full width of content area */}
         <div style={{ background: 'linear-gradient(175deg, #fffef9 0%, #fdf6e3 100%)', borderRadius: 6, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,90,43,0.25)', marginBottom: 48, textAlign: 'left' }}>
           <div style={{ height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)' }} />
-          <div style={{ padding: '32px 40px' }}>
+          <div style={{ padding: '40px 60px' }}>
             <div style={{ fontSize: 8, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(44,21,8,0.38)', marginBottom: 6, fontFamily: 'Georgia, serif' }}>From the desk of Santa Claus · North Pole</div>
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, color: '#150800', marginBottom: 18 }}>Dear Emma,</div>
-            <hr style={{ border: 'none', borderTop: '1px solid rgba(139,90,43,0.12)', marginBottom: 18 }} />
-            <p style={{ fontSize: 14.5, lineHeight: 1.85, color: '#2a1508', margin: '0 0 14px', fontFamily: "'Lora', Georgia, serif" }}>
+            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#150800', marginBottom: 18 }}>Dear Emma,</div>
+            <hr style={{ border: 'none', borderTop: '1px solid rgba(139,90,43,0.12)', marginBottom: 20 }} />
+            <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: '0 0 16px', fontFamily: "'Lora', Georgia, serif" }}>
               My elves told me something wonderful — that this year you learned to share your favourite toys with your little brother, even when it was hard. I see everything, you know, and that made my heart as warm as fresh cookies from Mrs. Claus&apos;s oven.
             </p>
             <div style={{ filter: 'blur(5px)', userSelect: 'none', position: 'relative' }}>
-              <p style={{ fontSize: 14.5, lineHeight: 1.85, color: '#2a1508', margin: 0, fontFamily: "'Lora', Georgia, serif" }}>
-                Your wish for the art set and the astronomy kit? Well, Mrs. Claus and I had a very long chat about that, and the reindeer have been extra busy this week loading up the sleigh with some very special surprises...
+              <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: 0, fontFamily: "'Lora', Georgia, serif" }}>
+                Your wish for the art set and the astronomy kit? Well, Mrs. Claus and I had a very long chat about that, and the reindeer have been extra busy this week loading up the sleigh with some very special surprises just for you. I cannot say more — but I think you will be pleased.
               </p>
             </div>
-            <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(139,90,43,0.1)' }}>
-              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 28, color: '#7B1010' }}>Santa Claus</div>
+            <div style={{ marginTop: 24, paddingTop: 18, borderTop: '1px solid rgba(139,90,43,0.1)' }}>
+              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 32, color: '#7B1010' }}>Santa Claus</div>
             </div>
           </div>
-          <div style={{ padding: '14px 40px 24px', background: 'rgba(253,246,227,0.95)', borderTop: '1px solid rgba(139,90,43,0.1)', textAlign: 'center' }}>
-            <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '10px 28px', borderRadius: 3, fontSize: 13, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.06em' }}>
+          <div style={{ padding: '16px 60px 28px', background: 'rgba(253,246,227,0.95)', borderTop: '1px solid rgba(139,90,43,0.1)', textAlign: 'center' }}>
+            <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '12px 36px', borderRadius: 3, fontSize: 14, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.06em' }}>
               ✦ Generate your child&apos;s letter →
             </Link>
           </div>
@@ -147,7 +147,7 @@ export default function Home() {
         <div id="how-it-works" style={{ marginBottom: 48 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8 }}>✦ the magic process ✦</div>
           <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 32px' }}>Ready in under two minutes</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, textAlign: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, textAlign: 'center' }}>
             {[
               { num: '01', icon: '📝', title: 'Tell Santa about them', desc: 'Name, age, wishes, and a little about their year' },
               { num: '02', icon: '✨', title: 'The elves get to work', desc: 'AI writes a warm, personal letter in seconds' },
@@ -164,7 +164,7 @@ export default function Home() {
         </div>
 
         {/* Pricing strip */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.2)', borderRadius: 8, padding: '28px 32px', marginBottom: 40 }}>
+        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.2)', borderRadius: 8, padding: '28px 40px', marginBottom: 40 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 20 }}>✦ simple pricing ✦</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {[

@@ -76,7 +76,7 @@ Write a letter with EXACTLY this structure — no salutation, no sign-off, those
 - P.S.: Something specific, warm, and slightly surprising — tied directly to THIS child's story. Never a generic reindeer or cookie joke.
 
 - NEVER invent specific physical details about the child's home (room layout, furniture placement, views from windows) — you only know what has been explicitly told to you.
-
+- NEVER invent specific events, moments, or stories about the child that were not explicitly provided. If behavior notes are empty, speak generally about their character, not made-up scenes.                                                                                                                                                                                                    
 Separate paragraphs with a blank line. Maximum 380 words. Make every sentence earn its place.`,
       }],
     })
