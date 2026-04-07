@@ -97,10 +97,11 @@ export async function generatePremiumPDF(
   page.drawLine({ start: { x: ml, y: bodyTop - 22 }, end: { x: width - mr, y: bodyTop - 22 }, thickness: 0.8, color: c.gold, opacity: 0.35 })
 
   // Letter body
-  const paragraphs = letterText
-    .split('\n\n')
-    .map(p => p.replace(/\*/g, '').replace(/\n/g, ' ').trim())
-    .filter(p => p.length > 0)
+const paragraphs = letterText
+.replace(/^Dear\s+\S.*?,\s*/i, '') // strip salutation — drawn separately above
+.split('\n\n')
+.map(p => p.replace(/\*/g, '').replace(/\n/g, ' ').trim())
+.filter(p => p.length > 0)
 
   const fontSize = 12
   const lineHeight = fontSize * 1.75
