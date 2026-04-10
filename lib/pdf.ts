@@ -126,7 +126,7 @@ html, body {
       <!-- Signature section -->
       <div style="height:8px;"></div>
       <div style="font-family:Georgia,serif; font-size:14px; font-style:italic; color:#1C0A00; margin-bottom:2px;">With all the love and magic of Christmas,</div>
-      <div style="font-family:'Pinyon',cursive; font-weight:400; font-size:86px; color:#8B1A1A; line-height:1.1;">Santa Claus</div>
+      <div style="font-family:'Pinyon',cursive; font-weight:400; font-size:64px; color:#8B1A1A; line-height:1.1;">Santa Claus</div>
       <!-- Pen flourish SVG -->
       <svg style="display:block;width:260px;height:14px;margin:0 0 6px;" viewBox="0 0 260 14" xmlns="http://www.w3.org/2000/svg">
         <path d="M0,9 C50,3 100,13 160,8 C200,4 235,11 260,7" fill="none" stroke="#8B1A1A" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
