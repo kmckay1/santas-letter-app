@@ -405,7 +405,7 @@ export async function generatePremiumPDF(
     },
     body: JSON.stringify({
       source: html,
-      page: { width: '680px', height: '1400px' },
+      format: '680xauto',
       margin: { top: '0', right: '0', bottom: '0', left: '0' },
       use_print: false,
       landscape: false,
