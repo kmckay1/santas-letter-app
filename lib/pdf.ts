@@ -56,7 +56,7 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
 @font-face {
   font-family: 'Pinyon';
   font-weight: 400;
-  src: url('data:font/woff2;base64,${PINYON_SCRIPT}') format('woff2');
+  src: url('data:font/truetype;base64,${PINYON_SCRIPT}') format('truetype');
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body {
