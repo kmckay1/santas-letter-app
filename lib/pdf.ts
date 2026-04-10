@@ -1,4 +1,5 @@
 import { PDFDocument, rgb, degrees, PDFPage, PDFFont } from 'pdf-lib'
+import fontkit from '@pdf-lib/fontkit'
 import { ChildInfo } from '@/types'
 import path from 'path'
 import fs from 'fs'
@@ -35,6 +36,7 @@ export async function generatePremiumPDF(
   letterText: string
 ): Promise<Buffer> {
   const doc = await PDFDocument.create()
+  doc.registerFontkit(fontkit)
   doc.setTitle(`A Letter from Santa for ${child.name}`)
   doc.setAuthor('Santa Claus — North Pole Post Office')
 
