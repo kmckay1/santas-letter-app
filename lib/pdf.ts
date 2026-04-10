@@ -1,5 +1,5 @@
 import { ChildInfo } from '@/types'
-import { DANCING_SCRIPT_400, DANCING_SCRIPT_700 } from './font-data'
+import { DANCING_SCRIPT_400, DANCING_SCRIPT_700, PINYON_SCRIPT } from './font-data'
 
 function buildLetterHTML(child: ChildInfo, letterText: string): string {
   const year = new Date().getFullYear()
@@ -53,6 +53,11 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
   src: url('data:font/woff2;base64,${DANCING_SCRIPT_700}') format('woff2');
 }
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,700&display=swap');
+@font-face {
+  font-family: 'Pinyon';
+  font-weight: 400;
+  src: url('data:font/woff2;base64,${PINYON_SCRIPT}') format('woff2');
+}
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body {
   width: 680px;
@@ -121,7 +126,7 @@ html, body {
       <!-- Signature section -->
       <div style="height:8px;"></div>
       <div style="font-family:Georgia,serif; font-size:14px; font-style:italic; color:#1C0A00; margin-bottom:2px;">With all the love and magic of Christmas,</div>
-      <div style="font-family:'DS',cursive; font-weight:700; font-size:76px; color:#8B1A1A; line-height:1.05;">Santa Claus</div>
+      <div style="font-family:'Pinyon',cursive; font-weight:400; font-size:86px; color:#8B1A1A; line-height:1.1;">Santa Claus</div>
       <!-- Pen flourish SVG -->
       <svg style="display:block;width:260px;height:14px;margin:0 0 6px;" viewBox="0 0 260 14" xmlns="http://www.w3.org/2000/svg">
         <path d="M0,9 C50,3 100,13 160,8 C200,4 235,11 260,7" fill="none" stroke="#8B1A1A" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
