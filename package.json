@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.82.0",
+    "@fontsource/dancing-script": "^5.2.8",
     "next": "14.2.35",
     "pdf-lib": "^1.17.1",
     "react": "^18",
