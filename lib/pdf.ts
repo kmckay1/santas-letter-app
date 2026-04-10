@@ -15,7 +15,7 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
     const nearEnd = i >= paragraphs.length - 3
     const isShort = para.split(' ').length < 25
     if (isPS) return `<p class="ps">${para}</p>`
-    if (nearEnd && isShort && !isPS) return `<div class="couplet"><p>${para}</p></div>`
+    if (nearEnd && isShort && !isPS) return `<p class="couplet">${para}</p>`
     return `<p>${para}</p>`
   }).join('')
 
@@ -35,9 +35,7 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
     <circle cx="34" cy="20" r="4" fill="#8B1A1A"/>
   </svg>`
 
-  const starSVG = `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;margin:0 4px;margin-bottom:2px"><polygon points="6,0 7.5,4.5 12,4.5 8.5,7 9.5,12 6,9 2.5,12 3.5,7 0,4.5 4.5,4.5" fill="#C8922A"/></svg>`
-
-  const checkSVG = `<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;margin-bottom:2px"><polyline points="2,7 5,11 12,3" stroke="#1E4012" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  const starSVG = `<svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;margin:0 5px;margin-bottom:2px"><polygon points="6,0 7.5,4.5 12,4.5 8.5,7.5 10,12 6,9 2,12 3.5,7.5 0,4.5 4.5,4.5" fill="#C8922A"/></svg>`
 
   return `<!DOCTYPE html>
 <html>
@@ -45,12 +43,12 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
 <meta charset="UTF-8">
 <style>
 @font-face {
-  font-family: 'Dancing Script';
+  font-family: 'DS';
   font-weight: 400;
   src: url('data:font/woff2;base64,${DANCING_SCRIPT_400}') format('woff2');
 }
 @font-face {
-  font-family: 'Dancing Script';
+  font-family: 'DS';
   font-weight: 700;
   src: url('data:font/woff2;base64,${DANCING_SCRIPT_700}') format('woff2');
 }
@@ -60,34 +58,28 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
 html, body {
   width: 680px;
   background: #F5EDD0;
-  font-family: 'Dancing Script', cursive;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
-.page {
-  width: 680px;
-  background: #F5EDD0;
+/* Single wrapper div IS the border — no absolute overlay crossing header */
+.wrapper {
+  margin: 18px;
+  border: 2.2px solid #C8922A;
   position: relative;
-  padding-bottom: 4px;
+  background: #F5EDD0;
 }
 
-/* Borders */
-.border-outer {
+/* Thin inner border inset */
+.wrapper::after {
+  content: '';
   position: absolute;
-  top: 18px; left: 18px; right: 18px; bottom: 18px;
-  border: 2.2px solid #C8922A;
+  top: 5px; left: 5px; right: 5px; bottom: 5px;
+  border: 0.5px solid rgba(212,170,90,0.45);
   pointer-events: none;
-  z-index: 10;
 }
-.border-inner {
-  position: absolute;
-  top: 23px; left: 23px; right: 23px; bottom: 23px;
-  border: 0.5px solid #D4AA5A;
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 10;
-}
+
+/* Corner diamonds — inside the wrapper, corners of the outer border */
 .corner {
   position: absolute;
   width: 14px; height: 14px;
@@ -95,67 +87,61 @@ html, body {
   transform: rotate(45deg);
   z-index: 20;
 }
-.corner-tl { top: 11px; left: 11px; }
-.corner-tr { top: 11px; right: 11px; }
-.corner-bl { bottom: 11px; left: 11px; }
-.corner-br { bottom: 11px; right: 11px; }
+.corner-tl { top: -8px; left: -8px; }
+.corner-tr { top: -8px; right: -8px; }
+.corner-bl { bottom: -8px; left: -8px; }
+.corner-br { bottom: -8px; right: -8px; }
 
 /* Header */
 .header {
   background: #600000;
-  margin: 18px 18px 0;
-  padding: 8px 20px 14px;
+  padding: 14px 20px 14px;
   text-align: center;
 }
 .header-sub {
-  font-family: 'Dancing Script', cursive;
+  font-family: 'DS', cursive;
   font-size: 13px;
-  color: rgba(245,237,208,0.85);
   font-weight: 400;
-  margin-bottom: 0;
+  color: rgba(245,237,208,0.85);
+  margin-bottom: 2px;
 }
 .header-title {
-  font-family: 'Dancing Script', cursive;
-  font-size: 66px;
-  color: #C8922A;
+  font-family: 'DS', cursive;
+  font-size: 64px;
   font-weight: 700;
+  color: #C8922A;
   line-height: 1.1;
 }
 
-.rule-thick { height: 2.5px; background: #C8922A; margin: 0 18px; }
-.rule-thin  { height: 0.6px; background: rgba(200,146,42,0.5); margin: 0 18px; }
+.rule-thick { height: 2.5px; background: #C8922A; }
+.rule-thin  { height: 0.6px; background: rgba(212,170,90,0.5); }
 
 /* Holly */
 .holly-row {
   display: flex;
   justify-content: space-between;
-  padding: 8px 36px 0;
-  align-items: center;
+  padding: 10px 36px 0;
 }
 
-/* Main content */
-.content { padding: 0 38px; }
+/* Content area */
+.content { padding: 0 42px; }
 
-/* Salutation + stamp zone */
+/* Salutation + stamp */
 .salutation-zone {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 .salutation {
-  font-family: 'Dancing Script', cursive;
+  font-family: 'DS', cursive;
   font-size: 36px;
   font-weight: 700;
   color: #8B1A1A;
   line-height: 1.2;
   flex: 1;
 }
-.stamp-date-block {
-  text-align: right;
-  flex-shrink: 0;
-  margin-left: 16px;
-}
+.stamp-date-block { text-align: right; flex-shrink: 0; margin-left: 16px; }
 .stamp {
   display: inline-block;
   border: 1.5px dashed #8B3A00;
@@ -168,158 +154,156 @@ html, body {
   border: 1.3px solid #8B3A00;
   border-radius: 50%;
   padding: 3px 6px;
-  font-family: 'Dancing Script', cursive;
+  font-family: Georgia, serif;
   font-size: 10px;
+  font-style: italic;
   color: #5A2000;
   line-height: 1.5;
 }
 .stamp-date-small {
-  font-family: 'Dancing Script', cursive;
+  font-family: Georgia, serif;
   font-size: 8.5px;
   color: #5A2000;
   margin-top: 3px;
 }
 .date {
-  font-family: 'Dancing Script', cursive;
-  font-size: 15px;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
   color: #1C0A00;
   margin-top: 5px;
-  text-align: right;
 }
 
-/* Thin rule below salutation only */
+/* One thin rule below salutation only */
 .salutation-rule {
-  height: 1px;
+  height: 0.8px;
   background: rgba(200,146,42,0.35);
-  margin: 8px 0 12px;
+  margin: 10px 0 14px;
 }
 
-/* Body paragraphs */
+/* Body — Georgia serif, highly readable, elegant */
 .body p {
-  font-family: 'Dancing Script', cursive;
-  font-size: 15.5px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 14.5px;
   color: #1C0A00;
-  line-height: 1.65;
-  margin-bottom: 12px;
-  text-indent: 22px;
+  line-height: 1.8;
+  margin-bottom: 14px;
+  text-indent: 24px;
 }
 .body p.ps {
   text-indent: 0;
-  font-size: 15px;
-  margin-top: 4px;
+  font-style: italic;
+  font-size: 14px;
+  color: #2C1200;
 }
-
-/* Couplet — centred italic block, lightly framed */
-.couplet {
+/* Couplet — centred, italic, NO borders/lines */
+.body p.couplet {
+  text-indent: 0;
   text-align: center;
-  border-top: 0.5px solid rgba(200,146,42,0.35);
-  border-bottom: 0.5px solid rgba(200,146,42,0.35);
-  padding: 10px 20px;
-  margin: 0 0 12px;
-}
-.couplet p {
-  font-family: 'Dancing Script', cursive;
-  font-size: 17px !important;
-  text-indent: 0 !important;
-  margin: 0 !important;
-  line-height: 1.75 !important;
-  color: #2C1200 !important;
+  font-style: italic;
+  font-size: 15px;
+  color: #2C1200;
+  padding: 4px 20px;
+  margin-bottom: 14px;
 }
 
-/* Signature — NO decorative rule above, just spacing */
-.sig-gap { height: 4px; }
+/* Signature */
+.sig-gap { height: 8px; }
 .sig-warm {
-  font-family: 'Dancing Script', cursive;
-  font-size: 14.5px;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
   color: #1C0A00;
   margin-bottom: 2px;
 }
+/* Signature uses lighter weight DS for more pen-like feel */
 .sig-name {
-  font-family: 'Dancing Script', cursive;
+  font-family: 'DS', cursive;
   font-size: 56px;
-  font-weight: 700;
+  font-weight: 400;
   color: #8B1A1A;
   line-height: 1.05;
 }
-.sig-underline {
-  height: 1px;
-  background: rgba(139,26,26,0.3);
-  width: 220px;
-  margin: 2px 0 5px;
+.sig-flourish {
+  display: block;
+  width: 260px;
+  height: 14px;
+  margin: 0 0 6px;
 }
+/* Titles with em-dash separators for clear spacing */
 .sig-titles {
-  font-family: 'Dancing Script', cursive;
-  font-size: 11.5px;
-  color: #1C0A00;
+  font-family: Georgia, serif;
+  font-size: 11px;
+  font-style: italic;
+  color: #2C1200;
   opacity: 0.7;
-  line-height: 1.65;
+  line-height: 1.8;
 }
 
 /* Footer */
-.footer-sep {
-  margin: 14px 18px 0;
-  height: 1.5px;
-  background: #C8922A;
-  opacity: 0.65;
-}
-.footer-sep-thin {
-  margin: 0 18px;
-  height: 0.5px;
-  background: #C8922A;
-  opacity: 0.35;
-}
+.footer-sep { height: 1.5px; background: #C8922A; opacity: 0.65; margin-top: 16px; }
+.footer-sep-thin { height: 0.5px; background: #C8922A; opacity: 0.35; }
 .footer-stamps {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 38px;
+  padding: 10px 42px;
 }
 .postmarked {
   border: 1.1px solid #8B3A00;
   padding: 5px 12px;
-  font-family: 'Dancing Script', cursive;
-  font-size: 12px;
+  font-family: Georgia, serif;
+  font-size: 11.5px;
+  font-style: italic;
   color: #4A2000;
 }
-.nice-list {
-  border: 2.4px solid #1E4012;
-  padding: 6px 16px;
+
+/* Nice List — rubber stamp look: angled, distressed border */
+.nice-stamp {
+  display: inline-block;
+  border: 2.5px solid #1E4012;
+  padding: 7px 18px;
   text-align: center;
   position: relative;
+  transform: rotate(-4deg);
+  background: transparent;
 }
-.nice-list-inner {
+.nice-stamp::before {
+  content: '';
   position: absolute;
-  top: 4px; left: 4px; right: 4px; bottom: 4px;
-  border: 0.6px solid #1E4012;
+  top: 3px; left: 3px; right: 3px; bottom: 3px;
+  border: 1px solid rgba(30,64,18,0.5);
 }
-.nice-list-text {
-  font-family: 'Dancing Script', cursive;
-  font-size: 14px;
-  font-weight: 700;
+.nice-stamp-text {
+  font-family: Georgia, serif;
+  font-size: 13.5px;
+  font-weight: bold;
   color: #1E4012;
+  letter-spacing: 1px;
   line-height: 1.5;
   position: relative;
   z-index: 1;
+  text-transform: uppercase;
 }
+
 .footer-band {
   background: #600000;
-  margin: 0 18px 18px;
   padding: 11px 0;
   text-align: center;
   border-top: 2px solid #C8922A;
+  margin-top: 0;
 }
 .footer-band-text {
-  font-family: 'Dancing Script', cursive;
-  font-size: 11px;
+  font-family: Georgia, serif;
+  font-size: 10.5px;
+  font-style: italic;
   color: #C8922A;
 }
 </style>
 </head>
 <body>
-<div class="page">
-
-  <div class="border-outer"></div>
-  <div class="border-inner"></div>
+<div style="background:#F5EDD0;padding:18px;">
+<div class="wrapper">
   <div class="corner corner-tl"></div>
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
@@ -338,7 +322,6 @@ html, body {
   </div>
 
   <div class="content">
-
     <div class="salutation-zone">
       <div class="salutation">Dear ${child.name},</div>
       <div class="stamp-date-block">
@@ -354,35 +337,32 @@ html, body {
     </div>
 
     <div class="salutation-rule"></div>
-
     <div class="body">${bodyHTML}</div>
 
     <div class="sig-gap"></div>
     <div class="sig-warm">With all the love and magic of Christmas,</div>
     <div class="sig-name">Santa Claus</div>
-    <div class="sig-underline"></div>
+    <svg class="sig-flourish" viewBox="0 0 260 14" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,9 C40,3 80,12 130,8 C180,4 220,11 260,7" fill="none" stroke="#8B1A1A" stroke-width="1.3" stroke-linecap="round" opacity="0.45"/>
+    </svg>
     <div class="sig-titles">
-      Kris Kringle &middot; Father Christmas &middot; St. Nicholas<br>
+      Kris Kringle &nbsp;&mdash;&nbsp; Father Christmas &nbsp;&mdash;&nbsp; St. Nicholas<br>
       Chief Correspondent, North Pole Post Office
     </div>
-
   </div>
 
   <div class="footer-sep"></div>
   <div class="footer-sep-thin"></div>
   <div class="footer-stamps">
     <div class="postmarked">Postmarked &middot; North Pole &middot; ${year}</div>
-    <div class="nice-list">
-      <div class="nice-list-inner"></div>
-      <div class="nice-list-text">Nice List<br>${checkSVG} Approved</div>
+    <div class="nice-stamp">
+      <div class="nice-stamp-text">Nice List<br>Approved</div>
     </div>
   </div>
-  <div class="rule-thick"></div>
-  <div class="rule-thin"></div>
   <div class="footer-band">
     <div class="footer-band-text">SantasLetter.ai ${starSVG} Official Correspondence of the North Pole Post Office ${starSVG} Est. CCLXXX A.D.</div>
   </div>
-
+</div>
 </div>
 </body>
 </html>`
@@ -417,6 +397,5 @@ export async function generatePremiumPDF(
     throw new Error(`PDFShift error ${response.status}: ${error}`)
   }
 
-  const arrayBuffer = await response.arrayBuffer()
-  return Buffer.from(arrayBuffer)
+  return Buffer.from(await response.arrayBuffer())
 }
