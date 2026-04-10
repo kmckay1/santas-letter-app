@@ -223,61 +223,28 @@ export async function generatePremiumPDF(
 ): Promise<Buffer> {
   const html = buildLetterHTML(child, letterText)
 
-  const chromium = await import('@sparticuz/chromium-min')
-  const puppeteer = await import('puppeteer-core')
-  const { PDFDocument } = await import('pdf-lib')
+  const apiKey = process.env.PDFSHIFT_API_KEY
+  if (!apiKey) throw new Error('PDFSHIFT_API_KEY env var not set')
 
-  const executablePath = await chromium.default.executablePath(
-    'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
-  )
-
-  const browser = await puppeteer.default.launch({
-    args: chromium.default.args,
-    defaultViewport: { width: 680, height: 960, deviceScaleFactor: 2 },
-    executablePath,
-    headless: true,
+  const response = await fetch('https://api.pdfshift.io/v3/convert/pdf', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Basic ' + Buffer.from(`api:${apiKey}`).toString('base64'),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      source: html,
+      format: 'Letter',
+      use_print: false,
+      landscape: false,
+    }),
   })
 
-  try {
-    const page = await browser.newPage()
-    await page.setContent(html, { waitUntil: 'networkidle0' })
-
-    // Wait for Dancing Script to fully render
-    await new Promise(r => setTimeout(r, 1500))
-
-    // Get actual full height of content
-    const contentHeight = await page.evaluate(() => document.body.scrollHeight)
-
-    await page.setViewport({ width: 680, height: contentHeight, deviceScaleFactor: 2 })
-
-    // Screenshot at 2x resolution for crisp output
-    const screenshot = await page.screenshot({
-      type: 'png',
-      fullPage: true,
-    }) as Buffer
-
-    // Embed screenshot into PDF — guaranteed pixel-perfect match
-    const pdfDoc = await PDFDocument.create()
-    pdfDoc.setTitle(`A Letter from Santa for ${child.name}`)
-    pdfDoc.setAuthor('Santa Claus — North Pole Post Office')
-
-    const pngImage = await pdfDoc.embedPng(screenshot)
-
-    // PDF points: 1pt = 1/72 inch. At deviceScaleFactor:2 our 680px = 1360px wide.
-    // Scale back to 680pt wide, proportional height
-    const pdfWidth = 680
-    const pdfHeight = Math.round((contentHeight / 680) * pdfWidth)
-
-    const pdfPage = pdfDoc.addPage([pdfWidth, pdfHeight])
-    pdfPage.drawImage(pngImage, {
-      x: 0,
-      y: 0,
-      width: pdfWidth,
-      height: pdfHeight,
-    })
-
-    return Buffer.from(await pdfDoc.save())
-  } finally {
-    await browser.close()
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`PDFShift error ${response.status}: ${error}`)
   }
+
+  const arrayBuffer = await response.arrayBuffer()
+  return Buffer.from(arrayBuffer)
 }
