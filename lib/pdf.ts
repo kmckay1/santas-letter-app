@@ -14,9 +14,9 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
     const isPS = para.startsWith('P.S') || para.startsWith('PS.')
     const nearEnd = i >= paragraphs.length - 3
     const isShort = para.split(' ').length < 25
-    if (isPS) return `<p style="font-style:italic;text-indent:0;margin-bottom:12px;">${para}</p>`
-    if (nearEnd && isShort && !isPS) return `<p style="text-align:center;font-style:italic;text-indent:0;margin-bottom:12px;font-size:15px;">${para}</p>`
-    return `<p style="text-indent:24px;margin-bottom:14px;">${para}</p>`
+    if (isPS) return `<p style="font-style:italic;text-indent:0;margin-bottom:12px;font-family:'DS',cursive;font-size:15px;">${para}</p>`
+    if (nearEnd && isShort && !isPS) return `<p style="text-align:center;font-style:italic;text-indent:0;margin-bottom:12px;font-size:16px;font-family:'DS',cursive;">${para}</p>`
+    return `<p style="text-indent:24px;margin-bottom:14px;font-family:'DS',cursive;font-size:15.5px;line-height:1.75;">${para}</p>`
   }).join('')
 
   const hollyLeft = `<svg width="52" height="30" viewBox="0 0 52 30" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +64,7 @@ html, body {
 <body>
 
 <!-- Outer parchment padding -->
-<div style="background:#F5EDD0; padding:18px 18px 18px 18px;">
+<div style="background:#F5EDD0; padding:18px 18px 4px 18px;">
 
   <!-- THE BORDER: single div, no pseudo-elements, no ::after -->
   <div style="border: 2.2px solid #C8922A; position:relative; background:#F5EDD0;">
@@ -77,7 +77,7 @@ html, body {
 
     <!-- HEADER: crimson band. No border-inner crossing this. -->
     <div style="background:#600000; text-align:center; padding:16px 20px 14px;">
-      <div style="font-family:'DS',cursive; font-weight:400; font-size:13px; color:rgba(245,237,208,0.85); margin-bottom:2px;">From the Desk of</div>
+      <div style="font-family:'DS',cursive; font-weight:400; font-size:17px; color:rgba(245,237,208,0.85); margin-bottom:2px;">From the Desk of</div>
       <div style="font-family:'DS',cursive; font-weight:700; font-size:64px; color:#C8922A; line-height:1.1;">Santa Claus</div>
     </div>
 
@@ -113,7 +113,7 @@ html, body {
       <div style="height:0.8px; background:rgba(200,146,42,0.35); margin:10px 0 14px;"></div>
 
       <!-- Body text: Georgia, no extra rules, no borders anywhere -->
-      <div style="font-family:Georgia,'Times New Roman',serif; font-size:14.5px; color:#1C0A00; line-height:1.8;">
+      <div style="font-family:'DS',cursive; font-weight:400; font-size:15.5px; color:#1C0A00; line-height:1.75;">
         ${bodyHTML}
       </div>
 
