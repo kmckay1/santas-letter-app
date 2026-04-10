@@ -102,7 +102,7 @@ html, body {
 
       <!-- Salutation + stamp -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:12px;">
-        <div style="font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:700; font-size:36px; color:#8B1A1A; line-height:1.2; flex:1;">Dear ${child.name},</div>
+        <div style="font-family:'DS',cursive; font-weight:700; font-size:36px; color:#8B1A1A; line-height:1.2; flex:1;">Dear ${child.name},</div>
         <div style="text-align:right; flex-shrink:0; margin-left:16px;">
           <div style="display:inline-block; border:1.5px dashed #8B3A00; padding:5px 8px; background:rgba(245,237,208,0.7); text-align:center; width:118px;">
             <div style="border:1.3px solid #8B3A00; border-radius:50%; padding:3px 6px; font-family:Georgia,serif; font-size:10px; font-style:italic; color:#5A2000; line-height:1.5;">
