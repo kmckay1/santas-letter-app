@@ -254,7 +254,6 @@ export async function generatePremiumPDF(
     const screenshot = await page.screenshot({
       type: 'png',
       fullPage: true,
-      clip: { x: 0, y: 0, width: 680, height: contentHeight },
     }) as Buffer
 
     // Embed screenshot into PDF — guaranteed pixel-perfect match
