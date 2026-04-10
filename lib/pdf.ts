@@ -14,9 +14,9 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
     const isPS = para.startsWith('P.S') || para.startsWith('PS.')
     const nearEnd = i >= paragraphs.length - 3
     const isShort = para.split(' ').length < 25
-    if (isPS) return `<p style="font-style:italic;text-indent:0;margin-bottom:12px;font-family:'DS',cursive;font-size:17px;">${para}</p>`
-    if (nearEnd && isShort && !isPS) return `<p style="text-align:center;font-style:italic;text-indent:0;margin-bottom:12px;font-size:18px;font-family:'DS',cursive;">${para}</p>`
-    return `<p style="text-indent:24px;margin-bottom:14px;font-family:'DS',cursive;font-size:17px;line-height:1.75;">${para}</p>`
+    if (isPS) return `<p style="font-style:italic;text-indent:0;margin-bottom:12px;font-family:'Playfair Display',Georgia,serif;font-size:16px;">${para}</p>`
+    if (nearEnd && isShort && !isPS) return `<p style="text-align:center;font-style:italic;text-indent:0;margin-bottom:12px;font-size:17px;font-family:'Playfair Display',Georgia,serif;">${para}</p>`
+    return `<p style="text-indent:24px;margin-bottom:14px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:16px;line-height:1.85;">${para}</p>`
   }).join('')
 
   const hollyLeft = `<svg width="52" height="30" viewBox="0 0 52 30" xmlns="http://www.w3.org/2000/svg">
@@ -52,6 +52,7 @@ function buildLetterHTML(child: ChildInfo, letterText: string): string {
   font-weight: 700;
   src: url('data:font/woff2;base64,${DANCING_SCRIPT_700}') format('woff2');
 }
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap');
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body {
   width: 680px;
@@ -113,7 +114,7 @@ html, body {
       <div style="height:0.8px; background:rgba(200,146,42,0.35); margin:10px 0 14px;"></div>
 
       <!-- Body text: Georgia, no extra rules, no borders anywhere -->
-      <div style="font-family:'DS',cursive; font-weight:400; font-size:17px; color:#1C0A00; line-height:1.75;">
+      <div style="font-family:'Playfair Display',Georgia,serif; font-style:italic; font-size:16px; color:#1C0A00; line-height:1.85;">
         ${bodyHTML}
       </div>
 
