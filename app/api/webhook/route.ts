@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
 
       // 2. Send physical letter via Lob for physical and bundle tiers
       if (tier === 'physical' || tier === 'bundle') {
-        const shipping = (session as any).shipping_details
+        const fullSession = await stripe.checkout.sessions.retrieve(session.id)
+        const shipping = (fullSession as any).shipping_details
         if (shipping?.address) {
           await sendPhysicalLetter(
             {
