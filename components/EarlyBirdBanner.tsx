@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 
 function getTimeLeft() {
-  const deadline = new Date('2025-06-30T23:59:59')
+  const deadline = new Date('2026-12-25T23:59:59')
   const now = new Date()
   const diff = deadline.getTime() - now.getTime()
   if (diff <= 0) return null
