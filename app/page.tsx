@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
+import EarlyBirdBanner from '../components/EarlyBirdBanner'
 
 function Snowflakes() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -59,6 +60,8 @@ export default function Home() {
     <main style={{ minHeight: '100vh', background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 60%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: "'Lora', Georgia, serif", color: '#f5ead8', textAlign: 'center', padding: '24px', position: 'relative', overflow: 'hidden' }}>
 
       <Snowflakes />
+
+      <EarlyBirdBanner />
 
       {/* Top ribbon */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)', zIndex: 200 }} />
