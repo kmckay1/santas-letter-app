@@ -41,6 +41,7 @@ export async function sendPhysicalLetter(
       color: true,
       double_sided: false,
       mail_type: 'usps_first_class',
+      use_type: 'operational',
     }),
   })
 
