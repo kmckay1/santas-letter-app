@@ -54,14 +54,42 @@ export async function sendPhysicalLetter(
   return { id: data.id, expectedDelivery: data.expected_delivery_date }
 }
 
-function holly(): string {
+function hollySvg(flipX: boolean): string {
+  const transform = flipX ? 'scale(-1,1) translate(-80,0)' : ''
   return (
-    '<span style="display:inline-flex;align-items:center;gap:2px;">' +
-      '<span style="width:14px;height:9px;background:#2d6a2d;border-radius:50% 0 50% 0;display:inline-block;transform:rotate(-15deg);"></span>' +
-      '<span style="width:12px;height:8px;background:#2d6a2d;border-radius:0 50% 0 50%;display:inline-block;transform:rotate(15deg);"></span>' +
-      '<span style="width:9px;height:9px;background:#c8382b;border-radius:50%;display:inline-block;margin-left:1px;"></span>' +
-      '<span style="width:7px;height:7px;background:#c8382b;border-radius:50%;display:inline-block;"></span>' +
-    '</span>'
+    '<svg width="80" height="52" viewBox="0 0 80 52" xmlns="http://www.w3.org/2000/svg">' +
+      '<g transform="' + transform + '">' +
+        // Leaf 1
+        '<ellipse cx="22" cy="28" rx="18" ry="9" fill="#2d6a2d" transform="rotate(-30 22 28)"/>' +
+        '<ellipse cx="22" cy="28" rx="14" ry="5" fill="#3a8a3a" transform="rotate(-30 22 28)"/>' +
+        // Leaf 2
+        '<ellipse cx="38" cy="32" rx="18" ry="9" fill="#2d6a2d" transform="rotate(15 38 32)"/>' +
+        '<ellipse cx="38" cy="32" rx="14" ry="5" fill="#3a8a3a" transform="rotate(15 38 32)"/>' +
+        // Leaf 3 small
+        '<ellipse cx="30" cy="22" rx="12" ry="6" fill="#256025" transform="rotate(-55 30 22)"/>' +
+        // Berry stem
+        '<line x1="34" y1="26" x2="50" y2="16" stroke="#5a3e1b" stroke-width="1.5"/>' +
+        '<line x1="50" y1="16" x2="58" y2="20" stroke="#5a3e1b" stroke-width="1.2"/>' +
+        '<line x1="50" y1="16" x2="54" y2="10" stroke="#5a3e1b" stroke-width="1.2"/>' +
+        // Berries
+        '<circle cx="58" cy="22" r="7" fill="#9b1c1c"/>' +
+        '<circle cx="58" cy="22" r="7" fill="url(#b1)"/>' +
+        '<circle cx="54" cy="9" r="6" fill="#9b1c1c"/>' +
+        '<circle cx="54" cy="9" r="6" fill="url(#b2)"/>' +
+        '<circle cx="66" cy="14" r="6.5" fill="#c8382b"/>' +
+        '<circle cx="66" cy="14" r="6.5" fill="url(#b3)"/>' +
+        // Berry highlights
+        '<circle cx="56" cy="20" r="2" fill="rgba(255,255,255,0.35)"/>' +
+        '<circle cx="52" cy="7" r="1.8" fill="rgba(255,255,255,0.35)"/>' +
+        '<circle cx="64" cy="12" r="1.8" fill="rgba(255,255,255,0.35)"/>' +
+        // Gradients for berry depth
+        '<defs>' +
+          '<radialGradient id="b1" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
+          '<radialGradient id="b2" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
+          '<radialGradient id="b3" cx="40%" cy="35%"><stop offset="0%" stop-color="#e87070"/><stop offset="100%" stop-color="#8b1a1a"/></radialGradient>' +
+        '</defs>' +
+      '</g>' +
+    '</svg>'
   )
 }
 
@@ -92,35 +120,25 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
 
     // PAGE 2
     '.page2 { width: 8.5in; height: 11in; overflow: hidden; position: relative; background: #f5edd6; border: 8px solid #d4aa5a; }',
-
-    // Header
     '.p2-header { background: #6B0F0F; padding: 16px 40px 14px; text-align: center; border-bottom: 3px solid #d4aa5a; }',
     '.p2-header-eyebrow { font-family: "Dancing Script", cursive; font-size: 13px; color: rgba(212,170,90,0.85); margin-bottom: 2px; }',
     '.p2-header-title { font-family: "Dancing Script", cursive; font-size: 50px; color: #d4aa5a; line-height: 1.1; }',
 
-    // Holly + salutation row
-    '.holly-salutation-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 36px 0; }',
-    '.holly-left { display: flex; align-items: center; }',
-    '.holly-right { display: flex; align-items: center; }',
+    // Holly row — one left, one right, on same line
+    '.holly-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 28px 0; }',
 
-    // Salutation + postmark row
-    '.salutation-postmark-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 36px 0; }',
+    // Salutation row — Dear X left, postmark right, same line
+    '.salutation-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 2px 36px 0; }',
     '.p2-salutation { font-family: "Dancing Script", cursive; font-size: 36px; color: #8B1A1A; line-height: 1.1; }',
-
-    // Postmark — small, right side only
-    '.p2-postmark { border: 1.5px dashed #8B1A1A; border-radius: 4px; padding: 5px 10px; text-align: center; width: 110px; flex-shrink: 0; }',
+    '.p2-postmark { border: 1.5px dashed #8B1A1A; border-radius: 4px; padding: 5px 12px; text-align: center; width: 115px; flex-shrink: 0; }',
     '.p2-postmark-inner { border: 1px solid #8B1A1A; border-radius: 50%; padding: 3px 6px; font-size: 8.5px; font-style: italic; color: #8B1A1A; margin-bottom: 3px; }',
     '.p2-postmark-date { font-size: 8px; color: #8B1A1A; }',
+
     '.p2-date-full { font-size: 10.5px; color: rgba(44,26,14,0.55); font-style: italic; padding: 4px 36px 0; }',
-
-    // Divider
     '.p2-divider { border: none; border-top: 1px solid rgba(139,90,43,0.3); margin: 8px 36px 10px; }',
-
-    // Body
     '.p2-body { padding: 0 36px; }',
     'p { font-size: 11px; line-height: 1.78; margin-bottom: 8px; color: #2a1508; font-style: italic; text-indent: 1.5em; }',
 
-    // Sign off
     '.p2-signoff-wrap { margin: 0 36px; padding-top: 10px; border-top: 1px solid rgba(139,90,43,0.2); }',
     '.p2-signoff-text { font-size: 10.5px; font-style: italic; color: rgba(44,26,14,0.55); margin-bottom: 2px; }',
     '.p2-signature { font-family: "Dancing Script", cursive; font-size: 42px; color: #8B1A1A; line-height: 1.1; }',
@@ -128,13 +146,12 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
     '.p2-sig-titles { font-size: 9px; font-style: italic; color: rgba(44,26,14,0.5); margin-bottom: 1px; }',
     '.p2-sig-role { font-size: 9px; font-style: italic; color: rgba(44,26,14,0.45); }',
 
-    // Footer zone — postmarked left, nice list right
+    // Footer zone — postmarked bottom-left, nice list bottom-right
     '.p2-footer-zone { position: absolute; bottom: 38px; left: 36px; right: 36px; display: flex; justify-content: space-between; align-items: flex-end; }',
     '.p2-postmarked { border: 1px solid rgba(139,90,43,0.5); border-radius: 3px; padding: 4px 12px; font-size: 9px; font-style: italic; color: rgba(44,26,14,0.5); display: inline-block; }',
-    '.p2-nice-list { border: 2px solid #2d6a2d; padding: 4px 10px; text-align: center; transform: rotate(-4deg); display: inline-block; }',
-    '.p2-nice-list-text { font-size: 8px; letter-spacing: 0.15em; font-weight: bold; color: #2d6a2d; line-height: 1.6; }',
+    '.p2-nice-list { border: 2px solid #2d6a2d; padding: 5px 12px; text-align: center; transform: rotate(-4deg); display: inline-block; }',
+    '.p2-nice-list-text { font-size: 8.5px; letter-spacing: 0.15em; font-weight: bold; color: #2d6a2d; line-height: 1.6; }',
 
-    // Bottom bar
     '.p2-bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; }',
     '.p2-footer-text { background: #6B0F0F; text-align: center; padding: 7px; font-size: 8px; font-style: italic; color: #d4aa5a; letter-spacing: 0.08em; }',
   ].join(' ')
@@ -164,12 +181,14 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
         '<div class="p2-header-title">Santa Claus</div>' +
       '</div>' +
 
-      '<div class="holly-salutation-row">' +
-        '<div class="holly-left">' + holly() + '</div>' +
-        '<div class="holly-right">' + holly() + '</div>' +
+      // Holly — one each side on same row
+      '<div class="holly-row">' +
+        '<div>' + hollySvg(false) + '</div>' +
+        '<div>' + hollySvg(true) + '</div>' +
       '</div>' +
 
-      '<div class="salutation-postmark-row">' +
+      // Salutation left, postmark right, same row
+      '<div class="salutation-row">' +
         '<div class="p2-salutation">Dear ' + child.name + ',</div>' +
         '<div class="p2-postmark">' +
           '<div class="p2-postmark-inner">North Pole<br>Post Office</div>' +
@@ -189,6 +208,7 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
         '<div class="p2-sig-role">Chief Correspondent, North Pole Post Office</div>' +
       '</div>' +
 
+      // Footer — postmarked left, nice list right
       '<div class="p2-footer-zone">' +
         '<div class="p2-postmarked">Postmarked · North Pole · ' + year + '</div>' +
         '<div class="p2-nice-list"><div class="p2-nice-list-text">NICE LIST<br>APPROVED</div></div>' +
