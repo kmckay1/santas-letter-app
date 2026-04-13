@@ -81,7 +81,6 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
 
   const year = new Date().getFullYear()
 
-  // Holly SVG — left version (berries on right)
   const hollyL =
     '<svg width="72" height="48" viewBox="0 0 72 48" xmlns="http://www.w3.org/2000/svg" style="display:block;">' +
     '<defs>' +
@@ -105,9 +104,8 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
     '<circle cx="61" cy="12" r="1.8" fill="rgba(255,255,255,0.38)"/>' +
     '</svg>'
 
-  // Holly SVG — right version (mirror: berries on left)
   const hollyR =
-    '<svg width="72" height="48" viewBox="0 0 72 48" xmlns="http://www.w3.org/2000/svg" style="display:block;">' +
+    '<svg width="72" height="48" viewBox="0 0 72 48" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-left:auto;">' +
     '<defs>' +
     '<radialGradient id="hrA" cx="38%" cy="32%"><stop offset="0%" stop-color="#e85555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
     '<radialGradient id="hrB" cx="38%" cy="32%"><stop offset="0%" stop-color="#e85555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
@@ -129,7 +127,6 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
     '<circle cx="11" cy="12" r="1.8" fill="rgba(255,255,255,0.38)"/>' +
     '</svg>'
 
-  // Nice List stamp — more stamp-like with double border and angled
   const niceListStamp =
     '<div style="position:absolute;bottom:42px;right:40px;transform:rotate(-6deg);display:inline-block;">' +
       '<div style="border:3px solid #1f5c1f;padding:2px;">' +
@@ -161,14 +158,9 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
     '.p2-header { background: #6B0F0F; padding: 16px 40px 14px; text-align: center; border-bottom: 3px solid #d4aa5a; }',
     '.p2-header-eyebrow { font-family: "Dancing Script", cursive; font-size: 13px; color: rgba(212,170,90,0.85); margin-bottom: 2px; }',
     '.p2-header-title { font-family: "Dancing Script", cursive; font-size: 50px; color: #d4aa5a; line-height: 1.1; }',
-    // Holly row — table layout guarantees left/right split on one row
-    '.holly-row { width: 100%; display: table; padding: 10px 28px 0; }',
-    '.holly-left { display: table-cell; text-align: left; vertical-align: middle; }',
-    '.holly-right { display: table-cell; text-align: right; vertical-align: middle; }',
-    // Salutation row
-    '.salutation-row { display: table; width: 100%; padding: 2px 36px 0; }',
-    '.salutation-cell { display: table-cell; vertical-align: top; }',
-    '.postmark-cell { display: table-cell; vertical-align: top; text-align: right; width: 130px; }',
+    '.top-row { display: table; width: 100%; padding: 8px 28px 0; }',
+    '.top-left { display: table-cell; vertical-align: bottom; padding-right: 12px; }',
+    '.top-right { display: table-cell; vertical-align: top; text-align: right; width: 160px; }',
     '.p2-salutation { font-family: "Dancing Script", cursive; font-size: 36px; color: #8B1A1A; line-height: 1.1; }',
     '.p2-postmark { border: 1.5px dashed #8B1A1A; border-radius: 4px; padding: 5px 12px; text-align: center; display: inline-block; margin-top: 4px; }',
     '.p2-postmark-inner { border: 1px solid #8B1A1A; border-radius: 50%; padding: 3px 8px; font-size: 8.5px; font-style: italic; color: #8B1A1A; margin-bottom: 3px; }',
@@ -211,16 +203,13 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
         '<div class="p2-header-title">Santa Claus</div>' +
       '</div>' +
 
-      // Holly — table layout guarantees one each side on same row
-      '<div class="holly-row">' +
-        '<div class="holly-left">' + hollyL + '</div>' +
-        '<div class="holly-right">' + hollyR + '</div>' +
-      '</div>' +
-
-      // Salutation left, postmark right — table layout
-      '<div class="salutation-row">' +
-        '<div class="salutation-cell"><div class="p2-salutation">Dear ' + child.name + ',</div></div>' +
-        '<div class="postmark-cell">' +
+      '<div class="top-row">' +
+        '<div class="top-left">' +
+          hollyL +
+          '<div class="p2-salutation">Dear ' + child.name + ',</div>' +
+        '</div>' +
+        '<div class="top-right">' +
+          hollyR +
           '<div class="p2-postmark">' +
             '<div class="p2-postmark-inner">North Pole<br>Post Office</div>' +
             '<div class="p2-postmark-date">Dec 25 · ' + year + '</div>' +
