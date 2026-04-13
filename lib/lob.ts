@@ -73,51 +73,63 @@ export async function sendPhysicalLetter(
 }
 
 function hollyLeft(): string {
-  return '<svg width="110" height="70" viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg">' +
+  return (
+    '<svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">' +
     '<defs>' +
-    '<radialGradient id="blA" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
-    '<radialGradient id="blB" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
-    '<radialGradient id="blC" cx="40%" cy="35%"><stop offset="0%" stop-color="#f07070"/><stop offset="100%" stop-color="#8b1a1a"/></radialGradient>' +
+    '<radialGradient id="blA" cx="38%" cy="32%"><stop offset="0%" stop-color="#e85858"/><stop offset="100%" stop-color="#7a0a0a"/></radialGradient>' +
+    '<radialGradient id="blB" cx="38%" cy="32%"><stop offset="0%" stop-color="#dd4a4a"/><stop offset="100%" stop-color="#6e0808"/></radialGradient>' +
+    '<radialGradient id="blC" cx="38%" cy="32%"><stop offset="0%" stop-color="#f06060"/><stop offset="100%" stop-color="#880c0c"/></radialGradient>' +
     '</defs>' +
-    '<ellipse cx="28" cy="38" rx="26" ry="13" fill="#2d6a2d" transform="rotate(-30 28 38)"/>' +
-    '<ellipse cx="28" cy="38" rx="20" ry="8" fill="#3a8a3a" transform="rotate(-30 28 38)"/>' +
-    '<ellipse cx="52" cy="44" rx="26" ry="13" fill="#2d6a2d" transform="rotate(15 52 44)"/>' +
-    '<ellipse cx="52" cy="44" rx="20" ry="8" fill="#3a8a3a" transform="rotate(15 52 44)"/>' +
-    '<ellipse cx="40" cy="30" rx="17" ry="9" fill="#256025" transform="rotate(-55 40 30)"/>' +
-    '<line x1="44" y1="36" x2="68" y2="22" stroke="#5a3e1b" stroke-width="2"/>' +
-    '<line x1="68" y1="22" x2="80" y2="28" stroke="#5a3e1b" stroke-width="1.6"/>' +
-    '<line x1="68" y1="22" x2="74" y2="12" stroke="#5a3e1b" stroke-width="1.6"/>' +
-    '<circle cx="80" cy="30" r="10" fill="url(#blA)"/>' +
-    '<circle cx="74" cy="12" r="9" fill="url(#blB)"/>' +
-    '<circle cx="92" cy="20" r="9.5" fill="url(#blC)"/>' +
-    '<circle cx="76" cy="27" r="3" fill="rgba(255,255,255,0.4)"/>' +
-    '<circle cx="71" cy="9" r="2.8" fill="rgba(255,255,255,0.4)"/>' +
-    '<circle cx="88" cy="17" r="2.8" fill="rgba(255,255,255,0.4)"/>' +
+    // Leaf 1 — large, bottom-left, pointing left
+    '<ellipse cx="20" cy="36" rx="22" ry="11" fill="#2a5e1e" stroke="#163010" stroke-width="0.8" transform="rotate(-25 20 36)"/>' +
+    '<ellipse cx="20" cy="36" rx="16" ry="7" fill="#366828" transform="rotate(-25 20 36)"/>' +
+    // Leaf 2 — upper, pointing upper-left
+    '<ellipse cx="28" cy="20" rx="20" ry="10" fill="#2a5e1e" stroke="#163010" stroke-width="0.8" transform="rotate(-55 28 20)"/>' +
+    '<ellipse cx="28" cy="20" rx="14" ry="6" fill="#366828" transform="rotate(-55 28 20)"/>' +
+    // Stem
+    '<line x1="38" y1="30" x2="52" y2="22" stroke="#6b4010" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<line x1="52" y1="22" x2="62" y2="28" stroke="#6b4010" stroke-width="1.4" stroke-linecap="round"/>' +
+    '<line x1="52" y1="22" x2="58" y2="12" stroke="#6b4010" stroke-width="1.4" stroke-linecap="round"/>' +
+    // Berries
+    '<circle cx="63" cy="30" r="9" fill="url(#blA)"/>' +
+    '<circle cx="58" cy="11" r="8" fill="url(#blB)"/>' +
+    '<circle cx="74" cy="19" r="8.5" fill="url(#blC)"/>' +
+    // Berry highlights
+    '<circle cx="60" cy="26" r="2.8" fill="rgba(255,255,255,0.45)"/>' +
+    '<circle cx="55" cy="8" r="2.5" fill="rgba(255,255,255,0.45)"/>' +
+    '<circle cx="71" cy="16" r="2.5" fill="rgba(255,255,255,0.45)"/>' +
     '</svg>'
+  )
 }
 
 function hollyRight(): string {
-  return '<svg width="110" height="70" viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg">' +
+  return (
+    '<svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">' +
     '<defs>' +
-    '<radialGradient id="brA" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
-    '<radialGradient id="brB" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
-    '<radialGradient id="brC" cx="40%" cy="35%"><stop offset="0%" stop-color="#f07070"/><stop offset="100%" stop-color="#8b1a1a"/></radialGradient>' +
+    '<radialGradient id="brA" cx="38%" cy="32%"><stop offset="0%" stop-color="#e85858"/><stop offset="100%" stop-color="#7a0a0a"/></radialGradient>' +
+    '<radialGradient id="brB" cx="38%" cy="32%"><stop offset="0%" stop-color="#dd4a4a"/><stop offset="100%" stop-color="#6e0808"/></radialGradient>' +
+    '<radialGradient id="brC" cx="38%" cy="32%"><stop offset="0%" stop-color="#f06060"/><stop offset="100%" stop-color="#880c0c"/></radialGradient>' +
     '</defs>' +
-    '<ellipse cx="82" cy="38" rx="26" ry="13" fill="#2d6a2d" transform="rotate(30 82 38)"/>' +
-    '<ellipse cx="82" cy="38" rx="20" ry="8" fill="#3a8a3a" transform="rotate(30 82 38)"/>' +
-    '<ellipse cx="58" cy="44" rx="26" ry="13" fill="#2d6a2d" transform="rotate(-15 58 44)"/>' +
-    '<ellipse cx="58" cy="44" rx="20" ry="8" fill="#3a8a3a" transform="rotate(-15 58 44)"/>' +
-    '<ellipse cx="70" cy="30" rx="17" ry="9" fill="#256025" transform="rotate(55 70 30)"/>' +
-    '<line x1="66" y1="36" x2="42" y2="22" stroke="#5a3e1b" stroke-width="2"/>' +
-    '<line x1="42" y1="22" x2="30" y2="28" stroke="#5a3e1b" stroke-width="1.6"/>' +
-    '<line x1="42" y1="22" x2="36" y2="12" stroke="#5a3e1b" stroke-width="1.6"/>' +
-    '<circle cx="30" cy="30" r="10" fill="url(#brA)"/>' +
-    '<circle cx="36" cy="12" r="9" fill="url(#brB)"/>' +
-    '<circle cx="18" cy="20" r="9.5" fill="url(#brC)"/>' +
-    '<circle cx="34" cy="27" r="3" fill="rgba(255,255,255,0.4)"/>' +
-    '<circle cx="39" cy="9" r="2.8" fill="rgba(255,255,255,0.4)"/>' +
-    '<circle cx="22" cy="17" r="2.8" fill="rgba(255,255,255,0.4)"/>' +
+    // Leaf 1 — large, bottom-right, pointing right
+    '<ellipse cx="70" cy="36" rx="22" ry="11" fill="#2a5e1e" stroke="#163010" stroke-width="0.8" transform="rotate(25 70 36)"/>' +
+    '<ellipse cx="70" cy="36" rx="16" ry="7" fill="#366828" transform="rotate(25 70 36)"/>' +
+    // Leaf 2 — upper, pointing upper-right
+    '<ellipse cx="62" cy="20" rx="20" ry="10" fill="#2a5e1e" stroke="#163010" stroke-width="0.8" transform="rotate(55 62 20)"/>' +
+    '<ellipse cx="62" cy="20" rx="14" ry="6" fill="#366828" transform="rotate(55 62 20)"/>' +
+    // Stem
+    '<line x1="52" y1="30" x2="38" y2="22" stroke="#6b4010" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<line x1="38" y1="22" x2="28" y2="28" stroke="#6b4010" stroke-width="1.4" stroke-linecap="round"/>' +
+    '<line x1="38" y1="22" x2="32" y2="12" stroke="#6b4010" stroke-width="1.4" stroke-linecap="round"/>' +
+    // Berries
+    '<circle cx="27" cy="30" r="9" fill="url(#brA)"/>' +
+    '<circle cx="32" cy="11" r="8" fill="url(#brB)"/>' +
+    '<circle cx="16" cy="19" r="8.5" fill="url(#brC)"/>' +
+    // Berry highlights
+    '<circle cx="30" cy="26" r="2.8" fill="rgba(255,255,255,0.45)"/>' +
+    '<circle cx="35" cy="8" r="2.5" fill="rgba(255,255,255,0.45)"/>' +
+    '<circle cx="19" cy="16" r="2.5" fill="rgba(255,255,255,0.45)"/>' +
     '</svg>'
+  )
 }
 
 function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAddress): string {
