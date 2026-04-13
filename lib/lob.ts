@@ -72,6 +72,54 @@ export async function sendPhysicalLetter(
   return { id: data.id, expectedDelivery: data.expected_delivery_date }
 }
 
+function hollyLeft(): string {
+  return '<svg width="80" height="52" viewBox="0 0 80 52" xmlns="http://www.w3.org/2000/svg">' +
+    '<defs>' +
+    '<radialGradient id="blA" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
+    '<radialGradient id="blB" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
+    '<radialGradient id="blC" cx="40%" cy="35%"><stop offset="0%" stop-color="#f07070"/><stop offset="100%" stop-color="#8b1a1a"/></radialGradient>' +
+    '</defs>' +
+    '<ellipse cx="22" cy="28" rx="18" ry="9" fill="#2d6a2d" transform="rotate(-30 22 28)"/>' +
+    '<ellipse cx="22" cy="28" rx="14" ry="5" fill="#3a8a3a" transform="rotate(-30 22 28)"/>' +
+    '<ellipse cx="38" cy="32" rx="18" ry="9" fill="#2d6a2d" transform="rotate(15 38 32)"/>' +
+    '<ellipse cx="38" cy="32" rx="14" ry="5" fill="#3a8a3a" transform="rotate(15 38 32)"/>' +
+    '<ellipse cx="30" cy="22" rx="12" ry="6" fill="#256025" transform="rotate(-55 30 22)"/>' +
+    '<line x1="34" y1="26" x2="50" y2="16" stroke="#5a3e1b" stroke-width="1.5"/>' +
+    '<line x1="50" y1="16" x2="58" y2="20" stroke="#5a3e1b" stroke-width="1.2"/>' +
+    '<line x1="50" y1="16" x2="54" y2="10" stroke="#5a3e1b" stroke-width="1.2"/>' +
+    '<circle cx="58" cy="22" r="7" fill="url(#blA)"/>' +
+    '<circle cx="54" cy="9" r="6" fill="url(#blB)"/>' +
+    '<circle cx="66" cy="14" r="6.5" fill="url(#blC)"/>' +
+    '<circle cx="56" cy="20" r="2" fill="rgba(255,255,255,0.35)"/>' +
+    '<circle cx="52" cy="7" r="1.8" fill="rgba(255,255,255,0.35)"/>' +
+    '<circle cx="64" cy="12" r="1.8" fill="rgba(255,255,255,0.35)"/>' +
+    '</svg>'
+}
+
+function hollyRight(): string {
+  return '<svg width="80" height="52" viewBox="0 0 80 52" xmlns="http://www.w3.org/2000/svg">' +
+    '<defs>' +
+    '<radialGradient id="brA" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
+    '<radialGradient id="brB" cx="40%" cy="35%"><stop offset="0%" stop-color="#e05555"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
+    '<radialGradient id="brC" cx="40%" cy="35%"><stop offset="0%" stop-color="#f07070"/><stop offset="100%" stop-color="#8b1a1a"/></radialGradient>' +
+    '</defs>' +
+    '<ellipse cx="58" cy="28" rx="18" ry="9" fill="#2d6a2d" transform="rotate(30 58 28)"/>' +
+    '<ellipse cx="58" cy="28" rx="14" ry="5" fill="#3a8a3a" transform="rotate(30 58 28)"/>' +
+    '<ellipse cx="42" cy="32" rx="18" ry="9" fill="#2d6a2d" transform="rotate(-15 42 32)"/>' +
+    '<ellipse cx="42" cy="32" rx="14" ry="5" fill="#3a8a3a" transform="rotate(-15 42 32)"/>' +
+    '<ellipse cx="50" cy="22" rx="12" ry="6" fill="#256025" transform="rotate(55 50 22)"/>' +
+    '<line x1="46" y1="26" x2="30" y2="16" stroke="#5a3e1b" stroke-width="1.5"/>' +
+    '<line x1="30" y1="16" x2="22" y2="20" stroke="#5a3e1b" stroke-width="1.2"/>' +
+    '<line x1="30" y1="16" x2="26" y2="10" stroke="#5a3e1b" stroke-width="1.2"/>' +
+    '<circle cx="22" cy="22" r="7" fill="url(#brA)"/>' +
+    '<circle cx="26" cy="9" r="6" fill="url(#brB)"/>' +
+    '<circle cx="14" cy="14" r="6.5" fill="url(#brC)"/>' +
+    '<circle cx="24" cy="20" r="2" fill="rgba(255,255,255,0.35)"/>' +
+    '<circle cx="28" cy="7" r="1.8" fill="rgba(255,255,255,0.35)"/>' +
+    '<circle cx="16" cy="12" r="1.8" fill="rgba(255,255,255,0.35)"/>' +
+    '</svg>'
+}
+
 function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAddress): string {
   const paragraphs = letterText
     .split('\n\n')
@@ -80,68 +128,6 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
     .join('')
 
   const year = new Date().getFullYear()
-
-  const hollyL =
-    '<svg width="90" height="70" viewBox="0 0 90 70" xmlns="http://www.w3.org/2000/svg" style="display:block;">' +
-    '<defs>' +
-    '<radialGradient id="hlA" cx="38%" cy="30%"><stop offset="0%" stop-color="#ef6666"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
-    '<radialGradient id="hlB" cx="38%" cy="30%"><stop offset="0%" stop-color="#ef6666"/><stop offset="100%" stop-color="#7a1010"/></radialGradient>' +
-    '<radialGradient id="hlC" cx="38%" cy="30%"><stop offset="0%" stop-color="#f47878"/><stop offset="100%" stop-color="#8b1a1a"/></radialGradient>' +
-    '<radialGradient id="hlLf1" cx="30%" cy="25%"><stop offset="0%" stop-color="#4aaa4a"/><stop offset="100%" stop-color="#1a5c1a"/></radialGradient>' +
-    '<radialGradient id="hlLf2" cx="30%" cy="25%"><stop offset="0%" stop-color="#3d9e3d"/><stop offset="100%" stop-color="#174f17"/></radialGradient>' +
-    '</defs>' +
-    '<path d="M28,52 C24,46 18,44 16,38 C14,32 18,26 14,22 C18,20 22,24 24,22 C26,18 24,12 28,10 C32,12 30,18 34,20 C38,18 40,14 44,16 C44,22 40,26 42,30 C46,28 50,24 54,26 C52,32 46,34 46,40 C50,40 54,38 56,42 C52,46 46,44 44,50 C46,54 50,56 48,60 C44,60 42,54 38,54 C36,58 38,64 34,66 C30,64 32,58 28,56 Z" fill="url(#hlLf1)"/>' +
-    '<path d="M28,52 C24,46 18,44 16,38 C14,32 18,26 14,22 C18,20 22,24 24,22 C26,18 24,12 28,10 C32,12 30,18 34,20 C38,18 40,14 44,16 C44,22 40,26 42,30 C46,28 50,24 54,26 C52,32 46,34 46,40 C50,40 54,38 56,42 C52,46 46,44 44,50 C46,54 50,56 48,60 C44,60 42,54 38,54 C36,58 38,64 34,66 C30,64 32,58 28,56 Z" fill="none" stroke="#155015" stroke-width="0.5"/>' +
-    '<line x1="28" y1="10" x2="44" y2="50" stroke="#2d7a2d" stroke-width="0.8" opacity="0.6"/>' +
-    '<line x1="36" y1="30" x2="16" y2="38" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<line x1="36" y1="30" x2="56" y2="42" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<path d="M48,12 C52,8 58,8 62,4 C66,8 62,12 64,16 C68,14 72,10 76,12 C74,18 68,18 68,24 C72,24 76,22 78,26 C74,30 68,28 66,34 C68,38 72,40 70,44 C66,42 64,36 60,36 C58,40 60,46 56,48 C52,44 54,38 50,36 C46,38 44,44 40,44 C38,40 42,36 40,30 C36,30 32,32 30,28 C34,24 40,26 42,20 C38,18 34,16 34,10 C38,10 42,14 46,12 Z" fill="url(#hlLf2)"/>' +
-    '<path d="M48,12 C52,8 58,8 62,4 C66,8 62,12 64,16 C68,14 72,10 76,12 C74,18 68,18 68,24 C72,24 76,22 78,26 C74,30 68,28 66,34 C68,38 72,40 70,44 C66,42 64,36 60,36 C58,40 60,46 56,48 C52,44 54,38 50,36 C46,38 44,44 40,44 C38,40 42,36 40,30 C36,30 32,32 30,28 C34,24 40,26 42,20 C38,18 34,16 34,10 C38,10 42,14 46,12 Z" fill="none" stroke="#155015" stroke-width="0.5"/>' +
-    '<line x1="48" y1="12" x2="56" y2="48" stroke="#2d7a2d" stroke-width="0.8" opacity="0.6"/>' +
-    '<line x1="52" y1="30" x2="30" y2="28" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<line x1="52" y1="30" x2="78" y2="26" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<path d="M36,52 C40,48 46,46 50,42" stroke="#5a3e1b" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
-    '<circle cx="38" cy="36" r="7.5" fill="url(#hlA)"/>' +
-    '<circle cx="50" cy="32" r="7" fill="url(#hlB)"/>' +
-    '<circle cx="44" cy="44" r="6.5" fill="url(#hlC)"/>' +
-    '<circle cx="38" cy="29" r="1.2" fill="#3d1a00" opacity="0.7"/>' +
-    '<circle cx="50" cy="25" r="1.2" fill="#3d1a00" opacity="0.7"/>' +
-    '<circle cx="44" cy="37" r="1.2" fill="#3d1a00" opacity="0.7"/>' +
-    '<circle cx="35" cy="33" r="2.5" fill="rgba(255,255,255,0.32)"/>' +
-    '<circle cx="47" cy="29" r="2.2" fill="rgba(255,255,255,0.32)"/>' +
-    '<circle cx="41" cy="41" r="2" fill="rgba(255,255,255,0.32)"/>' +
-    '</svg>'
-
-  const hollyR =
-    '<svg width="90" height="70" viewBox="0 0 90 70" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-left:auto;">' +
-    '<defs>' +
-    '<radialGradient id="hrA" cx="38%" cy="30%"><stop offset="0%" stop-color="#ef6666"/><stop offset="100%" stop-color="#6b0f0f"/></radialGradient>' +
-    '<radialGradient id="hrB" cx="38%" cy="30%"><stop offset="0%" stop-color="#ef6666"/><stop offset="100%" stop-color="#7a1010"/></radialGradient>' +
-    '<radialGradient id="hrC" cx="38%" cy="30%"><stop offset="0%" stop-color="#f47878"/><stop offset="100%" stop-color="#8b1a1a"/></radialGradient>' +
-    '<radialGradient id="hrLf1" cx="70%" cy="25%"><stop offset="0%" stop-color="#4aaa4a"/><stop offset="100%" stop-color="#1a5c1a"/></radialGradient>' +
-    '<radialGradient id="hrLf2" cx="70%" cy="25%"><stop offset="0%" stop-color="#3d9e3d"/><stop offset="100%" stop-color="#174f17"/></radialGradient>' +
-    '</defs>' +
-    '<path d="M62,52 C66,46 72,44 74,38 C76,32 72,26 76,22 C72,20 68,24 66,22 C64,18 66,12 62,10 C58,12 60,18 56,20 C52,18 50,14 46,16 C46,22 50,26 48,30 C44,28 40,24 36,26 C38,32 44,34 44,40 C40,40 36,38 34,42 C38,46 44,44 46,50 C44,54 40,56 42,60 C46,60 48,54 52,54 C54,58 52,64 56,66 C60,64 58,58 62,56 Z" fill="url(#hrLf1)"/>' +
-    '<path d="M62,52 C66,46 72,44 74,38 C76,32 72,26 76,22 C72,20 68,24 66,22 C64,18 66,12 62,10 C58,12 60,18 56,20 C52,18 50,14 46,16 C46,22 50,26 48,30 C44,28 40,24 36,26 C38,32 44,34 44,40 C40,40 36,38 34,42 C38,46 44,44 46,50 C44,54 40,56 42,60 C46,60 48,54 52,54 C54,58 52,64 56,66 C60,64 58,58 62,56 Z" fill="none" stroke="#155015" stroke-width="0.5"/>' +
-    '<line x1="62" y1="10" x2="46" y2="50" stroke="#2d7a2d" stroke-width="0.8" opacity="0.6"/>' +
-    '<line x1="54" y1="30" x2="74" y2="38" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<line x1="54" y1="30" x2="34" y2="42" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<path d="M42,12 C38,8 32,8 28,4 C24,8 28,12 26,16 C22,14 18,10 14,12 C16,18 22,18 22,24 C18,24 14,22 12,26 C16,30 22,28 24,34 C22,38 18,40 20,44 C24,42 26,36 30,36 C32,40 30,46 34,48 C38,44 36,38 40,36 C44,38 46,44 50,44 C52,40 48,36 50,30 C54,30 58,32 60,28 C56,24 50,26 48,20 C52,18 56,16 56,10 C52,10 48,14 44,12 Z" fill="url(#hrLf2)"/>' +
-    '<path d="M42,12 C38,8 32,8 28,4 C24,8 28,12 26,16 C22,14 18,10 14,12 C16,18 22,18 22,24 C18,24 14,22 12,26 C16,30 22,28 24,34 C22,38 18,40 20,44 C24,42 26,36 30,36 C32,40 30,46 34,48 C38,44 36,38 40,36 C44,38 46,44 50,44 C52,40 48,36 50,30 C54,30 58,32 60,28 C56,24 50,26 48,20 C52,18 56,16 56,10 C52,10 48,14 44,12 Z" fill="none" stroke="#155015" stroke-width="0.5"/>' +
-    '<line x1="42" y1="12" x2="34" y2="48" stroke="#2d7a2d" stroke-width="0.8" opacity="0.6"/>' +
-    '<line x1="38" y1="30" x2="60" y2="28" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<line x1="38" y1="30" x2="12" y2="26" stroke="#2d7a2d" stroke-width="0.5" opacity="0.5"/>' +
-    '<path d="M54,52 C50,48 44,46 40,42" stroke="#5a3e1b" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
-    '<circle cx="52" cy="36" r="7.5" fill="url(#hrA)"/>' +
-    '<circle cx="40" cy="32" r="7" fill="url(#hrB)"/>' +
-    '<circle cx="46" cy="44" r="6.5" fill="url(#hrC)"/>' +
-    '<circle cx="52" cy="29" r="1.2" fill="#3d1a00" opacity="0.7"/>' +
-    '<circle cx="40" cy="25" r="1.2" fill="#3d1a00" opacity="0.7"/>' +
-    '<circle cx="46" cy="37" r="1.2" fill="#3d1a00" opacity="0.7"/>' +
-    '<circle cx="55" cy="33" r="2.5" fill="rgba(255,255,255,0.32)"/>' +
-    '<circle cx="43" cy="29" r="2.2" fill="rgba(255,255,255,0.32)"/>' +
-    '<circle cx="49" cy="41" r="2" fill="rgba(255,255,255,0.32)"/>' +
-    '</svg>'
 
   const niceListStamp =
     '<div style="position:absolute;bottom:42px;right:40px;transform:rotate(-6deg);display:inline-block;">' +
@@ -221,12 +207,10 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
         '<div class="p2-header-eyebrow">From the Desk of</div>' +
         '<div class="p2-header-title">Santa Claus</div>' +
       '</div>' +
-
       '<div class="holly-row">' +
-        '<div class="holly-left">' + hollyL + '</div>' +
-        '<div class="holly-right">' + hollyR + '</div>' +
+        '<div class="holly-left">' + hollyLeft() + '</div>' +
+        '<div class="holly-right">' + hollyRight() + '</div>' +
       '</div>' +
-
       '<div class="sal-row">' +
         '<div class="sal-left"><div class="p2-salutation">Dear ' + child.name + ',</div></div>' +
         '<div class="sal-right">' +
@@ -236,11 +220,9 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
           '</div>' +
         '</div>' +
       '</div>' +
-
       '<div class="p2-date-full">25th December, ' + year + '</div>' +
       '<hr class="p2-divider" />' +
       '<div class="p2-body">' + paragraphs + '</div>' +
-
       '<div class="p2-signoff-wrap">' +
         '<div class="p2-signoff-text">With all the love and magic of Christmas,</div>' +
         '<div class="p2-signature">Santa Claus</div>' +
@@ -249,9 +231,7 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
         '<div class="p2-sig-role">Chief Correspondent, North Pole Post Office</div>' +
         '<div class="p2-postmarked">Postmarked · North Pole · ' + year + '</div>' +
       '</div>' +
-
       niceListStamp +
-
       '<div class="p2-bottom-bar">' +
         '<div class="p2-footer-text">SantasLetter.ai &#9733; Official Correspondence of the North Pole Post Office &#9733; Est. CCLXXX A.D.</div>' +
       '</div>' +
