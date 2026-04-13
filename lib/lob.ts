@@ -160,7 +160,7 @@ function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAd
     '.p2-header-title { font-family: "Dancing Script", cursive; font-size: 50px; color: #d4aa5a; line-height: 1.1; }',
     '.top-row { display: table; width: 100%; padding: 8px 28px 0; }',
     '.top-left { display: table-cell; vertical-align: bottom; padding-right: 12px; }',
-    '.top-right { display: table-cell; vertical-align: top; text-align: right; width: 160px; }',
+    '.top-right { display: table-cell; vertical-align: top; text-align: right; width: 160px; padding-top: 28px; }',
     '.p2-salutation { font-family: "Dancing Script", cursive; font-size: 36px; color: #8B1A1A; line-height: 1.1; }',
     '.p2-postmark { border: 1.5px dashed #8B1A1A; border-radius: 4px; padding: 5px 12px; text-align: center; display: inline-block; margin-top: 4px; }',
     '.p2-postmark-inner { border: 1px solid #8B1A1A; border-radius: 50%; padding: 3px 8px; font-size: 8.5px; font-style: italic; color: #8B1A1A; margin-bottom: 3px; }',
