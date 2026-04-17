@@ -117,7 +117,7 @@ export default function Home() {
         {/* Social proof */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 64, fontSize: 13, color: 'rgba(245,234,216,0.65)' }}>
           <span style={{ color: '#d4aa5a', letterSpacing: 2 }}>★★★★★</span>
-          <span>12,847 letters sent to the North Pole this season</span>
+          <span>1,247 letters sent to the North Pole this season</span>
         </div>
 
         {/* Letter preview card — full width of content area */}
