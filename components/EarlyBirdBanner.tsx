@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 
 function getTimeLeft() {
-  const deadline = new Date('2026-12-25T23:59:59')
+  const deadline = new Date('2026-06-30T23:59:59')
   const now = new Date()
   const diff = deadline.getTime() - now.getTime()
   if (diff <= 0) return null
@@ -20,7 +20,6 @@ export default function EarlyBirdBanner() {
   const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
-    // Check if dismissed in this session
     if (sessionStorage.getItem('earlybird_dismissed')) {
       setDismissed(true)
       return
@@ -33,6 +32,13 @@ export default function EarlyBirdBanner() {
 
   const pad = (n: number) => String(n).padStart(2, '0')
 
+  const units = [
+    { value: timeLeft.days, label: 'd' },
+    { value: timeLeft.hours, label: 'h' },
+    { value: timeLeft.minutes, label: 'm' },
+    { value: timeLeft.seconds, label: 's' },
+  ]
+
   return (
     <div style={{
       position: 'fixed', top: 5, left: 0, right: 0, zIndex: 300,
@@ -42,24 +48,15 @@ export default function EarlyBirdBanner() {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       gap: 20, flexWrap: 'wrap',
     }}>
-      {/* Left: label */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 14, color: '#d4aa5a', letterSpacing: '0.1em', fontFamily: "'Playfair Display', Georgia, serif" }}>
-          🎄 Early Bird — <strong style={{ color: '#fff' }}>20% off all orders</strong>
-        </span>
-      </div>
 
-      {/* Divider */}
+      <span style={{ fontSize: 14, color: '#d4aa5a', letterSpacing: '0.1em', fontFamily: "'Playfair Display', Georgia, serif" }}>
+        🎄 Early Bird — <strong style={{ color: '#fff' }}>20% off all orders</strong>
+      </span>
+
       <div style={{ width: 1, height: 18, background: 'rgba(212,170,90,0.35)' }} />
 
-      {/* Countdown */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'monospace' }}>
-        {[
-          { value: timeLeft.days, label: 'd' },
-          { value: timeLeft.hours, label: 'h' },
-          { value: timeLeft.minutes, label: 'm' },
-          { value: timeLeft.seconds, label: 's' },
-        ].map(({ value, label }, i) => (
+        {units.map(({ value, label }, i) => (
           <span key={label} style={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
             {i > 0 && <span style={{ color: 'rgba(212,170,90,0.5)', marginRight: 4 }}>:</span>}
             <span style={{
@@ -72,21 +69,21 @@ export default function EarlyBirdBanner() {
         ))}
       </div>
 
-      {/* Divider */}
       <div style={{ width: 1, height: 18, background: 'rgba(212,170,90,0.35)' }} />
 
-      {/* CTA */}
-      <a href="/create" style={{
-        background: 'linear-gradient(135deg, #d4aa5a, #b8922a)',
-        color: '#1a0a00', padding: '6px 18px', borderRadius: 3,
-        fontSize: 13, textDecoration: 'none',
-        fontFamily: "'Playfair Display', Georgia, serif",
-        fontWeight: 700, letterSpacing: '0.04em', whiteSpace: 'nowrap',
-      }}>
+      <a
+        href="/create"
+        onClick={() => sessionStorage.setItem('earlybird', 'true')}
+        style={{
+          background: 'linear-gradient(135deg, #d4aa5a, #b8922a)',
+          color: '#1a0a00', padding: '6px 18px', borderRadius: 3,
+          fontSize: 13, textDecoration: 'none',
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontWeight: 700, letterSpacing: '0.04em', whiteSpace: 'nowrap',
+        }}>
         Claim offer →
       </a>
 
-      {/* Dismiss */}
       <button
         onClick={() => { sessionStorage.setItem('earlybird_dismissed', '1'); setDismissed(true) }}
         style={{
@@ -96,6 +93,7 @@ export default function EarlyBirdBanner() {
         }}
         aria-label="Dismiss"
       >×</button>
+
     </div>
   )
 }

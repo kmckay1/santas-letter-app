@@ -3,13 +3,13 @@ import { createCheckoutSession } from '@/lib/stripe'
 
 export async function POST(req: NextRequest) {
   try {
-    const { tier, letterId, childName, recipientEmail } = await req.json()
+    const { tier, letterId, childName, recipientEmail, discount } = await req.json()
 
     if (!tier || !letterId || !childName || !recipientEmail) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const url = await createCheckoutSession({ tier, letterId, childName, recipientEmail })
+    const url = await createCheckoutSession({ tier, letterId, childName, recipientEmail, discount })
     return NextResponse.json({ url })
 
   } catch (err) {

@@ -168,7 +168,6 @@ export default function PreviewPage() {
     if (!stored) { router.push('/create'); return }
     const childData = JSON.parse(stored) as ChildInfo
     setChild(childData)
-  
     const cachedLetter = sessionStorage.getItem('santaLetterText')
     const cachedLetterId = sessionStorage.getItem('santaLetterId')
     if (cachedLetter && cachedLetterId) {
@@ -197,7 +196,7 @@ export default function PreviewPage() {
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
-        setLetter(data.letter)
+      setLetter(data.letter)
       sessionStorage.setItem('santaLetterText', data.letter)
       if (data.letterId) {
         setLetterId(data.letterId)
@@ -229,6 +228,7 @@ export default function PreviewPage() {
   const handleCheckout = async (tier: string) => {
     if (!child) return
     setCheckoutLoading(tier)
+    const discount = sessionStorage.getItem('earlybird') === 'true'
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -238,6 +238,7 @@ export default function PreviewPage() {
           letterId: letterId || sessionStorage.getItem('santaLetterId') || 'unknown',
           childName: child.name,
           recipientEmail: email,
+          discount,
         }),
       })
       const data = await res.json()
@@ -279,7 +280,6 @@ export default function PreviewPage() {
           </a>
         </div>
 
-        {/* GENERATING */}
         {step === 'generating' && (
           <div style={{ textAlign: 'center', padding: '64px 24px' }}>
             <div style={{ fontSize: 80, marginBottom: 32, filter: 'drop-shadow(0 12px 32px rgba(200,56,43,0.6))' }}>🎅</div>
@@ -299,7 +299,6 @@ export default function PreviewPage() {
           </div>
         )}
 
-        {/* EMAIL GATE */}
         {step === 'email-gate' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: 36 }}>
@@ -336,7 +335,6 @@ export default function PreviewPage() {
           </div>
         )}
 
-        {/* FULL LETTER */}
         {step === 'done' && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: 36 }}>
@@ -346,7 +344,6 @@ export default function PreviewPage() {
               </h1>
             </div>
 
-            {/* THE LETTER */}
             <div style={{ position: 'relative', background: 'linear-gradient(170deg, #fffef5 0%, #fdf8e8 35%, #faf2d5 70%, #f7ecc0 100%)', borderRadius: 2, boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(139,90,43,0.4)', marginBottom: 36, overflow: 'hidden' }}>
               <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(139,90,43,0.022) 31px, rgba(139,90,43,0.022) 32px)', pointerEvents: 'none', zIndex: 0 }} />
               <div style={{ height: 7, background: 'linear-gradient(90deg, #5a0a0a, #9b1f1f 20%, #c8382b 40%, #d4aa5a 50%, #c8382b 60%, #9b1f1f 80%, #5a0a0a)', position: 'relative', zIndex: 2 }} />
@@ -391,7 +388,6 @@ export default function PreviewPage() {
               <div style={{ height: 7, background: 'linear-gradient(90deg, #5a0a0a, #9b1f1f 20%, #c8382b 40%, #d4aa5a 50%, #c8382b 60%, #9b1f1f 80%, #5a0a0a)' }} />
             </div>
 
-            {/* Upsell */}
             <div style={{ background: 'linear-gradient(160deg, #0e1c35 0%, #080f20 100%)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 12, padding: 'clamp(24px, 5vw, 40px) clamp(16px, 4vw, 36px)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 16, left: 20, fontSize: 40, color: 'rgba(212,170,90,0.06)', pointerEvents: 'none' }}>❄</div>
               <div style={{ position: 'absolute', bottom: 16, right: 20, fontSize: 40, color: 'rgba(212,170,90,0.06)', pointerEvents: 'none' }}>❄</div>

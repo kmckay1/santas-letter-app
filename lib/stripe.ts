@@ -32,11 +32,13 @@ export async function createCheckoutSession({
   letterId,
   childName,
   recipientEmail,
+  discount,
 }: {
   tier: string
   letterId: string
   childName: string
   recipientEmail: string
+  discount?: boolean
 }): Promise<string> {
   const price = PRICES[tier as keyof typeof PRICES]
   if (!price) throw new Error(`Unknown tier: ${tier}`)
@@ -55,6 +57,9 @@ export async function createCheckoutSession({
     }),
     success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}&letter_id=${letterId}`,
     cancel_url: `${process.env.NEXT_PUBLIC_URL}/preview?letter_id=${letterId}`,
+    ...(discount && process.env.STRIPE_EARLYBIRD_PROMO_ID && {
+      discounts: [{ promotion_code: process.env.STRIPE_EARLYBIRD_PROMO_ID }],
+    }),
     metadata: { tier, letterId, childName, recipientEmail },
   })
 
