@@ -200,8 +200,11 @@ export default function Home() {
 
         {/* Footer */}
         <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.55)', lineHeight: 1.8 }}>
-          SantasLetter.ai · Made with ❤ in Amsterdam · © {new Date().getFullYear()}
-        </div>
+  SantasLetter.ai · Made with ❤ in Amsterdam · © {new Date().getFullYear()}
+  <br />
+  <a href="/privacy" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Privacy Policy</a>
+  <a href="/terms" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none' }}>Terms of Service</a>
+</div>
       </div>
     </main>
   )
