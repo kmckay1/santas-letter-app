@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import EarlyBirdBanner from '../components/EarlyBirdBanner'
 
@@ -55,9 +55,100 @@ function Snowflakes() {
   return <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 5 }} />
 }
 
+function ExitIntentPopup({ onClose }: { onClose: () => void }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 1000,
+      background: 'rgba(4,8,20,0.88)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '24px',
+    }}>
+      <div style={{
+        background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 100%)',
+        border: '1px solid rgba(212,170,90,0.4)',
+        borderRadius: 16,
+        padding: '48px 40px',
+        maxWidth: 480,
+        width: '100%',
+        textAlign: 'center',
+        position: 'relative',
+        boxShadow: '0 40px 120px rgba(0,0,0,0.8)',
+      }}>
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: 16, right: 20,
+            background: 'none', border: 'none',
+            color: 'rgba(245,234,216,0.35)', fontSize: 22,
+            cursor: 'pointer', lineHeight: 1, padding: '4px 8px',
+          }}
+        >×</button>
+
+        <div style={{ fontSize: 64, marginBottom: 20, filter: 'drop-shadow(0 8px 24px rgba(200,56,43,0.5))' }}>🎅</div>
+
+        <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 14 }}>
+          ✦ wait — don&apos;t go yet ✦
+        </div>
+
+        <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 14px', lineHeight: 1.25 }}>
+          Your child&apos;s letter<br />from Santa is free
+        </h2>
+
+        <p style={{ fontSize: 15, color: 'rgba(245,234,216,0.6)', margin: '0 0 32px', lineHeight: 1.75, fontStyle: 'italic' }}>
+          It takes less than two minutes. No credit card needed — just a little Christmas magic.
+        </p>
+
+        <Link
+          href="/create"
+          onClick={onClose}
+          style={{
+            display: 'block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)',
+            color: '#fff', padding: '16px 32px', borderRadius: 4,
+            fontSize: 16, textDecoration: 'none',
+            fontFamily: "'Playfair Display', Georgia, serif",
+            letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)',
+            marginBottom: 14,
+          }}>
+          ✦ Write my child&apos;s free letter
+        </Link>
+
+        <button
+          onClick={onClose}
+          style={{
+            background: 'none', border: 'none',
+            color: 'rgba(245,234,216,0.25)', fontSize: 12,
+            cursor: 'pointer', fontFamily: 'Georgia, serif',
+          }}>
+          No thanks, I&apos;ll skip the magic
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function Home() {
+  const [showExitPopup, setShowExitPopup] = useState(false)
+  const exitTriggered = useRef(false)
+
+  useEffect(() => {
+    if (sessionStorage.getItem('exit_popup_shown')) return
+
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 10 && !exitTriggered.current) {
+        exitTriggered.current = true
+        sessionStorage.setItem('exit_popup_shown', '1')
+        setShowExitPopup(true)
+      }
+    }
+
+    document.addEventListener('mouseleave', handleMouseLeave)
+    return () => document.removeEventListener('mouseleave', handleMouseLeave)
+  }, [])
+
   return (
     <main style={{ minHeight: '100vh', background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 60%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: "'Lora', Georgia, serif", color: '#f5ead8', textAlign: 'center', padding: '24px', position: 'relative', overflow: 'hidden' }}>
+
+      {showExitPopup && <ExitIntentPopup onClose={() => setShowExitPopup(false)} />}
 
       <Snowflakes />
 
@@ -76,7 +167,6 @@ export default function Home() {
       {/* Ambient glow */}
       <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translateX(-50%)', width: 800, height: 500, background: 'radial-gradient(ellipse, rgba(200,56,43,0.07) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
 
-      {/* Content — wider max width */}
       <div style={{ position: 'relative', zIndex: 10, maxWidth: 900, width: '100%' }}>
 
         {/* Eyebrow */}
@@ -120,7 +210,7 @@ export default function Home() {
           <span>1,247 letters sent to the North Pole this season</span>
         </div>
 
-        {/* Letter preview card — full width of content area */}
+        {/* Letter preview card */}
         <div style={{ background: 'linear-gradient(175deg, #fffef9 0%, #fdf6e3 100%)', borderRadius: 6, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,90,43,0.25)', marginBottom: 48, textAlign: 'left' }}>
           <div style={{ height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)' }} />
           <div style={{ padding: '40px 60px' }}>
@@ -200,11 +290,11 @@ export default function Home() {
 
         {/* Footer */}
         <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.55)', lineHeight: 1.8 }}>
-  SantasLetter.ai · Made with ❤ in Amsterdam · © {new Date().getFullYear()}
-  <br />
-  <a href="/privacy" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Privacy Policy</a>
-  <a href="/terms" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none' }}>Terms of Service</a>
-</div>
+          SantasLetter.ai · Made with ❤ in Amsterdam · © {new Date().getFullYear()}
+          <br />
+          <a href="/privacy" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Privacy Policy</a>
+          <a href="/terms" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none' }}>Terms of Service</a>
+        </div>
       </div>
     </main>
   )
