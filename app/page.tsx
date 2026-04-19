@@ -126,6 +126,96 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
   )
 }
 
+function LeadMagnet() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (res.ok) setStatus('done')
+      else setStatus('error')
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div style={{
+      background: 'linear-gradient(135deg, rgba(212,170,90,0.08) 0%, rgba(180,130,50,0.04) 100%)',
+      border: '1px solid rgba(212,170,90,0.3)',
+      borderRadius: 12,
+      padding: '36px 40px',
+      marginBottom: 40,
+      textAlign: 'center',
+    }}>
+      <div style={{ fontSize: 36, marginBottom: 12 }}>🎁</div>
+      <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 10 }}>
+        ✦ free gift from santa&apos;s workshop ✦
+      </div>
+      <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#f5ead8', fontWeight: 400, margin: '0 0 10px', lineHeight: 1.3 }}>
+        5 Magical Christmas Activities for Your Kids
+      </h2>
+      <p style={{ fontSize: 14, color: 'rgba(245,234,216,0.55)', margin: '0 0 28px', lineHeight: 1.75, fontStyle: 'italic', maxWidth: 420, marginLeft: 'auto', marginRight: 'auto' }}>
+        From reindeer food to kindness countdowns — free ideas delivered instantly to your inbox.
+      </p>
+
+      {status === 'done' ? (
+        <div style={{ padding: '16px 24px', background: 'rgba(212,170,90,0.1)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 8 }}>
+          <div style={{ fontSize: 24, marginBottom: 8 }}>✉️</div>
+          <div style={{ color: '#d4aa5a', fontSize: 15, fontFamily: "'Playfair Display', Georgia, serif" }}>Check your inbox — the magic is on its way!</div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 10, maxWidth: 440, margin: '0 auto', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <input
+            type="email"
+            placeholder="your@email.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            style={{
+              flex: 1, minWidth: 220, padding: '13px 18px',
+              background: 'rgba(255,255,255,0.07)',
+              border: '1px solid rgba(245,234,216,0.2)',
+              borderRadius: 4, color: '#f5ead8',
+              fontFamily: 'Georgia, serif', fontSize: 15,
+              outline: 'none',
+            }}
+          />
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            style={{
+              padding: '13px 24px',
+              background: 'linear-gradient(135deg, #d4aa5a, #a8802a)',
+              color: '#0d1b2e', border: 'none', borderRadius: 4,
+              cursor: status === 'loading' ? 'wait' : 'pointer',
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap',
+            }}>
+            {status === 'loading' ? 'Sending...' : '✦ Send me the ideas'}
+          </button>
+          {status === 'error' && (
+            <p style={{ width: '100%', color: '#f09595', fontSize: 12, margin: '4px 0 0', textAlign: 'center' }}>
+              Something went wrong — please try again.
+            </p>
+          )}
+        </form>
+      )}
+      <p style={{ fontSize: 11, color: 'rgba(245,234,216,0.25)', margin: '14px 0 0' }}>
+        No spam · Unsubscribe anytime
+      </p>
+    </div>
+  )
+}
+
 export default function Home() {
   const [showExitPopup, setShowExitPopup] = useState(false)
   const exitTriggered = useRef(false)
@@ -280,6 +370,9 @@ export default function Home() {
             <p style={{ fontSize: 12, color: 'rgba(245,234,216,0.65)', marginTop: 12 }}>No credit card needed · Upgrade anytime</p>
           </div>
         </div>
+
+{/* Lead magnet — email capture */}
+<LeadMagnet />
 
         {/* Urgency */}
         <div style={{ background: 'rgba(200,56,43,0.1)', border: '1px solid rgba(200,56,43,0.3)', borderRadius: 8, padding: '16px 24px', marginBottom: 40 }}>
