@@ -60,7 +60,7 @@ export async function sendFreeLetterEmail(
           </div>
 
           <p style="text-align:center;margin-top:24px;font-size:11px;color:rgba(245,234,216,0.25);">
-            SantasLetter.ai · Made with ❤ in Amsterdam<br>
+            SantasLetter.ai · Made with ❤ in San Francisco<br>
             <a href="https://santasletter.ai/unsubscribe" style="color:rgba(245,234,216,0.3);">Unsubscribe</a>
           </p>
         </div>
@@ -168,7 +168,7 @@ export async function sendPremiumPDFEmail(
           </div>
 
           <p style="text-align:center;font-size:11px;color:rgba(245,234,216,0.2);margin:0;">
-            SantasLetter.ai · Made with ❤ in Amsterdam<br>
+            SantasLetter.ai · Made with ❤ in San Francisco<br>
             Questions? Just reply to this email.
           </p>
         </div>
