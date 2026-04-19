@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Analytics } from '@vercel/analytics/react'
 
 export const metadata: Metadata = {
   title: "SantasLetter.ai — A personalised letter from Santa for your child",
@@ -8,11 +9,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SantasLetter.ai — A letter from Santa, written just for them",
     description: "Magical, personalised letters from the North Pole. Free to read, beautiful to keep, delivered from the Official North Pole Post Office.",
-    url: "https://santasletter.ai",
+    url: "https://www.santasletter.ai",
     siteName: "SantasLetter.ai",
     images: [
       {
-        url: "https://santasletter.ai/og-image.png",
+        url: "https://www.santasletter.ai/og-image.png",
         width: 1200,
         height: 630,
         alt: "SantasLetter.ai — Official North Pole Post Office",
@@ -25,12 +26,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SantasLetter.ai — A letter from Santa, written just for them",
     description: "Magical, personalised letters from the North Pole. Free to generate.",
-    images: ["https://santasletter.ai/og-image.png"],
+    images: ["https://www.santasletter.ai/og-image.png"],
   },
   icons: {
     icon: "/favicon.ico",
   },
-  metadataBase: new URL("https://santasletter.ai"),
+  metadataBase: new URL("https://www.santasletter.ai"),
 }
 
 export default function RootLayout({
@@ -45,7 +46,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   )
 }
