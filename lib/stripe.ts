@@ -45,6 +45,23 @@ export async function createCheckoutSession({
 
   const needsShipping = tier === 'physical' || tier === 'bundle'
 
+  // Determine which promo ID to use based on current date
+  function getActivePromoId(): string | null {
+    if (!discount) return null
+    const now = new Date()
+    const month = now.getMonth() + 1
+    const day = now.getDate()
+    if (month < 6 || (month === 6 && day <= 30)) {
+      return process.env.STRIPE_EARLYBIRD_PROMO_ID || null
+    }
+    if (month === 7 || (month === 8 && day <= 31)) {
+      return process.env.STRIPE_SUMMER_PROMO_ID || null
+    }
+    return null
+  }
+
+  const promoId = getActivePromoId()
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items: [{ price: price.priceId, quantity: 1 }],
@@ -55,11 +72,11 @@ export async function createCheckoutSession({
         allowed_countries: ['US', 'GB', 'NL', 'DE', 'FR', 'BE', 'AU', 'CA', 'IE', 'ES', 'IT', 'PT', 'SE', 'NO', 'DK', 'FI', 'PL'],
       },
     }),
+    ...(promoId && {
+      discounts: [{ promotion_code: promoId }],
+    }),
     success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}&letter_id=${letterId}`,
     cancel_url: `${process.env.NEXT_PUBLIC_URL}/preview?letter_id=${letterId}`,
-    ...(discount && process.env.STRIPE_EARLYBIRD_PROMO_ID && {
-      discounts: [{ promotion_code: process.env.STRIPE_EARLYBIRD_PROMO_ID }],
-    }),
     metadata: { tier, letterId, childName, recipientEmail },
   })
 

@@ -2,10 +2,19 @@
 
 import { useState, useEffect } from 'react'
 
-function getTimeLeft() {
-  const deadline = new Date('2026-06-30T23:59:59')
+type CampaignType = 'earlybird' | 'summer' | null
+
+function getCampaign(): CampaignType {
   const now = new Date()
-  const diff = deadline.getTime() - now.getTime()
+  const month = now.getMonth() + 1
+  const day = now.getDate()
+  if (month < 6 || (month === 6 && day <= 30)) return 'earlybird'
+  if (month === 7 || (month === 8 && day <= 31)) return 'summer'
+  return null
+}
+
+function getTimeLeft(deadline: Date) {
+  const diff = deadline.getTime() - new Date().getTime()
   if (diff <= 0) return null
   return {
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
@@ -16,19 +25,31 @@ function getTimeLeft() {
 }
 
 export default function EarlyBirdBanner() {
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft())
+  const [campaign, setCampaign] = useState<CampaignType>(null)
+  const [timeLeft, setTimeLeft] = useState<ReturnType<typeof getTimeLeft>>(null)
   const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
-    if (sessionStorage.getItem('earlybird_dismissed')) {
+    const c = getCampaign()
+    setCampaign(c)
+    if (!c) return
+    if (sessionStorage.getItem('banner_dismissed')) {
       setDismissed(true)
       return
     }
-    const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000)
+    const deadline = c === 'earlybird'
+      ? new Date('2026-06-30T23:59:59')
+      : new Date('2026-08-31T23:59:59')
+    setTimeLeft(getTimeLeft(deadline))
+    const timer = setInterval(() => {
+      const tl = getTimeLeft(deadline)
+      setTimeLeft(tl)
+      if (!tl) clearInterval(timer)
+    }, 1000)
     return () => clearInterval(timer)
   }, [])
 
-  if (dismissed || !timeLeft) return null
+  if (!campaign || dismissed || !timeLeft) return null
 
   const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -38,6 +59,10 @@ export default function EarlyBirdBanner() {
     { value: timeLeft.minutes, label: 'm' },
     { value: timeLeft.seconds, label: 's' },
   ]
+
+  const isEarlyBird = campaign === 'earlybird'
+  const bannerLabel = isEarlyBird ? '🎄 Early Bird — ' : '☀️ Christmas in July — '
+  const cta = isEarlyBird ? 'Claim offer →' : 'Get the summer deal →'
 
   return (
     <div style={{
@@ -50,7 +75,7 @@ export default function EarlyBirdBanner() {
     }}>
 
       <span style={{ fontSize: 14, color: '#d4aa5a', letterSpacing: '0.1em', fontFamily: "'Playfair Display', Georgia, serif" }}>
-        🎄 Early Bird — <strong style={{ color: '#fff' }}>20% off all orders</strong>
+        {bannerLabel}<strong style={{ color: '#fff' }}>20% off all orders</strong>
       </span>
 
       <div style={{ width: 1, height: 18, background: 'rgba(212,170,90,0.35)' }} />
@@ -81,18 +106,18 @@ export default function EarlyBirdBanner() {
           fontFamily: "'Playfair Display', Georgia, serif",
           fontWeight: 700, letterSpacing: '0.04em', whiteSpace: 'nowrap',
         }}>
-        Claim offer →
+        {cta}
       </a>
 
       <button
-        onClick={() => { sessionStorage.setItem('earlybird_dismissed', '1'); setDismissed(true) }}
+        onClick={() => { sessionStorage.setItem('banner_dismissed', '1'); setDismissed(true) }}
         style={{
           position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
           background: 'none', border: 'none', color: 'rgba(245,234,216,0.45)',
           fontSize: 18, cursor: 'pointer', lineHeight: 1, padding: '4px 6px',
         }}
         aria-label="Dismiss"
-      >×</button>
+      >x</button>
 
     </div>
   )
