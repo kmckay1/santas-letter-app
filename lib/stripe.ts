@@ -33,19 +33,20 @@ export async function createCheckoutSession({
   childName,
   recipientEmail,
   discount,
+  deliveryDate,
 }: {
   tier: string
   letterId: string
   childName: string
   recipientEmail: string
   discount?: boolean
+  deliveryDate?: string
 }): Promise<string> {
   const price = PRICES[tier as keyof typeof PRICES]
   if (!price) throw new Error(`Unknown tier: ${tier}`)
 
   const needsShipping = tier === 'physical' || tier === 'bundle'
 
-  // Determine which promo ID to use based on current date
   function getActivePromoId(): string | null {
     if (!discount) return null
     const now = new Date()
@@ -77,7 +78,13 @@ export async function createCheckoutSession({
     }),
     success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}&letter_id=${letterId}`,
     cancel_url: `${process.env.NEXT_PUBLIC_URL}/preview?letter_id=${letterId}`,
-    metadata: { tier, letterId, childName, recipientEmail },
+    metadata: {
+      tier,
+      letterId,
+      childName,
+      recipientEmail,
+      ...(deliveryDate && { delivery_date: deliveryDate }),
+    },
   })
 
   return session.url!

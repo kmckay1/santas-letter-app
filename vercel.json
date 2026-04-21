@@ -1,13 +1,16 @@
 {
-    "functions": {
-      "app/api/webhook/route.ts": {
-        "maxDuration": 60
-      },
-      "app/api/webhooks/stripe/route.ts": {
-        "maxDuration": 60
-      },
-      "app/api/test-pdf/route.ts": {
-        "maxDuration": 60
-      }
+  "functions": {
+    "app/api/webhook/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/webhooks/stripe/route.ts": {
+      "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/send-letters",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}

@@ -114,9 +114,7 @@ function LetterHeader() {
           <text x="30" y="34" textAnchor="middle" fontSize="10" fontFamily="Georgia" fill="rgba(139,90,43,0.8)">❄</text>
         </svg>
       </div>
-      <div style={{ fontSize: 9, letterSpacing: '0.35em', color: 'rgba(139,90,43,0.55)', textTransform: 'uppercase', fontFamily: 'Georgia, serif', marginBottom: 8 }}>
-        The Official
-      </div>
+      <div style={{ fontSize: 9, letterSpacing: '0.35em', color: 'rgba(139,90,43,0.55)', textTransform: 'uppercase', fontFamily: 'Georgia, serif', marginBottom: 8 }}>The Official</div>
       <div style={{ position: 'relative', marginBottom: 10 }}>
         <div style={{ fontFamily: "'Palatino Linotype', Palatino, Georgia, serif", fontSize: 'clamp(14px, 4vw, 24px)', letterSpacing: 'clamp(0.05em, 1vw, 0.2em)', color: 'rgba(80,38,10,0.88)', textTransform: 'uppercase', fontWeight: 400, whiteSpace: 'nowrap', padding: '6px 0' }}>
           North Pole Post Office
@@ -148,6 +146,151 @@ const TIER_MAP: Record<string, string> = {
   'Add a child': 'addChild',
 }
 
+function DeliveryDateModal({
+  tier,
+  onConfirm,
+  onCancel,
+}: {
+  tier: string
+  onConfirm: (date: string) => void
+  onCancel: () => void
+}) {
+  const today = new Date().toISOString().split('T')[0]
+  const maxDate = `${new Date().getFullYear()}-12-24`
+  const [selectedDate, setSelectedDate] = useState('')
+  const [mode, setMode] = useState<'now' | 'schedule'>('schedule')
+
+  const suggestedDate = (() => {
+    const d = new Date()
+    d.setMonth(10) // November
+    d.setDate(15)
+    return d.toISOString().split('T')[0]
+  })()
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 2000,
+      background: 'rgba(4,8,20,0.92)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '24px',
+    }}>
+      <div style={{
+        background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 100%)',
+        border: '1px solid rgba(212,170,90,0.4)',
+        borderRadius: 16,
+        padding: '40px 36px',
+        maxWidth: 460,
+        width: '100%',
+        textAlign: 'center',
+        boxShadow: '0 40px 120px rgba(0,0,0,0.8)',
+      }}>
+        <div style={{ fontSize: 40, marginBottom: 16 }}>📬</div>
+        <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 12 }}>
+          ✦ when should we post it? ✦
+        </div>
+        <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#f5ead8', fontWeight: 400, margin: '0 0 10px', lineHeight: 1.3 }}>
+          Choose your delivery date
+        </h2>
+        <p style={{ fontSize: 13, color: 'rgba(245,234,216,0.55)', margin: '0 0 28px', lineHeight: 1.7, fontStyle: 'italic' }}>
+          We can send it now or schedule it to arrive closer to Christmas — the magic works either way.
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24, textAlign: 'left' }}>
+
+          <button
+            onClick={() => setMode('now')}
+            style={{
+              padding: '14px 18px',
+              background: mode === 'now' ? 'rgba(212,170,90,0.15)' : 'rgba(255,255,255,0.04)',
+              border: `1px solid ${mode === 'now' ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.12)'}`,
+              borderRadius: 8, cursor: 'pointer', textAlign: 'left',
+            }}>
+            <div style={{ fontSize: 13, color: '#f5ead8', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: 2 }}>
+              Send immediately
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.5)' }}>
+              Posted within 1–2 business days — great for testing
+            </div>
+          </button>
+
+          <button
+            onClick={() => setMode('schedule')}
+            style={{
+              padding: '14px 18px',
+              background: mode === 'schedule' ? 'rgba(212,170,90,0.15)' : 'rgba(255,255,255,0.04)',
+              border: `1px solid ${mode === 'schedule' ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.12)'}`,
+              borderRadius: 8, cursor: 'pointer', textAlign: 'left',
+            }}>
+            <div style={{ fontSize: 13, color: '#f5ead8', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: 2 }}>
+              Schedule for Christmas
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.5)' }}>
+              We post it on your chosen date so it arrives in time
+            </div>
+          </button>
+
+        </div>
+
+        {mode === 'schedule' && (
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.55)', marginBottom: 8, textAlign: 'left' }}>
+              Select your preferred send date:
+            </div>
+            <input
+              type="date"
+              min={today}
+              max={maxDate}
+              value={selectedDate || suggestedDate}
+              onChange={e => setSelectedDate(e.target.value)}
+              style={{
+                width: '100%', padding: '12px 16px',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(245,234,216,0.2)',
+                borderRadius: 6, color: '#f5ead8',
+                fontFamily: 'Georgia, serif', fontSize: 15,
+                outline: 'none', boxSizing: 'border-box',
+              }}
+            />
+            <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.35)', marginTop: 6, textAlign: 'left' }}>
+              We recommend November 15 for US delivery · December 1 for international
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={() => {
+            if (mode === 'now') {
+              onConfirm(today)
+            } else {
+              onConfirm(selectedDate || suggestedDate)
+            }
+          }}
+          style={{
+            width: '100%', padding: '14px',
+            background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)',
+            color: '#fff', border: 'none', borderRadius: 6,
+            cursor: 'pointer', fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: 15, letterSpacing: '0.04em',
+            boxShadow: '0 6px 20px rgba(200,56,43,0.4)',
+            marginBottom: 10,
+          }}>
+          ✦ Confirm &amp; proceed to payment
+        </button>
+
+        <button
+          onClick={onCancel}
+          style={{
+            background: 'none', border: 'none',
+            color: 'rgba(245,234,216,0.25)', fontSize: 12,
+            cursor: 'pointer', fontFamily: 'Georgia, serif',
+          }}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function PreviewPage() {
   const router = useRouter()
   const [child, setChild] = useState<ChildInfo | null>(null)
@@ -159,6 +302,8 @@ export default function PreviewPage() {
   const [genError, setGenError] = useState(false)
   const [dots, setDots] = useState('.')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
+  const [pendingTier, setPendingTier] = useState<string | null>(null)
+  const [showDateModal, setShowDateModal] = useState(false)
   const calledRef = useRef(false)
 
   useEffect(() => {
@@ -225,9 +370,20 @@ export default function PreviewPage() {
     setStep('done')
   }
 
-  const handleCheckout = async (tier: string) => {
+  const handleCheckoutClick = (tier: string) => {
+    const needsShipping = tier === 'physical' || tier === 'bundle'
+    if (needsShipping) {
+      setPendingTier(tier)
+      setShowDateModal(true)
+    } else {
+      proceedToCheckout(tier, undefined)
+    }
+  }
+
+  const proceedToCheckout = async (tier: string, deliveryDate: string | undefined) => {
     if (!child) return
     setCheckoutLoading(tier)
+    setShowDateModal(false)
     const discount = sessionStorage.getItem('earlybird') === 'true'
     try {
       const res = await fetch('/api/checkout', {
@@ -239,6 +395,7 @@ export default function PreviewPage() {
           childName: child.name,
           recipientEmail: email,
           discount,
+          deliveryDate,
         }),
       })
       const data = await res.json()
@@ -261,6 +418,21 @@ export default function PreviewPage() {
 
   return (
     <main style={{ minHeight: '100vh', background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 60%)', fontFamily: "'Lora', Georgia, serif", position: 'relative', overflow: 'hidden' }}>
+
+      {showDateModal && pendingTier && (
+        <DeliveryDateModal
+          tier={pendingTier}
+          onConfirm={(date) => {
+            proceedToCheckout(pendingTier, date)
+            setPendingTier(null)
+          }}
+          onCancel={() => {
+            setShowDateModal(false)
+            setPendingTier(null)
+          }}
+        />
+      )}
+
       <Snowflakes />
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)', zIndex: 200 }} />
       <div style={{ position: 'fixed', top: '15%', left: '50%', transform: 'translateX(-50%)', width: 700, height: 400, background: 'radial-gradient(ellipse, rgba(200,56,43,0.07) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
@@ -311,7 +483,6 @@ export default function PreviewPage() {
             <div style={{ position: 'relative', marginBottom: 28, borderRadius: 3, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,170,90,0.25)' }}>
               <div style={{ height: 7, background: 'linear-gradient(90deg, #5a0a0a, #9b1f1f 20%, #c8382b 40%, #d4aa5a 50%, #c8382b 60%, #9b1f1f 80%, #5a0a0a)' }} />
               <div style={{ background: 'linear-gradient(175deg, #fffef5 0%, #fdf8e8 50%, #faf0d0 100%)', padding: 'clamp(20px, 4vw, 40px) clamp(16px, 4vw, 52px) 32px', filter: 'blur(5px)', maxHeight: 240, overflow: 'hidden', userSelect: 'none' }}>
-                <div style={{ textAlign: 'center', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(100,50,20,0.5)', marginBottom: 16, textTransform: 'uppercase' }}>The Official North Pole Post Office</div>
                 <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(18px, 4vw, 24px)', color: '#150800', marginBottom: 20 }}>Dear {child?.name},</div>
                 {paragraphs}
               </div>
@@ -405,7 +576,7 @@ export default function PreviewPage() {
                 {[
                   { label: 'Premium PDF', price: '$9', emoji: '📄', desc: 'Illustrated parchment design, print-ready at home', highlight: false, cta: 'Select' },
                   { label: 'The bundle', price: '$35', emoji: '🎁', desc: 'Premium PDF + real posted letter — saves $3', highlight: true, cta: '✦ Get the bundle' },
-                  { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Printed & posted, arrives in 5–7 days', highlight: false, cta: 'Select' },
+                  { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Printed & posted, you choose the delivery date', highlight: false, cta: 'Select' },
                   { label: 'Add a child', price: '+$15', emoji: '⭐', desc: 'Another child gets their own magical letter', highlight: false, cta: 'Select' },
                 ].map(opt => {
                   const tier = TIER_MAP[opt.label]
@@ -422,7 +593,7 @@ export default function PreviewPage() {
                       <div style={{ fontSize: 13, color: opt.highlight ? 'rgba(245,234,216,0.9)' : 'rgba(245,234,216,0.7)', marginBottom: 6, fontWeight: 500 }}>{opt.label}</div>
                       <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.4)', marginBottom: 16, lineHeight: 1.55 }}>{opt.desc}</div>
                       <button
-                        onClick={() => handleCheckout(tier)}
+                        onClick={() => handleCheckoutClick(tier)}
                         disabled={checkoutLoading !== null}
                         style={{ width: '100%', padding: '11px', background: opt.highlight ? 'linear-gradient(135deg, #c8382b 0%, #8B1A1A 100%)' : 'rgba(255,255,255,0.06)', color: opt.highlight ? '#fff' : 'rgba(245,234,216,0.6)', border: opt.highlight ? 'none' : '1px solid rgba(245,234,216,0.14)', borderRadius: 6, cursor: checkoutLoading ? 'wait' : 'pointer', fontFamily: opt.highlight ? "'Playfair Display', Georgia, serif" : 'Georgia, serif', fontSize: opt.highlight ? 14 : 13, boxShadow: opt.highlight ? '0 6px 20px rgba(200,56,43,0.4)' : 'none', opacity: checkoutLoading && !isLoading ? 0.5 : 1, transition: 'opacity 0.2s' }}>
                         {isLoading ? '✦ Loading...' : opt.cta}
