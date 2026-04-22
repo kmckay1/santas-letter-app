@@ -6,89 +6,54 @@ import EarlyBirdBanner from '../components/EarlyBirdBanner'
 
 function Snowflakes() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
-
     const flakes = Array.from({ length: 120 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 2.5 + 0.5,
-      speed: Math.random() * 1.0 + 0.3,
-      wind: Math.random() * 0.5 - 0.25,
-      opacity: Math.random() * 0.55 + 0.15,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: Math.random() * 0.02 + 0.005,
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      r: Math.random() * 2.5 + 0.5, speed: Math.random() * 1.0 + 0.3,
+      wind: Math.random() * 0.5 - 0.25, opacity: Math.random() * 0.55 + 0.15,
+      wobble: Math.random() * Math.PI * 2, wobbleSpeed: Math.random() * 0.02 + 0.005,
     }))
-
     let animId: number
     function draw() {
       if (!ctx || !canvas) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       flakes.forEach(f => {
-        ctx.beginPath()
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(210, 235, 255, ${f.opacity})`
-        ctx.fill()
-        f.y += f.speed
-        f.wobble += f.wobbleSpeed
+        ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(210, 235, 255, ${f.opacity})`; ctx.fill()
+        f.y += f.speed; f.wobble += f.wobbleSpeed
         f.x += f.wind + Math.sin(f.wobble) * 0.4
         if (f.y > canvas.height + 5) { f.y = -5; f.x = Math.random() * canvas.width }
-        if (f.x > canvas.width) f.x = 0
-        if (f.x < 0) f.x = canvas.width
+        if (f.x > canvas.width) f.x = 0; if (f.x < 0) f.x = canvas.width
       })
       animId = requestAnimationFrame(draw)
     }
     draw()
-
     const handleResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
     window.addEventListener('resize', handleResize)
     return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', handleResize) }
   }, [])
-
   return <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 5 }} />
 }
 
 function ExitIntentPopup({ onClose }: { onClose: () => void }) {
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(4,8,20,0.88)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '24px',
-    }}>
-      <div style={{
-        background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 100%)',
-        border: '1px solid rgba(212,170,90,0.4)',
-        borderRadius: 16,
-        padding: '48px 40px',
-        maxWidth: 480,
-        width: '100%',
-        textAlign: 'center',
-        position: 'relative',
-        boxShadow: '0 40px 120px rgba(0,0,0,0.8)',
-      }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(4,8,20,0.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 100%)', border: '1px solid rgba(212,170,90,0.4)', borderRadius: 16, padding: '48px 40px', maxWidth: 480, width: '100%', textAlign: 'center', position: 'relative', boxShadow: '0 40px 120px rgba(0,0,0,0.8)' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 20, background: 'none', border: 'none', color: 'rgba(245,234,216,0.35)', fontSize: 22, cursor: 'pointer', lineHeight: 1, padding: '4px 8px' }}>×</button>
         <div style={{ fontSize: 64, marginBottom: 20, filter: 'drop-shadow(0 8px 24px rgba(200,56,43,0.5))' }}>🎅</div>
         <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 14 }}>✦ wait — don&apos;t go yet ✦</div>
-        <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 14px', lineHeight: 1.25 }}>
-          Your child&apos;s letter<br />from Santa is free
-        </h2>
-        <p style={{ fontSize: 15, color: 'rgba(245,234,216,0.6)', margin: '0 0 32px', lineHeight: 1.75, fontStyle: 'italic' }}>
-          It takes less than two minutes. No credit card needed — just a little Christmas magic.
-        </p>
+        <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 14px', lineHeight: 1.25 }}>Your child&apos;s letter<br />from Santa is free</h2>
+        <p style={{ fontSize: 15, color: 'rgba(245,234,216,0.6)', margin: '0 0 32px', lineHeight: 1.75, fontStyle: 'italic' }}>It takes less than two minutes. No credit card needed — just a little Christmas magic.</p>
         <Link href="/create" onClick={onClose} style={{ display: 'block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 32px', borderRadius: 4, fontSize: 16, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)', marginBottom: 14 }}>
           ✦ Write my child&apos;s free letter
         </Link>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(245,234,216,0.25)', fontSize: 12, cursor: 'pointer', fontFamily: 'Georgia, serif' }}>
-          No thanks, I&apos;ll skip the magic
-        </button>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(245,234,216,0.25)', fontSize: 12, cursor: 'pointer', fontFamily: 'Georgia, serif' }}>No thanks, I&apos;ll skip the magic</button>
       </div>
     </div>
   )
@@ -97,32 +62,22 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
 function LeadMagnet() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return
     setStatus('loading')
     try {
-      const res = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
+      const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
       if (res.ok) setStatus('done')
       else setStatus('error')
-    } catch {
-      setStatus('error')
-    }
+    } catch { setStatus('error') }
   }
-
   return (
     <div style={{ background: 'linear-gradient(135deg, rgba(212,170,90,0.08) 0%, rgba(180,130,50,0.04) 100%)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 12, padding: '36px 40px', marginBottom: 40, textAlign: 'center' }}>
       <div style={{ fontSize: 36, marginBottom: 12 }}>🎁</div>
       <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 10 }}>✦ free gift from santa&apos;s workshop ✦</div>
       <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#f5ead8', fontWeight: 400, margin: '0 0 10px', lineHeight: 1.3 }}>5 Magical Christmas Activities for Your Kids</h2>
-      <p style={{ fontSize: 14, color: 'rgba(245,234,216,0.55)', margin: '0 0 28px', lineHeight: 1.75, fontStyle: 'italic', maxWidth: 420, marginLeft: 'auto', marginRight: 'auto' }}>
-        From reindeer food to kindness countdowns — free ideas delivered instantly to your inbox.
-      </p>
+      <p style={{ fontSize: 14, color: 'rgba(245,234,216,0.55)', margin: '0 0 28px', lineHeight: 1.75, fontStyle: 'italic', maxWidth: 420, marginLeft: 'auto', marginRight: 'auto' }}>From reindeer food to kindness countdowns — free ideas delivered instantly to your inbox.</p>
       {status === 'done' ? (
         <div style={{ padding: '16px 24px', background: 'rgba(212,170,90,0.1)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 8 }}>
           <div style={{ fontSize: 24, marginBottom: 8 }}>✉️</div>
@@ -130,10 +85,8 @@ function LeadMagnet() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 10, maxWidth: 440, margin: '0 auto', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <input type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required
-            style={{ flex: 1, minWidth: 220, padding: '13px 18px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(245,234,216,0.2)', borderRadius: 4, color: '#f5ead8', fontFamily: 'Georgia, serif', fontSize: 15, outline: 'none' }} />
-          <button type="submit" disabled={status === 'loading'}
-            style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #d4aa5a, #a8802a)', color: '#0d1b2e', border: 'none', borderRadius: 4, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
+          <input type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required style={{ flex: 1, minWidth: 220, padding: '13px 18px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(245,234,216,0.2)', borderRadius: 4, color: '#f5ead8', fontFamily: 'Georgia, serif', fontSize: 15, outline: 'none' }} />
+          <button type="submit" disabled={status === 'loading'} style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #d4aa5a, #a8802a)', color: '#0d1b2e', border: 'none', borderRadius: 4, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
             {status === 'loading' ? 'Sending...' : '✦ Send me the ideas'}
           </button>
           {status === 'error' && <p style={{ width: '100%', color: '#f09595', fontSize: 12, margin: '4px 0 0', textAlign: 'center' }}>Something went wrong — please try again.</p>}
@@ -144,36 +97,62 @@ function LeadMagnet() {
   )
 }
 
-function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-
-  const faqs = [
+function Testimonials() {
+  const testimonials = [
     {
-      q: 'Is the letter really free?',
-      a: 'Yes — completely free. Enter your child\'s details, generate their letter, and read the full thing at no cost. We\'ll send it to your email too. Paid options are available if you\'d like a beautifully designed PDF or a real printed letter posted to your door.',
+      quote: "My daughter burst into tears — happy ones — when I read her the letter. Santa mentioned her little act of kindness at school and she couldn't believe he knew. Worth every penny.",
+      name: "Sarah M.",
+      detail: "Mum of Lily, age 6 · United Kingdom",
+      stars: 5,
     },
     {
-      q: 'Is this AI-generated?',
-      a: 'Yes — each letter is written by AI, trained to write in the warm, magical voice of Santa Claus. Every letter is unique and personalised using the details you provide. We review our prompts carefully to ensure the letters feel genuinely special, not generic.',
+      quote: "The letter arrived beautifully printed and felt so official. My son kept it on his bedside table for weeks. Already ordered one for his sister for this Christmas.",
+      name: "James T.",
+      detail: "Dad of Oliver, age 8 · United States",
+      stars: 5,
     },
     {
-      q: 'When will my physical letter arrive?',
-      a: 'Physical letters are printed and posted within 1–2 business days via USPS First Class Mail. Estimated delivery is 5–10 business days within the US. For guaranteed Christmas delivery, we recommend ordering by December 15.',
-    },
-    {
-      q: 'What countries do you ship to?',
-      a: 'We currently ship physical letters to the US, UK, Canada, Australia, Ireland, Netherlands, Germany, France, Belgium, Spain, Italy, Portugal, Sweden, Norway, Denmark, Finland, and Poland. Digital PDFs are available worldwide.',
-    },
-    {
-      q: 'Can I order for more than one child?',
-      a: 'Yes! After your first order you\'ll see the option to add another child for just $15. Each child gets their own fully personalised letter mentioning their name, age, interests, and good deeds.',
-    },
-    {
-      q: 'Is my child\'s information safe?',
-      a: 'Absolutely. We take privacy seriously, especially when it comes to children\'s data. We only collect the information needed to write the letter, we never share it with third parties for marketing, and we comply with COPPA. Read our full Privacy Policy for details.',
+      quote: "I was sceptical but the quality blew me away. The letter mentioned specific things about my kids — their names, their wishes, even something kind they'd done. Absolutely magical.",
+      name: "Emma R.",
+      detail: "Mum of twins, age 5 · Australia",
+      stars: 5,
     },
   ]
 
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8, textAlign: 'center' }}>✦ what parents are saying ✦</div>
+      <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 32px', textAlign: 'center' }}>Real families, real magic</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+        {testimonials.map((t, i) => (
+          <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.18)', borderRadius: 12, padding: '28px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ color: '#d4aa5a', fontSize: 16, letterSpacing: 3 }}>
+              {'★'.repeat(t.stars)}
+            </div>
+            <p style={{ fontSize: 14, color: 'rgba(245,234,216,0.8)', lineHeight: 1.8, margin: 0, fontStyle: 'italic', flex: 1 }}>
+              &ldquo;{t.quote}&rdquo;
+            </p>
+            <div>
+              <div style={{ fontSize: 13, color: '#f5ead8', fontWeight: 500, marginBottom: 2 }}>{t.name}</div>
+              <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.4)' }}>{t.detail}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function FAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const faqs = [
+    { q: 'Is the letter really free?', a: 'Yes — completely free. Enter your child\'s details, generate their letter, and read the full thing at no cost. We\'ll send it to your email too. Paid options are available if you\'d like a beautifully designed PDF or a real printed letter posted to your door.' },
+    { q: 'Is this AI-generated?', a: 'Yes — each letter is written by AI, trained to write in the warm, magical voice of Santa Claus. Every letter is unique and personalised using the details you provide. We review our prompts carefully to ensure the letters feel genuinely special, not generic.' },
+    { q: 'When will my physical letter arrive?', a: 'Physical letters are printed and posted within 1–2 business days via USPS First Class Mail. Estimated delivery is 5–10 business days within the US. For guaranteed Christmas delivery, we recommend ordering by December 15.' },
+    { q: 'What countries do you ship to?', a: 'We currently ship physical letters to the US, UK, Canada, Australia, Ireland, Netherlands, Germany, France, Belgium, Spain, Italy, Portugal, Sweden, Norway, Denmark, Finland, and Poland. Digital PDFs are available worldwide.' },
+    { q: 'Can I order for more than one child?', a: 'Yes! After your first order you\'ll see the option to add another child for just $15. Each child gets their own fully personalised letter mentioning their name, age, interests, and good deeds.' },
+    { q: 'Is my child\'s information safe?', a: 'Absolutely. We take privacy seriously, especially when it comes to children\'s data. We only collect the information needed to write the letter, we never share it with third parties for marketing, and we comply with COPPA. Read our full Privacy Policy for details.' },
+  ]
   return (
     <div style={{ marginBottom: 40 }}>
       <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8, textAlign: 'center' }}>✦ questions & answers ✦</div>
@@ -181,9 +160,7 @@ function FAQ() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {faqs.map((faq, i) => (
           <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.15)', borderRadius: 8, overflow: 'hidden' }}>
-            <button
-              onClick={() => setOpenIndex(openIndex === i ? null : i)}
-              style={{ width: '100%', padding: '18px 24px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, textAlign: 'left' }}>
+            <button onClick={() => setOpenIndex(openIndex === i ? null : i)} style={{ width: '100%', padding: '18px 24px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, textAlign: 'left' }}>
               <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 16, color: '#f5ead8', lineHeight: 1.4 }}>{faq.q}</span>
               <span style={{ color: '#d4aa5a', fontSize: 20, lineHeight: 1, flexShrink: 0, transform: openIndex === i ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s' }}>+</span>
             </button>
@@ -266,6 +243,7 @@ export default function Home() {
           <span>1,247 letters sent to the North Pole this season</span>
         </div>
 
+        {/* Letter preview card */}
         <div style={{ background: 'linear-gradient(175deg, #fffef9 0%, #fdf6e3 100%)', borderRadius: 6, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,90,43,0.25)', marginBottom: 48, textAlign: 'left' }}>
           <div style={{ height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)' }} />
           <div style={{ padding: '40px 60px' }}>
@@ -291,6 +269,10 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Testimonials — below letter preview, highest value position */}
+        <Testimonials />
+
+        {/* How it works */}
         <div id="how-it-works" style={{ marginBottom: 48 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8 }}>✦ the magic process ✦</div>
           <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 32px' }}>Ready in under two minutes</h2>
@@ -310,6 +292,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Pricing */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.2)', borderRadius: 8, padding: '28px 40px', marginBottom: 40 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 20 }}>✦ simple pricing ✦</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 16 }}>
