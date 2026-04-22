@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/send-letters",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/send-reviews",
+      "schedule": "0 10 * * *"
     }
   ]
 }
