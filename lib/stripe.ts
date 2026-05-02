@@ -67,6 +67,7 @@ export async function createCheckoutSession({
     payment_method_types: ['card'],
     line_items: [{ price: price.priceId, quantity: 1 }],
     mode: 'payment',
+    allow_promotion_codes: true,
     customer_email: recipientEmail,
     ...(needsShipping && {
       shipping_address_collection: {
