@@ -36,6 +36,9 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-touch-icon.png',
   },
+  other: {
+    'facebook-domain-verification': 'prh0crlvztj1vm5zg1179or3yfae6p',
+  },
   metadataBase: new URL("https://www.santasletter.ai"),
 }
 
