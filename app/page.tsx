@@ -59,6 +59,21 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
   )
 }
 
+function VideoWaitlistBanner() {
+  return (
+    <Link href="/video" style={{ display: 'block', textDecoration: 'none', marginBottom: 16 }}>
+      <div style={{ background: 'linear-gradient(135deg, rgba(107,15,15,0.25) 0%, rgba(155,31,31,0.15) 100%)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 10, padding: '18px 24px', display: 'flex', alignItems: 'center', gap: 16, transition: 'border-color 0.2s' }}>
+        <div style={{ fontSize: 32, flexShrink: 0 }}>🎬</div>
+        <div style={{ flex: 1, textAlign: 'left' }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 4 }}>Coming October 2026</div>
+          <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 16, color: '#f5ead8', lineHeight: 1.3 }}>Personalised video from Santa — join the waitlist for 30% off</div>
+        </div>
+        <div style={{ color: '#d4aa5a', fontSize: 18, flexShrink: 0 }}>→</div>
+      </div>
+    </Link>
+  )
+}
+
 function LeadMagnet() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
@@ -317,6 +332,7 @@ export default function Home() {
           </div>
         </div>
 
+        <VideoWaitlistBanner />
         <LeadMagnet />
 
         <FAQ />
