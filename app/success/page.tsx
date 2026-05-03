@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
+import { trackEvent } from '@/lib/pixel'
 
 function Snowflakes() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -47,6 +48,18 @@ function SuccessContent() {
   const letterId = searchParams.get('letter_id') || ''
   const [upsellLoading, setUpsellLoading] = useState(false)
   const [upsellDone, setUpsellDone] = useState(false)
+  // Fire Meta Pixel Purchase event once on mount
+  useEffect(() => {
+    const tier = searchParams.get('tier') || 'unknown'
+    const amountCents = parseInt(searchParams.get('amount') || '0', 10)
+    const value = amountCents > 0 ? amountCents / 100 : undefined
+    trackEvent('Purchase', {
+      value,
+      currency: 'USD',
+      content_name: tier,
+      content_type: 'product',
+    })
+  }, [searchParams])
 
   const handleAddChild = async () => {
     setUpsellLoading(true)
