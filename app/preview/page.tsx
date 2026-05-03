@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChildInfo } from '@/types'
+import { trackEvent } from '@/lib/pixel'
 
 function Snowflakes() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -367,6 +368,7 @@ export default function PreviewPage() {
         })
       } catch { console.warn('Email delivery call failed') }
     }
+    trackEvent('Lead', { content_name: 'email_gate_submission' })
     setStep('done')
   }
 
