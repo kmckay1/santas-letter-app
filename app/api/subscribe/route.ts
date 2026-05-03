@@ -11,9 +11,14 @@ function getSupabaseAdmin() {
   )
 }
 
+type Source = 'lead_magnet' | 'video_waitlist'
+
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json()
+    const body = await req.json()
+    const email: string | undefined = body.email
+    const sourceInput: string | undefined = body.source
+    const source: Source = sourceInput === 'video_waitlist' ? 'video_waitlist' : 'lead_magnet'
 
     if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
@@ -21,21 +26,36 @@ export async function POST(req: NextRequest) {
 
     const supabase = getSupabaseAdmin()
 
-    // Store in Supabase — ignore if already subscribed
+    // Store in Supabase — ignore if already subscribed (unique constraint)
     const { error: dbError } = await supabase
       .from('subscribers')
-      .insert({ email, source: 'lead_magnet' })
+      .insert({ email, source })
 
     if (dbError && !dbError.message.includes('unique')) {
       console.error('Supabase error:', dbError)
     }
 
-    // Send lead magnet email via Resend
-    await resend.emails.send({
-      from: 'Santa\'s Letter <hello@santasletter.ai>',
-      to: email,
-      subject: '🎄 Your 5 Magical Christmas Activities from Santa\'s Workshop',
-      html: `
+    // Send the appropriate confirmation email based on source
+    if (source === 'video_waitlist') {
+      await sendVideoWaitlistEmail(email)
+    } else {
+      await sendLeadMagnetEmail(email)
+    }
+
+    return NextResponse.json({ success: true })
+
+  } catch (err) {
+    console.error('Subscribe error:', err)
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+  }
+}
+
+async function sendVideoWaitlistEmail(email: string) {
+  await resend.emails.send({
+    from: 'Santa\'s Letter <hello@santasletter.ai>',
+    to: email,
+    subject: '🎬 You\'re on the list — Personalised Santa Video coming this Christmas',
+    html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,13 +65,91 @@ export async function POST(req: NextRequest) {
 <body style="margin:0;padding:0;background:#f5edd6;font-family:Georgia,serif;">
   <div style="max-width:600px;margin:0 auto;background:#fdf6e3;border:1px solid rgba(200,146,42,0.3);">
 
-    <!-- Header -->
     <div style="background:#6B0F0F;padding:32px 40px;text-align:center;border-bottom:3px solid #d4aa5a;">
       <div style="font-family:Georgia,serif;font-style:italic;font-size:13px;color:rgba(212,170,90,0.85);margin-bottom:6px;letter-spacing:0.08em;">From the Workshop of</div>
       <div style="font-family:Georgia,serif;font-style:italic;font-size:42px;color:#d4aa5a;line-height:1.1;">Santa Claus</div>
     </div>
 
-    <!-- Body -->
+    <div style="padding:40px 48px;">
+
+      <p style="font-size:16px;color:#2c1a0e;line-height:1.8;margin:0 0 24px;font-style:italic;">
+        Ho ho ho! You're officially on the waitlist for our most magical creation yet — a personalised video message from Santa Claus, made just for your child.
+      </p>
+
+      <div style="height:1px;background:rgba(200,146,42,0.3);margin:0 0 32px;"></div>
+
+      <div style="margin-bottom:32px;">
+        <div style="font-family:Georgia,serif;font-size:20px;color:#6B0F0F;font-style:italic;margin-bottom:14px;">What you'll get</div>
+        <ul style="font-size:14px;color:#2c1a0e;line-height:1.9;margin:0;padding:0 0 0 20px;">
+          <li>A custom video where Santa speaks your child's name</li>
+          <li>Mentions of their wishes, kind deeds, and personality</li>
+          <li>HD quality, downloadable, ready to share with family</li>
+          <li>30% off launch price for being on the early list</li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:40px;">
+        <div style="font-family:Georgia,serif;font-size:20px;color:#6B0F0F;font-style:italic;margin-bottom:14px;">When to expect it</div>
+        <p style="font-size:14px;color:#2c1a0e;line-height:1.8;margin:0;">
+          Launching October 2026 — in time for Christmas. We'll email you the moment it's ready, with your exclusive 30% early-access discount built in. No spam, no daily updates, just the launch.
+        </p>
+      </div>
+
+      <div style="height:1px;background:rgba(200,146,42,0.3);margin:0 0 32px;"></div>
+
+      <div style="text-align:center;margin-bottom:32px;">
+        <p style="font-size:15px;color:#2c1a0e;line-height:1.8;margin:0 0 20px;font-style:italic;">
+          While you wait, would your child love a free personalised letter from Santa? It's a perfect way to start the magic.
+        </p>
+        <a href="https://www.santasletter.ai/create" style="display:inline-block;background:#6B0F0F;color:#d4aa5a;padding:14px 36px;text-decoration:none;font-family:Georgia,serif;font-size:15px;letter-spacing:0.06em;border:1px solid #d4aa5a;">
+          ✦ Create a free letter from Santa →
+        </a>
+      </div>
+
+      <div style="border-top:1px solid rgba(200,146,42,0.2);padding-top:24px;">
+        <div style="font-size:13px;color:rgba(44,26,14,0.5);margin-bottom:4px;font-style:italic;">With love and Christmas magic,</div>
+        <div style="font-family:Georgia,serif;font-style:italic;font-size:36px;color:#6B0F0F;line-height:1.1;">Santa Claus</div>
+        <div style="font-size:11px;color:rgba(44,26,14,0.4);margin-top:6px;">via SantasLetter.ai · Official North Pole Post Office</div>
+      </div>
+
+    </div>
+
+    <div style="background:#6B0F0F;padding:16px 40px;text-align:center;">
+      <div style="font-size:11px;color:rgba(212,170,90,0.7);line-height:1.8;">
+        SantasLetter.ai · Official North Pole Post Office<br>
+        <a href="https://www.santasletter.ai/privacy" style="color:rgba(212,170,90,0.5);text-decoration:none;">Privacy Policy</a>
+        &nbsp;·&nbsp;
+        You received this because you joined the video waitlist at SantasLetter.ai
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
+    `,
+  })
+}
+
+async function sendLeadMagnetEmail(email: string) {
+  await resend.emails.send({
+    from: 'Santa\'s Letter <hello@santasletter.ai>',
+    to: email,
+    subject: '🎄 Your 5 Magical Christmas Activities from Santa\'s Workshop',
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0;padding:0;background:#f5edd6;font-family:Georgia,serif;">
+  <div style="max-width:600px;margin:0 auto;background:#fdf6e3;border:1px solid rgba(200,146,42,0.3);">
+
+    <div style="background:#6B0F0F;padding:32px 40px;text-align:center;border-bottom:3px solid #d4aa5a;">
+      <div style="font-family:Georgia,serif;font-style:italic;font-size:13px;color:rgba(212,170,90,0.85);margin-bottom:6px;letter-spacing:0.08em;">From the Workshop of</div>
+      <div style="font-family:Georgia,serif;font-style:italic;font-size:42px;color:#d4aa5a;line-height:1.1;">Santa Claus</div>
+    </div>
+
     <div style="padding:40px 48px;">
 
       <p style="font-size:16px;color:#2c1a0e;line-height:1.8;margin:0 0 24px;font-style:italic;">
@@ -60,7 +158,6 @@ export async function POST(req: NextRequest) {
 
       <div style="height:1px;background:rgba(200,146,42,0.3);margin:0 0 32px;"></div>
 
-      <!-- Activity 1 -->
       <div style="margin-bottom:32px;">
         <div style="display:flex;align-items:center;margin-bottom:10px;">
           <span style="font-size:28px;margin-right:14px;">✉️</span>
@@ -71,7 +168,6 @@ export async function POST(req: NextRequest) {
         </p>
       </div>
 
-      <!-- Activity 2 -->
       <div style="margin-bottom:32px;">
         <div style="display:flex;align-items:center;margin-bottom:10px;">
           <span style="font-size:28px;margin-right:14px;">🦌</span>
@@ -82,7 +178,6 @@ export async function POST(req: NextRequest) {
         </p>
       </div>
 
-      <!-- Activity 3 -->
       <div style="margin-bottom:32px;">
         <div style="display:flex;align-items:center;margin-bottom:10px;">
           <span style="font-size:28px;margin-right:14px;">⭐</span>
@@ -93,7 +188,6 @@ export async function POST(req: NextRequest) {
         </p>
       </div>
 
-      <!-- Activity 4 -->
       <div style="margin-bottom:32px;">
         <div style="display:flex;align-items:center;margin-bottom:10px;">
           <span style="font-size:28px;margin-right:14px;">🎄</span>
@@ -104,7 +198,6 @@ export async function POST(req: NextRequest) {
         </p>
       </div>
 
-      <!-- Activity 5 -->
       <div style="margin-bottom:40px;">
         <div style="display:flex;align-items:center;margin-bottom:10px;">
           <span style="font-size:28px;margin-right:14px;">🗺️</span>
@@ -117,7 +210,6 @@ export async function POST(req: NextRequest) {
 
       <div style="height:1px;background:rgba(200,146,42,0.3);margin:0 0 32px;"></div>
 
-      <!-- CTA -->
       <div style="text-align:center;margin-bottom:32px;">
         <p style="font-size:15px;color:#2c1a0e;line-height:1.8;margin:0 0 20px;font-style:italic;">
           Want to make Christmas even more magical? Give your child a personalised letter from Santa — written just for them, mentioning their name, their kind deeds, and their wishes.
@@ -127,7 +219,6 @@ export async function POST(req: NextRequest) {
         </a>
       </div>
 
-      <!-- Sign off -->
       <div style="border-top:1px solid rgba(200,146,42,0.2);padding-top:24px;">
         <div style="font-size:13px;color:rgba(44,26,14,0.5);margin-bottom:4px;font-style:italic;">With love and Christmas magic,</div>
         <div style="font-family:Georgia,serif;font-style:italic;font-size:36px;color:#6B0F0F;line-height:1.1;">Santa Claus</div>
@@ -136,7 +227,6 @@ export async function POST(req: NextRequest) {
 
     </div>
 
-    <!-- Footer -->
     <div style="background:#6B0F0F;padding:16px 40px;text-align:center;">
       <div style="font-size:11px;color:rgba(212,170,90,0.7);line-height:1.8;">
         SantasLetter.ai · Official North Pole Post Office<br>
@@ -149,13 +239,6 @@ export async function POST(req: NextRequest) {
   </div>
 </body>
 </html>
-      `,
-    })
-
-    return NextResponse.json({ success: true })
-
-  } catch (err) {
-    console.error('Subscribe error:', err)
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
-  }
+    `,
+  })
 }
