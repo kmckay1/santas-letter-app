@@ -2,19 +2,12 @@
   "functions": {
     "app/api/webhook/route.ts": {
       "maxDuration": 60
-    },
-    "app/api/webhooks/stripe/route.ts": {
-      "maxDuration": 60
     }
   },
   "crons": [
     {
       "path": "/api/cron/send-letters",
       "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/send-reviews",
-      "schedule": "0 10 * * *"
     }
   ]
 }

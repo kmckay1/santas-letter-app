@@ -14,12 +14,6 @@ function getSupabaseAdmin() {
   )
 }
 
-function getReviewSendDate(): string {
-  const d = new Date()
-  d.setDate(d.getDate() + 10)
-  return d.toISOString().split('T')[0]
-}
-
 export async function POST(req: NextRequest) {
   const body = await req.text()
   const sig = req.headers.get('stripe-signature')!
@@ -115,19 +109,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // 3. Schedule review request email (10 days from now for all paid tiers)
-      const supabase = getSupabaseAdmin()
-      await supabase.from('review_requests').insert({
-        stripe_session_id: session.id,
-        child_name: childName,
-        recipient_email: recipientEmail,
-        tier,
-        send_after: getReviewSendDate(),
-        sent: false,
-      })
-      console.log(`✅ Review request scheduled for ${getReviewSendDate()}`)
-
-      // 4. Order confirmation for all tiers
+      // 3. Order confirmation for all tiers
       await sendOrderConfirmationEmail(recipientEmail, childName, tier, letterId)
       await markLetterFulfilled(letterId, tier)
       console.log(`✅ Fulfilled ${tier} for ${childName}`)
