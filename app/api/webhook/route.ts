@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true })
       }
 
-      // 1. Generate & email premium PDF for premium and bundle tiers
+      // 1. Generate & email premium PDF for premium and bundle tiers (always immediate)
       if (tier === 'premium' || tier === 'bundle') {
         console.log(`Generating premium PDF for ${childName}...`)
         const pdfBuffer = await generatePremiumPDF(letterData.child, letterData.letterText)
@@ -47,6 +47,9 @@ export async function POST(req: NextRequest) {
       }
 
       // 2. Schedule or immediately send physical letter
+      // Physical letters are clamped to never ship before the December delivery window,
+      // regardless of customer-selected date. Set PHYSICAL_MAIL_EARLIEST_SEND env var
+      // to override the default of 2026-11-22.
       if (tier === 'physical' || tier === 'bundle') {
         const fullSession = await stripe.checkout.sessions.retrieve(session.id)
         const shipping = (fullSession as any).shipping_details
@@ -63,11 +66,15 @@ export async function POST(req: NextRequest) {
           }
 
           const today = new Date().toISOString().split('T')[0]
-          const sendAfter = delivery_date || today
+          const earliestAllowed = process.env.PHYSICAL_MAIL_EARLIEST_SEND || '2026-11-22'
+          const customerRequested = delivery_date || today
+          // Clamp send date — physical letters never ship before December delivery window
+          const sendAfter = customerRequested > earliestAllowed ? customerRequested : earliestAllowed
 
           const supabase = getSupabaseAdmin()
 
           if (sendAfter <= today) {
+            // Same-day send (only fires after Nov 22, 2026 in production)
             const result = await sendPhysicalLetter(
               shippingData,
               letterData.child,
@@ -90,6 +97,7 @@ export async function POST(req: NextRequest) {
               lob_letter_id: result.id,
             })
           } else {
+            // Scheduled send (default path during pre-holiday window)
             await supabase.from('scheduled_letters').insert({
               stripe_session_id: session.id,
               letter_id: letterId,
