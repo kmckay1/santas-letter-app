@@ -85,6 +85,9 @@ export async function sendOrderConfirmationEmail(
     bundle: 'Premium PDF + Physical Letter',
   }
 
+  const includesPDF = tier === 'premium' || tier === 'bundle'
+  const includesPhysical = tier === 'physical' || tier === 'bundle'
+
   await resend.emails.send({
     from: 'Santa Claus <santa@santasletter.ai>',
     to: email,
@@ -96,15 +99,24 @@ export async function sendOrderConfirmationEmail(
         <div style="max-width:500px;margin:0 auto;text-align:center;">
           <p style="font-size:48px;margin:0 0 20px;">🎅</p>
           <h1 style="font-size:24px;color:#f5ead8;font-weight:400;margin:0 0 12px;">Order confirmed!</h1>
-          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">${childName}'s ${tierLabels[tier] || tier} is being prepared</p>
+          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">${childName}'s ${tierLabels[tier] || tier} is being prepared at the North Pole</p>
           
           <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,170,90,0.2);border-radius:6px;padding:24px;text-align:left;margin-bottom:24px;">
             <p style="color:#d4aa5a;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 8px;">Your order</p>
             <p style="color:#f5ead8;font-size:16px;margin:0 0 4px;">${tierLabels[tier] || tier}</p>
             <p style="color:rgba(245,234,216,0.5);font-size:13px;margin:0;">For: ${childName}</p>
-            ${tier === 'physical' || tier === 'bundle' ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:8px 0 0;">📬 Physical letter arriving in 5–7 days</p>` : ''}
-            ${tier === 'premium' || tier === 'bundle' ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:4px 0 0;">📄 Premium PDF sent to this email</p>` : ''}
+            ${includesPDF ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:12px 0 0;">📄 <strong style="color:rgba(245,234,216,0.85);">Premium PDF:</strong> Sent to this email shortly — check your inbox.</p>` : ''}
+            ${includesPhysical ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:8px 0 0;">📬 <strong style="color:rgba(245,234,216,0.85);">Physical letter:</strong> Hand-stamped and mailed from the North Pole in late November so it arrives in December — when Christmas magic feels closest.</p>` : ''}
           </div>
+
+          ${includesPhysical ? `
+          <div style="background:rgba(212,170,90,0.06);border:1px solid rgba(212,170,90,0.18);border-radius:6px;padding:18px 22px;text-align:left;margin-bottom:24px;">
+            <p style="color:#d4aa5a;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 6px;">What happens next</p>
+            <p style="color:rgba(245,234,216,0.6);font-size:12px;margin:0;line-height:1.7;">
+              Santa's elves will keep ${childName}'s letter safe at the North Pole until late November, then hand-stamp and post it so it lands in your mailbox in early-to-mid December. We'll email you the moment it ships.
+            </p>
+          </div>
+          ` : ''}
 
           <p style="color:rgba(245,234,216,0.3);font-size:11px;">Questions? Reply to this email and an elf will help.</p>
         </div>
@@ -113,6 +125,7 @@ export async function sendOrderConfirmationEmail(
     `,
   })
 }
+
 export async function sendPremiumPDFEmail(
   email: string,
   childName: string,

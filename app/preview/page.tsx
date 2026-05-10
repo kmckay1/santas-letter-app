@@ -147,6 +147,11 @@ const TIER_MAP: Record<string, string> = {
   'Add a child': 'addChild',
 }
 
+// Earliest date a physical letter can mail. Must match the server-side
+// floor in app/api/webhook/route.ts (PHYSICAL_MAIL_EARLIEST_SEND env var).
+// Server enforces this regardless of UI; this is for UX clarity only.
+const EARLIEST_MAIL_DATE = '2026-11-22'
+
 function DeliveryDateModal({
   tier,
   onConfirm,
@@ -156,17 +161,22 @@ function DeliveryDateModal({
   onConfirm: (date: string) => void
   onCancel: () => void
 }) {
-  const today = new Date().toISOString().split('T')[0]
-  const maxDate = `${new Date().getFullYear()}-12-24`
-  const [selectedDate, setSelectedDate] = useState('')
-  const [mode, setMode] = useState<'now' | 'schedule'>('schedule')
+  // Customer can pick any date from Nov 22, 2026 onward, capped at Dec 22.
+  // Letters posted in this range arrive between early and late December.
+  const minDate = EARLIEST_MAIL_DATE
+  const maxDate = '2026-12-22'
 
-  const suggestedDate = (() => {
-    const d = new Date()
-    d.setMonth(10) // November
-    d.setDate(15)
-    return d.toISOString().split('T')[0]
-  })()
+  // Three preset arrival windows, each maps to a specific send_after date
+  // that gives Lob 5-10 business days to deliver.
+  const presets = [
+    { id: 'early', label: 'Early December', sub: 'Arrives Dec 1–7', sendDate: '2026-11-22' },
+    { id: 'mid', label: 'Mid-December', sub: 'Arrives Dec 8–15', sendDate: '2026-11-30' },
+    { id: 'late', label: 'Late December', sub: 'Arrives Dec 16–22', sendDate: '2026-12-08' },
+  ]
+
+  const [selectedPreset, setSelectedPreset] = useState<string>('early')
+  const [customDate, setCustomDate] = useState('')
+  const [useCustom, setUseCustom] = useState(false)
 
   return (
     <div style={{
@@ -187,62 +197,63 @@ function DeliveryDateModal({
       }}>
         <div style={{ fontSize: 40, marginBottom: 16 }}>📬</div>
         <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 12 }}>
-          ✦ when should we post it? ✦
+          ✦ when should it arrive? ✦
         </div>
         <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#f5ead8', fontWeight: 400, margin: '0 0 10px', lineHeight: 1.3 }}>
-          Choose your delivery date
+          Choose your delivery window
         </h2>
         <p style={{ fontSize: 13, color: 'rgba(245,234,216,0.55)', margin: '0 0 28px', lineHeight: 1.7, fontStyle: 'italic' }}>
-          We can send it now or schedule it to arrive closer to Christmas — the magic works either way.
+          Letters are hand-stamped and mailed in late November so they arrive in December — when Christmas magic feels closest.
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24, textAlign: 'left' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18, textAlign: 'left' }}>
+          {presets.map(preset => {
+            const isSelected = !useCustom && selectedPreset === preset.id
+            return (
+              <button
+                key={preset.id}
+                onClick={() => { setSelectedPreset(preset.id); setUseCustom(false) }}
+                style={{
+                  padding: '14px 18px',
+                  background: isSelected ? 'rgba(212,170,90,0.15)' : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${isSelected ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.12)'}`,
+                  borderRadius: 8, cursor: 'pointer', textAlign: 'left',
+                }}>
+                <div style={{ fontSize: 13, color: '#f5ead8', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: 2 }}>
+                  {preset.label}
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.5)' }}>
+                  {preset.sub}
+                </div>
+              </button>
+            )
+          })}
 
           <button
-            onClick={() => setMode('now')}
+            onClick={() => setUseCustom(true)}
             style={{
               padding: '14px 18px',
-              background: mode === 'now' ? 'rgba(212,170,90,0.15)' : 'rgba(255,255,255,0.04)',
-              border: `1px solid ${mode === 'now' ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.12)'}`,
+              background: useCustom ? 'rgba(212,170,90,0.15)' : 'rgba(255,255,255,0.04)',
+              border: `1px solid ${useCustom ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.12)'}`,
               borderRadius: 8, cursor: 'pointer', textAlign: 'left',
             }}>
             <div style={{ fontSize: 13, color: '#f5ead8', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: 2 }}>
-              Send immediately
+              Pick a specific date
             </div>
             <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.5)' }}>
-              Posted within 1–2 business days — great for testing
+              Choose any post date between Nov 22 and Dec 22
             </div>
           </button>
-
-          <button
-            onClick={() => setMode('schedule')}
-            style={{
-              padding: '14px 18px',
-              background: mode === 'schedule' ? 'rgba(212,170,90,0.15)' : 'rgba(255,255,255,0.04)',
-              border: `1px solid ${mode === 'schedule' ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.12)'}`,
-              borderRadius: 8, cursor: 'pointer', textAlign: 'left',
-            }}>
-            <div style={{ fontSize: 13, color: '#f5ead8', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: 2 }}>
-              Schedule for Christmas
-            </div>
-            <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.5)' }}>
-              We post it on your chosen date so it arrives in time
-            </div>
-          </button>
-
         </div>
 
-        {mode === 'schedule' && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.55)', marginBottom: 8, textAlign: 'left' }}>
-              Select your preferred send date:
-            </div>
+        {useCustom && (
+          <div style={{ marginBottom: 18 }}>
             <input
               type="date"
-              min={today}
+              min={minDate}
               max={maxDate}
-              value={selectedDate || suggestedDate}
-              onChange={e => setSelectedDate(e.target.value)}
+              value={customDate || minDate}
+              onChange={e => setCustomDate(e.target.value)}
               style={{
                 width: '100%', padding: '12px 16px',
                 background: 'rgba(255,255,255,0.07)',
@@ -253,17 +264,18 @@ function DeliveryDateModal({
               }}
             />
             <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.35)', marginTop: 6, textAlign: 'left' }}>
-              We recommend November 15 for US delivery · December 1 for international
+              Letters arrive 5–10 business days after the post date.
             </div>
           </div>
         )}
 
         <button
           onClick={() => {
-            if (mode === 'now') {
-              onConfirm(today)
+            if (useCustom) {
+              onConfirm(customDate || minDate)
             } else {
-              onConfirm(selectedDate || suggestedDate)
+              const preset = presets.find(p => p.id === selectedPreset)
+              onConfirm(preset?.sendDate || minDate)
             }
           }}
           style={{
@@ -577,8 +589,8 @@ export default function PreviewPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 18 }}>
                 {[
                   { label: 'Premium PDF', price: '$9', emoji: '📄', desc: 'Illustrated parchment design, print-ready at home', highlight: false, cta: 'Select' },
-                  { label: 'The bundle', price: '$35', emoji: '🎁', desc: 'Premium PDF + real posted letter — saves $3', highlight: true, cta: '✦ Get the bundle' },
-                  { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Printed & posted, you choose the delivery date', highlight: false, cta: 'Select' },
+                  { label: 'The bundle', price: '$35', emoji: '🎁', desc: 'Premium PDF (instant) + posted letter for December', highlight: true, cta: '✦ Get the bundle' },
+                  { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Hand-stamped & posted, arriving in December', highlight: false, cta: 'Select' },
                   { label: 'Add a child', price: '+$15', emoji: '⭐', desc: 'Another child gets their own magical letter', highlight: false, cta: 'Select' },
                 ].map(opt => {
                   const tier = TIER_MAP[opt.label]
@@ -608,9 +620,9 @@ export default function PreviewPage() {
               <div style={{ textAlign: 'center', padding: '12px 0 6px', fontSize: 13, color: 'rgba(245,234,216,0.5)', marginBottom: 8 }}>
                 ✓ Your free letter has been sent to {email}
               </div>
-              <div style={{ background: 'rgba(200,56,43,0.1)', border: '1px solid rgba(200,56,43,0.25)', borderRadius: 8, padding: '14px 20px', textAlign: 'center', marginBottom: 14 }}>
-                <span style={{ color: '#f09595', fontSize: 12, letterSpacing: '0.04em' }}>
-                  🎄 Order physical mail by <strong style={{ color: '#f5ead8' }}>December 15</strong> for guaranteed Christmas delivery
+              <div style={{ background: 'rgba(212,170,90,0.08)', border: '1px solid rgba(212,170,90,0.25)', borderRadius: 8, padding: '14px 20px', textAlign: 'center', marginBottom: 14 }}>
+                <span style={{ color: '#d4aa5a', fontSize: 12, letterSpacing: '0.04em' }}>
+                  📬 Physical letters are hand-stamped and mailed in late November · <strong style={{ color: '#f5ead8' }}>Arriving in December</strong>
                 </span>
               </div>
               <p style={{ textAlign: 'center', fontSize: 11, color: 'rgba(245,234,216,0.18)', margin: 0, lineHeight: 1.7 }}>
