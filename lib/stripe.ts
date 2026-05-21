@@ -32,13 +32,15 @@ export async function createCheckoutSession({
   letterId,
   childName,
   recipientEmail,
+  upgradeToken,
   discount,
   deliveryDate,
 }: {
   tier: string
   letterId: string
   childName: string
-  recipientEmail: string
+  recipientEmail?: string
+  upgradeToken?: string
   discount?: boolean
   deliveryDate?: string
 }): Promise<string> {
@@ -46,6 +48,7 @@ export async function createCheckoutSession({
   if (!price) throw new Error(`Unknown tier: ${tier}`)
 
   const needsShipping = tier === 'physical' || tier === 'bundle'
+  const isUpgrade = !!upgradeToken
 
   function getActivePromoId(): string | null {
     if (!discount) return null
@@ -63,12 +66,18 @@ export async function createCheckoutSession({
 
   const promoId = getActivePromoId()
 
+  // Cancel URL: upgrade flow returns to the upgrade page; legacy flow keeps existing behavior
+  const cancelUrl = isUpgrade
+    ? `${process.env.NEXT_PUBLIC_URL}/upgrade/${upgradeToken}`
+    : `${process.env.NEXT_PUBLIC_URL}/preview?letter_id=${letterId}`
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items: [{ price: price.priceId, quantity: 1 }],
     mode: 'payment',
     allow_promotion_codes: true,
-    customer_email: recipientEmail,
+    // Pre-fill email only when provided (legacy flow). Upgrade flow lets Stripe collect.
+    ...(recipientEmail && { customer_email: recipientEmail }),
     ...(needsShipping && {
       shipping_address_collection: {
         allowed_countries: ['US', 'GB', 'NL', 'DE', 'FR', 'BE', 'AU', 'CA', 'IE', 'ES', 'IT', 'PT', 'SE', 'NO', 'DK', 'FI', 'PL'],
@@ -78,12 +87,13 @@ export async function createCheckoutSession({
       discounts: [{ promotion_code: promoId }],
     }),
     success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}&letter_id=${letterId}&tier=${tier}&amount=${price.amount}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_URL}/preview?letter_id=${letterId}`,
+    cancel_url: cancelUrl,
     metadata: {
       tier,
       letterId,
       childName,
-      recipientEmail,
+      ...(recipientEmail && { recipientEmail }),
+      ...(upgradeToken && { upgradeToken }),
       ...(deliveryDate && { delivery_date: deliveryDate }),
     },
   })

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { sendPhysicalLetter } from '@/lib/lob'
-import { getLetter, markLetterFulfilled } from '@/lib/storage'
+import { getLetter, getLetterByUpgradeToken, markLetterFulfilled } from '@/lib/storage'
 import { sendOrderConfirmationEmail, sendPremiumPDFEmail } from '@/lib/resend'
 import { generatePremiumPDF } from '@/lib/pdf'
 import { createClient } from '@supabase/supabase-js'
@@ -29,12 +29,32 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
-    const { tier, letterId, childName, recipientEmail, delivery_date } = session.metadata!
+    const { tier, letterId, upgradeToken, childName, delivery_date } = session.metadata!
+
+    // Email source: metadata (legacy flow) → Stripe-collected (upgrade flow)
+    const recipientEmail = session.metadata?.recipientEmail || session.customer_details?.email
+
+    if (!recipientEmail) {
+      console.error('No recipient email found in session metadata or customer_details')
+      return NextResponse.json({ received: true })
+    }
 
     try {
-      const letterData = await getLetter(letterId)
+      // Resolve letter via upgrade_token (upgrade flow) or letter_id (original purchase flow)
+      let letterData = null
+      let resolvedLetterId = letterId
+
+      if (upgradeToken) {
+        letterData = await getLetterByUpgradeToken(upgradeToken)
+        if (letterData) {
+          resolvedLetterId = letterData.id
+        }
+      } else if (letterId) {
+        letterData = await getLetter(letterId)
+      }
+
       if (!letterData) {
-        console.error(`Letter ${letterId} not found`)
+        console.error(`Letter not found (letterId=${letterId}, upgradeToken=${upgradeToken})`)
         return NextResponse.json({ received: true })
       }
 
@@ -84,7 +104,7 @@ export async function POST(req: NextRequest) {
 
             await supabase.from('scheduled_letters').insert({
               stripe_session_id: session.id,
-              letter_id: letterId,
+              letter_id: resolvedLetterId,
               child_name: childName,
               recipient_email: recipientEmail,
               tier,
@@ -100,7 +120,7 @@ export async function POST(req: NextRequest) {
             // Scheduled send (default path during pre-holiday window)
             await supabase.from('scheduled_letters').insert({
               stripe_session_id: session.id,
-              letter_id: letterId,
+              letter_id: resolvedLetterId,
               child_name: childName,
               recipient_email: recipientEmail,
               tier,
@@ -118,8 +138,8 @@ export async function POST(req: NextRequest) {
       }
 
       // 3. Order confirmation for all tiers
-      await sendOrderConfirmationEmail(recipientEmail, childName, tier, letterId)
-      await markLetterFulfilled(letterId, tier)
+      await sendOrderConfirmationEmail(recipientEmail, childName, tier, resolvedLetterId)
+      await markLetterFulfilled(resolvedLetterId, tier)
       console.log(`✅ Fulfilled ${tier} for ${childName}`)
 
     } catch (err) {

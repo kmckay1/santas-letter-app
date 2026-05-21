@@ -92,15 +92,17 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
       createdAt: new Date().toISOString(),
     }
 
+    let upgradeToken: string | null = null
     try {
-      await storeLetter(storedLetter)
+      upgradeToken = await storeLetter(storedLetter)
     } catch (kvErr) {
       console.warn('KV storage unavailable:', kvErr)
     }
 
     if (email) {
       try {
-        await sendFreeLetterEmail(email, storedLetter)
+        // Include the upgrade token so the email contains a secure tokenized upgrade URL
+        await sendFreeLetterEmail(email, { ...storedLetter, upgradeToken: upgradeToken || undefined })
       } catch (emailErr) {
         console.warn('Email delivery failed:', emailErr)
       }

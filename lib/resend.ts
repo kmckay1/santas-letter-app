@@ -16,6 +16,12 @@ export async function sendFreeLetterEmail(
     .map(p => `<p style="margin:0 0 20px;line-height:1.8;color:#1a0a02;font-size:16px;font-family:Georgia,serif;">${p.replace(/\*/g, '')}</p>`)
     .join('')
 
+  // Tokenized upgrade URL — UUID is unguessable, doesn't expose child name
+  // Falls back to /create if token unavailable (transient storage failure)
+  const upgradeUrl = letter.upgradeToken
+    ? `https://santasletter.ai/upgrade/${letter.upgradeToken}`
+    : `https://santasletter.ai/create`
+
   await resend.emails.send({
     from: 'Santa Claus <santa@santasletter.ai>',
     to: email,
@@ -50,12 +56,12 @@ export async function sendFreeLetterEmail(
 
           <!-- Upsell -->
           <div style="margin-top:28px;padding:28px;background:rgba(255,255,255,0.04);border:1px solid rgba(212,170,90,0.2);border-radius:6px;text-align:center;">
-            <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#d4aa5a;margin:0 0 10px;">Make it extra magical</p>
-            <p style="font-size:18px;color:#f5ead8;margin:0 0 8px;font-family:Georgia,serif;">Get the official printed letter</p>
-            <p style="font-size:13px;color:rgba(245,234,216,0.5);margin:0 0 20px;">A premium illustrated PDF or a real letter in the post</p>
-            <a href="https://santasletter.ai/preview?letter_id=${letter.id}" 
+            <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#d4aa5a;margin:0 0 10px;">Make it one to keep</p>
+            <p style="font-size:18px;color:#f5ead8;margin:0 0 8px;font-family:Georgia,serif;">The official illustrated letter</p>
+            <p style="font-size:13px;color:rgba(245,234,216,0.5);margin:0 0 20px;line-height:1.6;">A beautifully designed PDF — printable, frameable,<br>and designed like a real letter from the North Pole Post Office</p>
+            <a href="${upgradeUrl}" 
                style="display:inline-block;background:linear-gradient(135deg,#c8382b,#9b1f1f);color:#fff;padding:13px 32px;border-radius:4px;text-decoration:none;font-family:Georgia,serif;font-size:15px;">
-              ✦ Upgrade my letter
+              ✦ See the keepsake version
             </a>
           </div>
 

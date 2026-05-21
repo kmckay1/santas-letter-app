@@ -8,6 +8,7 @@ export interface StoredLetter {
   createdAt: string
   tier?: string
   fulfilled?: boolean
+  upgradeToken?: string
 }
 
 function getSupabase() {
@@ -34,24 +35,37 @@ async function supabaseFetch(
   })
 }
 
-export async function storeLetter(letter: StoredLetter): Promise<void> {
-  const res = await supabaseFetch('/letters', {
-    method: 'POST',
-    body: JSON.stringify({
-      id: letter.id,
-      child_name: letter.child.name,
-      child_age: letter.child.age,
-      child_data: letter.child,
-      letter_text: letter.letterText,
-      language: letter.language,
-      created_at: letter.createdAt,
-      fulfilled: false,
-    }),
-  })
+export async function storeLetter(letter: StoredLetter): Promise<string | null> {
+  // Use return=representation so we can read back the auto-generated upgrade_token
+  const res = await fetch(
+    `${getSupabase().url}/rest/v1/letters`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': getSupabase().key,
+        'Authorization': `Bearer ${getSupabase().key}`,
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify({
+        id: letter.id,
+        child_name: letter.child.name,
+        child_age: letter.child.age,
+        child_data: letter.child,
+        letter_text: letter.letterText,
+        language: letter.language,
+        created_at: letter.createdAt,
+        fulfilled: false,
+      }),
+    }
+  )
   if (!res.ok) {
     const err = await res.text()
     throw new Error(`Supabase insert failed: ${err}`)
   }
+  const rows = await res.json()
+  const row = Array.isArray(rows) ? rows[0] : rows
+  return row?.upgrade_token || null
 }
 
 export async function getLetter(id: string): Promise<StoredLetter | null> {
@@ -71,6 +85,32 @@ export async function getLetter(id: string): Promise<StoredLetter | null> {
     createdAt: row.created_at,
     tier: row.tier,
     fulfilled: row.fulfilled,
+    upgradeToken: row.upgrade_token,
+  }
+}
+
+export async function getLetterByUpgradeToken(token: string): Promise<StoredLetter | null> {
+  // Validate UUID format before querying (prevents injection, fails fast on bad input)
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!uuidRegex.test(token)) return null
+
+  const res = await supabaseFetch(`/letters?upgrade_token=eq.${token}&limit=1`, {
+    method: 'GET',
+    headers: { 'Prefer': 'return=representation' },
+  })
+  if (!res.ok) return null
+  const rows = await res.json()
+  if (!rows || rows.length === 0) return null
+  const row = rows[0]
+  return {
+    id: row.id,
+    child: row.child_data,
+    letterText: row.letter_text,
+    language: row.language,
+    createdAt: row.created_at,
+    tier: row.tier,
+    fulfilled: row.fulfilled,
+    upgradeToken: row.upgrade_token,
   }
 }
 
