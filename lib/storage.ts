@@ -25,6 +25,9 @@ async function supabaseFetch(
   const { url, key } = getSupabase()
   return fetch(`${url}/rest/v1${path}`, {
     ...options,
+    // Opt out of Next.js fetch caching — server components otherwise cache GETs by default,
+    // which means the upgrade page would render stale fulfilled/tier values even after a purchase.
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'apikey': key,
@@ -41,6 +44,7 @@ export async function storeLetter(letter: StoredLetter): Promise<string | null> 
     `${getSupabase().url}/rest/v1/letters`,
     {
       method: 'POST',
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
         'apikey': getSupabase().key,
