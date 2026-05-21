@@ -7,6 +7,12 @@ export async function sendFreeLetterEmail(
   email: string,
   letter: StoredLetter
 ): Promise<void> {
+  // Defensive validation — Resend returns 422 on undefined/empty `to`, but the SDK
+  // doesn't throw, so the caller would silently believe the email was sent.
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    throw new Error(`sendFreeLetterEmail: invalid email address: ${email}`)
+  }
+
   const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -22,7 +28,7 @@ export async function sendFreeLetterEmail(
     ? `https://santasletter.ai/upgrade/${letter.upgradeToken}`
     : `https://santasletter.ai/create`
 
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: 'Santa Claus <santa@santasletter.ai>',
     to: email,
     subject: `🎅 A letter from Santa, just for ${letter.child.name}`,
@@ -74,6 +80,11 @@ export async function sendFreeLetterEmail(
       </html>
     `,
   })
+
+  if (result.error) {
+    console.error('Resend sendFreeLetterEmail failed:', result.error)
+    throw new Error(`Resend error in sendFreeLetterEmail: ${result.error.message}`)
+  }
 }
 
 export async function sendOrderConfirmationEmail(
@@ -82,6 +93,10 @@ export async function sendOrderConfirmationEmail(
   tier: string,
   _letterId: string
 ): Promise<void> {
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    throw new Error(`sendOrderConfirmationEmail: invalid email address: ${email}`)
+  }
+
   const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -94,7 +109,7 @@ export async function sendOrderConfirmationEmail(
   const includesPDF = tier === 'premium' || tier === 'bundle'
   const includesPhysical = tier === 'physical' || tier === 'bundle'
 
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: 'Santa Claus <santa@santasletter.ai>',
     to: email,
     subject: `🎁 Order confirmed — ${childName}'s letter is on its way!`,
@@ -130,6 +145,11 @@ export async function sendOrderConfirmationEmail(
       </html>
     `,
   })
+
+  if (result.error) {
+    console.error('Resend sendOrderConfirmationEmail failed:', result.error)
+    throw new Error(`Resend error in sendOrderConfirmationEmail: ${result.error.message}`)
+  }
 }
 
 export async function sendPremiumPDFEmail(
@@ -137,10 +157,14 @@ export async function sendPremiumPDFEmail(
   childName: string,
   pdfBuffer: Buffer
 ): Promise<void> {
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    throw new Error(`sendPremiumPDFEmail: invalid email address: ${email}`)
+  }
+
   const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)
 
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: 'Santa Claus <santa@santasletter.ai>',
     to: email,
     subject: `🎁 ${childName}'s official letter from Santa — your PDF is here!`,
@@ -195,4 +219,9 @@ export async function sendPremiumPDFEmail(
       </html>
     `,
   })
+
+  if (result.error) {
+    console.error('Resend sendPremiumPDFEmail failed:', result.error)
+    throw new Error(`Resend error in sendPremiumPDFEmail: ${result.error.message}`)
+  }
 }
