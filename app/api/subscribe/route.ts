@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
+import { generateUnsubscribeUrl } from '@/lib/unsubscribe'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
 }
 
 async function sendVideoWaitlistEmail(email: string) {
+  const unsubscribeUrl = generateUnsubscribeUrl(email)
   await resend.emails.send({
     from: 'Santa\'s Letter <hello@santasletter.ai>',
     to: email,
@@ -119,7 +121,7 @@ async function sendVideoWaitlistEmail(email: string) {
         SantasLetter.ai · Official North Pole Post Office<br>
         <a href="https://www.santasletter.ai/privacy" style="color:rgba(212,170,90,0.5);text-decoration:none;">Privacy Policy</a>
         &nbsp;·&nbsp;
-        You received this because you joined the video waitlist at SantasLetter.ai
+        <a href="${unsubscribeUrl}" style="color:rgba(212,170,90,0.5);text-decoration:none;">Unsubscribe</a>
       </div>
     </div>
 
@@ -131,6 +133,7 @@ async function sendVideoWaitlistEmail(email: string) {
 }
 
 async function sendLeadMagnetEmail(email: string) {
+  const unsubscribeUrl = generateUnsubscribeUrl(email)
   await resend.emails.send({
     from: 'Santa\'s Letter <hello@santasletter.ai>',
     to: email,
@@ -232,7 +235,7 @@ async function sendLeadMagnetEmail(email: string) {
         SantasLetter.ai · Official North Pole Post Office<br>
         <a href="https://www.santasletter.ai/privacy" style="color:rgba(212,170,90,0.5);text-decoration:none;">Privacy Policy</a>
         &nbsp;·&nbsp;
-        You received this because you signed up at SantasLetter.ai
+        <a href="${unsubscribeUrl}" style="color:rgba(212,170,90,0.5);text-decoration:none;">Unsubscribe</a>
       </div>
     </div>
 

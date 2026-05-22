@@ -9,6 +9,7 @@ export interface StoredLetter {
   tier?: string
   fulfilled?: boolean
   upgradeToken?: string
+  email?: string
 }
 
 function getSupabase() {
@@ -60,6 +61,9 @@ export async function storeLetter(letter: StoredLetter): Promise<string | null> 
         language: letter.language,
         created_at: letter.createdAt,
         fulfilled: false,
+        // Store email so Phase 2 nurture sequence can find recipients later.
+        // Stored lowercase so the unsubscribe lookup (which lowercases) matches.
+        email: letter.email ? letter.email.toLowerCase().trim() : null,
       }),
     }
   )
@@ -90,6 +94,7 @@ export async function getLetter(id: string): Promise<StoredLetter | null> {
     tier: row.tier,
     fulfilled: row.fulfilled,
     upgradeToken: row.upgrade_token,
+    email: row.email,
   }
 }
 
@@ -115,6 +120,7 @@ export async function getLetterByUpgradeToken(token: string): Promise<StoredLett
     tier: row.tier,
     fulfilled: row.fulfilled,
     upgradeToken: row.upgrade_token,
+    email: row.email,
   }
 }
 

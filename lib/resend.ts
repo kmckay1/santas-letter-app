@@ -1,4 +1,5 @@
 import { StoredLetter } from './storage'
+import { generateUnsubscribeUrl } from './unsubscribe'
 
 // Install: npm install resend
 // Get API key at resend.com — free tier is very generous
@@ -27,6 +28,8 @@ export async function sendFreeLetterEmail(
   const upgradeUrl = letter.upgradeToken
     ? `https://santasletter.ai/upgrade/${letter.upgradeToken}`
     : `https://santasletter.ai/create`
+
+  const unsubscribeUrl = generateUnsubscribeUrl(email)
 
   const result = await resend.emails.send({
     from: 'Santa Claus <santa@santasletter.ai>',
@@ -73,7 +76,7 @@ export async function sendFreeLetterEmail(
 
           <p style="text-align:center;margin-top:24px;font-size:11px;color:rgba(245,234,216,0.25);">
             SantasLetter.ai · Made with ❤ in San Francisco<br>
-            <a href="https://santasletter.ai/unsubscribe" style="color:rgba(245,234,216,0.3);">Unsubscribe</a>
+            <a href="${unsubscribeUrl}" style="color:rgba(245,234,216,0.3);">Unsubscribe</a>
           </p>
         </div>
       </body>

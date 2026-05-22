@@ -90,6 +90,7 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
       letterText,
       language,
       createdAt: new Date().toISOString(),
+      email,
     }
 
     let upgradeToken: string | null = null
