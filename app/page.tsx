@@ -346,6 +346,7 @@ export default function Home() {
         <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.55)', lineHeight: 1.8 }}>
           SantasLetter.ai · Made with ❤ in San Francisco · © {new Date().getFullYear()}
           <br />
+          <a href="/blog" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Blog</a>
           <a href="/privacy" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Privacy Policy</a>
           <a href="/terms" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Terms of Service</a>
           <a href="/refunds" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none' }}>Refunds & Delivery</a>

@@ -39,4 +39,56 @@ a {
   html {
     color-scheme: dark;
   }
+  /* Blog post body — styles the HTML rendered from markdown */
+.blog-body p {
+  font-size: 16px;
+  line-height: 1.85;
+  margin-bottom: 22px;
+  color: #2c1a0e;
+}
+
+.blog-body h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #6B0F0F;
+  margin-top: 44px;
+  margin-bottom: 16px;
+}
+
+.blog-body h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #6B0F0F;
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+.blog-body ul {
+  margin: 0 0 22px 0;
+  padding-left: 24px;
+}
+
+.blog-body li {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 10px;
+  color: #2c1a0e;
+}
+
+.blog-body a {
+  color: #6B0F0F;
+  text-decoration: underline;
+  text-decoration-color: rgba(200, 146, 42, 0.6);
+}
+
+.blog-body strong {
+  color: #2c1a0e;
+  font-weight: 700;
+}
+
+.blog-body em {
+  font-style: italic;
+}
 }
