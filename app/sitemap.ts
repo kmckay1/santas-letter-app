@@ -1,56 +1,61 @@
 import { MetadataRoute } from 'next'
+import { getAllPostSlugs } from '@/lib/blog'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.santasletter.ai'
+  const now = new Date()
 
-  return [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
       url: `${baseUrl}/create`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${baseUrl}/refunds`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${baseUrl}/video`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
-    {
-      url: `${baseUrl}/blog/letter-from-santa-stopped-believing`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
   ]
-}  
+
+  const blogPosts: MetadataRoute.Sitemap = getAllPostSlugs().map((slug) => ({
+    url: `${baseUrl}/blog/${slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  return [...staticRoutes, ...blogPosts]
+}
