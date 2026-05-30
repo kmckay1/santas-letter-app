@@ -79,17 +79,6 @@ export default function RootLayout({
             }}
           />
         )}
-        {IS_PRODUCTION && PIXEL_ID && (
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style={{ display: 'none' }}
-              src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
-              alt=""
-            />
-          </noscript>
-        )}
         {children}
         <Analytics />
       </body>
