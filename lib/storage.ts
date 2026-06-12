@@ -12,18 +12,26 @@ export interface StoredLetter {
   email?: string
 }
 
-function getSupabase() {
+function getSupabaseAnon() {
   const url = process.env.SUPABASE_URL
   const key = process.env.SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase env vars not set')
+  if (!url || !key) throw new Error('Supabase anon env vars not set')
   return { url, key }
 }
 
+function getSupabaseAdmin() {
+  const url = process.env.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error('Supabase service role env vars not set')
+  return { url, key }
+}
+
+// Read operations use anon key — no elevated permissions needed for reads
 async function supabaseFetch(
   path: string,
   options: RequestInit = {}
 ): Promise<Response> {
-  const { url, key } = getSupabase()
+  const { url, key } = getSupabaseAnon()
   return fetch(`${url}/rest/v1${path}`, {
     ...options,
     // Opt out of Next.js fetch caching — server components otherwise cache GETs by default,
@@ -39,17 +47,37 @@ async function supabaseFetch(
   })
 }
 
+// Write operations use service-role key to bypass RLS
+async function supabaseAdminFetch(
+  path: string,
+  options: RequestInit = {}
+): Promise<Response> {
+  const { url, key } = getSupabaseAdmin()
+  return fetch(`${url}/rest/v1${path}`, {
+    ...options,
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': key,
+      'Authorization': `Bearer ${key}`,
+      'Prefer': 'return=minimal',
+      ...options.headers,
+    },
+  })
+}
+
 export async function storeLetter(letter: StoredLetter): Promise<string | null> {
+  const { url, key } = getSupabaseAdmin()
   // Use return=representation so we can read back the auto-generated upgrade_token
   const res = await fetch(
-    `${getSupabase().url}/rest/v1/letters`,
+    `${url}/rest/v1/letters`,
     {
       method: 'POST',
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': getSupabase().key,
-        'Authorization': `Bearer ${getSupabase().key}`,
+        'apikey': key,
+        'Authorization': `Bearer ${key}`,
         'Prefer': 'return=representation',
       },
       body: JSON.stringify({
@@ -125,7 +153,7 @@ export async function getLetterByUpgradeToken(token: string): Promise<StoredLett
 }
 
 export async function markLetterFulfilled(id: string, tier: string): Promise<void> {
-  const res = await supabaseFetch(`/letters?id=eq.${id}`, {
+  const res = await supabaseAdminFetch(`/letters?id=eq.${id}`, {
     method: 'PATCH',
     body: JSON.stringify({ fulfilled: true, tier }),
   })
