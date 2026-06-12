@@ -598,8 +598,6 @@ export default function PreviewPage() {
             </div>
 
             <div style={{ background: 'linear-gradient(160deg, #0e1c35 0%, #080f20 100%)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 12, padding: 'clamp(24px, 5vw, 40px) clamp(16px, 4vw, 36px)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 16, left: 20, fontSize: 40, color: 'rgba(212,170,90,0.06)', pointerEvents: 'none' }}>❄</div>
-              <div style={{ position: 'absolute', bottom: 16, right: 20, fontSize: 40, color: 'rgba(212,170,90,0.06)', pointerEvents: 'none' }}>❄</div>
               <div style={{ textAlign: 'center', marginBottom: 28 }}>
                 <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 10 }}>✦ make it extra magical ✦</div>
                 <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(20px, 4vw, 26px)', color: '#f5ead8', fontWeight: 400, margin: '0 0 8px', lineHeight: 1.3 }}>
