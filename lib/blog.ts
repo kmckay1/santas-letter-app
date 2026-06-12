@@ -17,11 +17,17 @@ export interface Post extends PostMeta {
   html: string
 }
 
+function isPublished(data: Record<string, unknown>): boolean {
+  if (!data.publishDate) return true
+  return new Date(data.publishDate as string) <= new Date()
+}
+
 function readPostFile(slug: string): Post | null {
   const fullPath = path.join(BLOG_DIR, `${slug}.md`)
   if (!fs.existsSync(fullPath)) return null
   const raw = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(raw)
+  if (!isPublished(data)) return null
   const html = marked.parse(content, { async: false }) as string
   return {
     slug,
@@ -39,6 +45,12 @@ export function getAllPostSlugs(): string[] {
     .readdirSync(BLOG_DIR)
     .filter((f) => f.endsWith('.md'))
     .map((f) => f.replace(/\.md$/, ''))
+    .filter((slug) => {
+      const fullPath = path.join(BLOG_DIR, `${slug}.md`)
+      const raw = fs.readFileSync(fullPath, 'utf8')
+      const { data } = matter(raw)
+      return isPublished(data)
+    })
 }
 
 export function getPost(slug: string): Post | null {

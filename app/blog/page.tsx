@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getAllPosts } from '@/lib/blog'
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'The North Pole Post — Stories & Christmas Magic | SantasLetter.ai',
