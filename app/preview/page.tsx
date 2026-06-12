@@ -147,9 +147,6 @@ const TIER_MAP: Record<string, string> = {
   'Add a child': 'addChild',
 }
 
-// Earliest date a physical letter can mail. Must match the server-side
-// floor in app/api/webhook/route.ts (PHYSICAL_MAIL_EARLIEST_SEND env var).
-// Server enforces this regardless of UI; this is for UX clarity only.
 const EARLIEST_MAIL_DATE = '2026-11-22'
 
 function DeliveryDateModal({
@@ -161,13 +158,9 @@ function DeliveryDateModal({
   onConfirm: (date: string) => void
   onCancel: () => void
 }) {
-  // Customer can pick any date from Nov 22, 2026 onward, capped at Dec 22.
-  // Letters posted in this range arrive between early and late December.
   const minDate = EARLIEST_MAIL_DATE
   const maxDate = '2026-12-22'
 
-  // Three preset arrival windows, each maps to a specific send_after date
-  // that gives Lob 5-10 business days to deliver.
   const presets = [
     { id: 'early', label: 'Early December', sub: 'Arrives Dec 1–7', sendDate: '2026-11-22' },
     { id: 'mid', label: 'Mid-December', sub: 'Arrives Dec 8–15', sendDate: '2026-11-30' },
@@ -312,6 +305,7 @@ export default function PreviewPage() {
   const [step, setStep] = useState<'generating' | 'email-gate' | 'done'>('generating')
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
+  const [emailSubmitting, setEmailSubmitting] = useState(false)
   const [genError, setGenError] = useState(false)
   const [dots, setDots] = useState('.')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
@@ -364,12 +358,16 @@ export default function PreviewPage() {
     } catch { setGenError(true) }
   }
 
+  // CHANGE 3: handleEmail now tracks submitting state so the button
+  // shows a loading label and disables while the API call runs,
+  // preventing double-taps and making it clear something is happening.
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       setEmailError('Please enter a valid email address')
       return
     }
+    setEmailSubmitting(true)
     const language = sessionStorage.getItem('santaLanguage') || 'en'
     if (child) {
       try {
@@ -381,6 +379,7 @@ export default function PreviewPage() {
       } catch { console.warn('Email delivery call failed') }
     }
     trackEvent('Lead', { content_name: 'email_gate_submission' })
+    setEmailSubmitting(false)
     setStep('done')
   }
 
@@ -508,11 +507,36 @@ export default function PreviewPage() {
             <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.25)', borderRadius: 8, padding: 'clamp(20px, 4vw, 32px) clamp(16px, 4vw, 36px)' }}>
               <form onSubmit={handleEmail}>
                 <label style={{ display: 'block', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(245,234,216,0.5)', marginBottom: 12 }}>Your email address</label>
-                <input type="email" placeholder="parent@example.com" value={email} onChange={e => { setEmail(e.target.value); setEmailError('') }}
-                  style={{ width: '100%', padding: '14px 18px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(245,234,216,0.18)', borderRadius: 5, color: '#f5ead8', fontFamily: 'Georgia, serif', fontSize: 16, marginBottom: 14, boxSizing: 'border-box', outline: 'none' }} />
+                <input
+                  type="email"
+                  placeholder="parent@example.com"
+                  value={email}
+                  onChange={e => { setEmail(e.target.value); setEmailError('') }}
+                  disabled={emailSubmitting}
+                  style={{ width: '100%', padding: '14px 18px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(245,234,216,0.18)', borderRadius: 5, color: '#f5ead8', fontFamily: 'Georgia, serif', fontSize: 16, marginBottom: 14, boxSizing: 'border-box', outline: 'none', opacity: emailSubmitting ? 0.6 : 1 }}
+                />
                 {emailError && <p style={{ color: '#f09595', fontSize: 13, margin: '0 0 14px' }}>{emailError}</p>}
-                <button type="submit" style={{ width: '100%', padding: '15px', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', border: 'none', borderRadius: 5, fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, cursor: 'pointer', letterSpacing: '0.04em', boxShadow: '0 6px 24px rgba(200,56,43,0.45)' }}>
-                  ✦ Reveal {child?.name}&apos;s letter
+                {/* CHANGE 3: Button shows loading state while API call runs */}
+                <button
+                  type="submit"
+                  disabled={emailSubmitting}
+                  style={{
+                    width: '100%',
+                    padding: '15px',
+                    background: emailSubmitting
+                      ? 'linear-gradient(135deg, #8a2820 0%, #6b1515 100%)'
+                      : 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 5,
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontSize: 18,
+                    cursor: emailSubmitting ? 'wait' : 'pointer',
+                    letterSpacing: '0.04em',
+                    boxShadow: '0 6px 24px rgba(200,56,43,0.45)',
+                    transition: 'background 0.2s',
+                  }}>
+                  {emailSubmitting ? '✦ Sending your letter...' : `✦ Reveal ${child?.name}'s letter`}
                 </button>
                 <p style={{ textAlign: 'center', marginTop: 14, fontSize: 12, color: 'rgba(245,234,216,0.4)', lineHeight: 1.7 }}>Free forever · No spam · Just Christmas magic</p>
               </form>

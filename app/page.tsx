@@ -245,8 +245,9 @@ export default function Home() {
         </p>
 
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
+          {/* CHANGE 1: CTA copy updated to make "free" the explicit above-fold promise */}
           <Link href="/create" style={{ background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 36px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)', display: 'inline-block' }}>
-            ✦ Write my child&apos;s letter
+            ✦ Get your child&apos;s free Santa letter
           </Link>
           <a href="#how-it-works" style={{ background: 'transparent', color: '#d4aa5a', padding: '16px 32px', borderRadius: 4, fontSize: 16, textDecoration: 'none', border: '1px solid rgba(212,170,90,0.35)', display: 'inline-block' }}>
             See how it works
@@ -284,7 +285,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Testimonials — below letter preview, highest value position */}
+        {/* Testimonials */}
         <Testimonials />
 
         {/* How it works */}
@@ -306,6 +307,10 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        {/* CHANGE 2: Lead magnet moved above pricing — lowest-friction email capture
+            should appear before the purchase decision, not after it */}
+        <LeadMagnet />
 
         {/* Pricing */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.2)', borderRadius: 8, padding: '28px 40px', marginBottom: 40 }}>
@@ -333,7 +338,6 @@ export default function Home() {
         </div>
 
         <VideoWaitlistBanner />
-        <LeadMagnet />
 
         <FAQ />
 
