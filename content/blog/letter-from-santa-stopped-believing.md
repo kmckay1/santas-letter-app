@@ -18,7 +18,7 @@ If you've found your way to this page, you're probably standing at that exact th
 
 Childhood belief in Santa rarely switches off like a light. For most kids it dims slowly, somewhere between the ages of six and ten, flickering between *I'm pretty sure* and *but what if*. Researchers who study this transition have found something tender and useful in it. Children often *want* to keep believing even after the logical part of their brain has started raising its hand. The wonder and the doubt coexist for a while. They're not lying to you when they say they still believe, and they're not entirely fooling themselves either. They're holding both at once, the way we all hold the things we love and the things we know.
 
-That in-between space is precious. It's also where a little bit of magic goes a remarkably long way.
+TThat in-between space is precious. It's also where a little bit of magic goes a remarkably long way. If you want the full developmental picture on that timeline, there's dedicated research on [what age kids stop believing in Santa](/blog/what-age-do-kids-stop-believing-in-santa).
 
 ## Why you don't have to "come clean" just yet
 
