@@ -42,7 +42,9 @@ That's the child for whom a letter with real specific details becomes a meaningf
 
 There's something worth preserving in that. Not the specific belief in a man with a sleigh, but the capacity to let wonder coexist with skepticism. A child who learns too early that the answer is always "it was just your parents" loses something more than Santa. They lose a template for holding mystery comfortably.
 
-[Keeping the magic alive](https://www.santasletter.ai/blog/letter-from-santa-stopped-believing) for a child who is starting to doubt is genuinely harder than sustaining it in a young child. A letter that demonstrates awareness of the child's specific year, with no way for a skeptical 7-year-old to easily explain how Santa could have known, does some of that work.
+[Keeping the magic alive](https://www.santasletter.ai/blog/letter-from-santa-stopped-believing) [Keeping the magic alive](https://www.santasletter.ai/blog/letter-from-santa-stopped-believing) for a child who is starting to doubt is genuinely harder than sustaining it in a young child. A letter that demonstrates awareness of the child's specific year, with no way for a skeptical 7-year-old to easily explain how Santa could have known, does some of that work. The physical evidence side of that equation is covered in [twelve ways to make Santa feel real](/blog/santa-proof-ideas) — ideas that work best when paired with a letter that references the same specific details. The physical evidence side of that equation is covered in [twelve ways to make Santa feel real](/blog/santa-proof-ideas) — ideas that work best when paired with a letter that references the same specific details.
+
+Make all four changes, save, and give me the full clean post #9 request and I'll produce it. Then we move to post #10.
 
 If you want to see what that actually looks like, you can [get a free personalized letter](/create) without committing to anything. The free version gives you a real sense of what the personalization produces.
 

@@ -12,7 +12,7 @@ It usually doesn't arrive as a single dramatic announcement. It arrives as a que
 
 Maybe a kid at school said something. Maybe your child noticed your handwriting looked a little familiar on last year's tag. Maybe they've simply reached the age where the math of one man, one night, and the entire world stopped adding up. However it happens, that question lands in a parent's chest with a specific kind of ache, because you know what it really means. The window is closing.
 
-If you've found your way to this page, you're probably standing at that exact threshold. And the first thing worth saying is this: you have more time than you think.
+If you've found your way to this page, you're probably standing at that exact threshold. And the first thing worth saying is this: you have more time than you think. If you want the full developmental picture on that timeline, there's dedicated research on [what age kids stop believing in Santa](/blog/what-age-do-kids-stop-believing-in-santa). If your child has just asked you directly whether Santa is real, [how to answer in the moment](/blog/how-to-answer-is-santa-real) covers the specific words to use tonight.
 
 ## The believing years don't end overnight
 
@@ -67,7 +67,7 @@ If your child is in that tender, doubting place this year, here's the gentle pat
 
 **Lean into specificity.** Whatever traditions you keep, make them personal. Generic magic is forgettable. Magic that's clearly about *them* is unforgettable.
 
-**Give them something they can hold.** A real letter, addressed to them, full of details only Santa could know, is the kind of keepsake that turns a wavering believer back into a wide-eyed one. Many families tuck these away and bring them out years later. They become part of the family story.
+**Give them something they can hold.** A real letter, addressed to them, full of details only Santa could know, is the kind of keepsake that turns a wavering believer back into a wide-eyed one. Many families tuck these away and bring them out years later. They become part of the family story. For the physical evidence side, [twelve ways to make Santa feel real on Christmas Eve](/blog/santa-proof-ideas) covers everything from boot prints to the coherence layer that ties it all together. When the time comes to cross the threshold fully, [the "becoming a Santa" letter](/blog/becoming-a-santa-letter) is the most powerful way to mark the transition.
 
 This is the whole reason we built SantasLetter.ai. You tell us about your child, their name, their age, the things they've done this year, what they're hoping for, and Santa writes them a letter that's genuinely, specifically *theirs*. Warm, personal, and grounded entirely in the real details you share. No two letters are alike, because no two children are.
 

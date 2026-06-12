@@ -42,7 +42,7 @@ This is the tradition I'd argue is worth the most thought, because it's the one 
 
 Most parents, when they think about getting a letter from Santa, think of it as a one-time gesture. An ornament for the occasion. But consider the alternative: a letter that starts the year your child is born and continues through age eight or nine, when the magic starts to fade.
 
-What you'd have at the end isn't a letter. It's a record. If you're wondering whether a Santa letter actually makes a difference developmentally, [the case for why kids still need one](/blog/why-kids-need-a-letter-from-santa) is worth reading first.
+What you'd have at the end isn't a letter. It's a record. If you're wondering whether a Santa letter actually makes a difference developmentally, [the case for why kids still need one](/blog/why-kids-need-a-letter-from-santa) is worth reading first. For more gift ideas in the same spirit, [sentimental Christmas gifts for kids](/blog/sentimental-christmas-gifts-for-kids) covers the broader category. For the keepsake-specific deep dive, [Christmas keepsakes kids will actually keep](/blog/christmas-keepsakes-kids-will-actually-keep) covers six ideas that hold their value into adulthood.
 
 Year one, Santa writes to a baby who doesn't know his own name yet, but whose parents have told Santa exactly who he already is: how his eyes went wide the first time he saw lights on a tree, how he belly-laughed at the dog, how his arrival changed everything. The letter is written to the child, but it's also written for the parents, in the way that a photograph taken today is for the person who looks back at it later.
 
@@ -58,7 +58,7 @@ The [long-distance grandparents](https://www.santasletter.ai/blog/long-distance-
 
 ## Start small. Start now.
 
-You don't need all four of these. Pick one or two that sound like you and actually do them. A tradition you start this year and sustain for a decade is worth more than five you start and abandon.
+You don't need all four of these. Pick one or two that sound like you and actually do them. A tradition you start this year and sustain for a decade is worth more than five you start and abandon. If you're thinking through the timing of when each tradition will actually land developmentally, [when to start Christmas traditions with young kids](/blog/when-to-start-christmas-traditions-with-kids) covers the full picture by age. For a full breakdown of Christmas Eve box ideas by age, [Christmas Eve box ideas for 2026](/blog/christmas-eve-box-ideas-2026) covers what actually works at each stage.
 
 The handprint and the photo are the lowest-lift. They require almost nothing and accumulate on their own.
 

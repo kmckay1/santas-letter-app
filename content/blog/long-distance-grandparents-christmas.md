@@ -58,7 +58,7 @@ If you want to order for more than one grandchild, you can add additional childr
 
 If you'd prefer the DIY route, the [USPS North Pole postmark program](/blog/north-pole-postmark-2026-guide) is a real and free alternative where you write the letter yourself and mail it through the Anchorage, Alaska post office for a genuine postmark. It takes more effort and has a tight December deadline, but it works.
 
-The physical letter is $29. There's also a [free letter from Santa](https://www.santasletter.ai/blog/free-letter-from-santa-2026) option if you'd like to see what the personalization looks like before you order. The free version is an email PDF rather than a mailed letter, but it's the same personalization mechanic and a good way to get a feel for it.
+The physical letter is $29. There's also a [free letter from Santa](https://www.santasletter.ai/blog/free-letter-from-santa-2026) option if you'd like to see what the personalization looks like before you order. If you're looking for other sentimental gift ideas beyond the letter, [Christmas gifts for kids that actually last](/blog/sentimental-christmas-gifts-for-kids) covers five more options in the same spirit. For the broader category of keepsakes worth building over years, [Christmas keepsakes kids will actually keep](/blog/christmas-keepsakes-kids-will-actually-keep) covers six ideas that pass the specificity test. The free version is an email PDF rather than a mailed letter, but it's the same personalization mechanic and a good way to get a feel for it.
 
 ---
 
