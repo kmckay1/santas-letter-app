@@ -79,6 +79,13 @@ export default function RootLayout({
             }}
           />
         )}
+        {IS_PRODUCTION && (
+          <Script
+            id="contentsquare"
+            src="https://t.contentsquare.net/uxa/9173e4f5bea3d.js"
+            strategy="afterInteractive"
+          />
+        )}
         {children}
         <Analytics />
       </body>
