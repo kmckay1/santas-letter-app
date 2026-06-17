@@ -135,10 +135,10 @@ function Testimonials() {
   ]
 
   return (
-    <div style={{ marginBottom: 48 }}>
+    <div style={{ marginBottom: 32 }}>
       <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8, textAlign: 'center' }}>✦ what parents are saying ✦</div>
       <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 32px', textAlign: 'center' }}>Real families, real magic</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginBottom: 32 }}>
         {testimonials.map((t, i) => (
           <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.18)', borderRadius: 12, padding: '28px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ color: '#d4aa5a', fontSize: 16, letterSpacing: 3 }}>
@@ -153,6 +153,13 @@ function Testimonials() {
             </div>
           </div>
         ))}
+      </div>
+      {/* CHANGE 2: CTA after testimonials — catches readers at peak trust moment */}
+      <div style={{ textAlign: 'center', marginBottom: 16 }}>
+        <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 40px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
+          ✦ Get your child&apos;s free Santa letter
+        </Link>
+        <p style={{ fontSize: 12, color: 'rgba(245,234,216,0.4)', marginTop: 10 }}>Free to generate · No credit card needed · Takes 2 minutes</p>
       </div>
     </div>
   )
@@ -245,7 +252,6 @@ export default function Home() {
         </p>
 
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
-          {/* CHANGE 1: CTA copy updated to make "free" the explicit above-fold promise */}
           <Link href="/create" style={{ background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 36px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)', display: 'inline-block' }}>
             ✦ Get your child&apos;s free Santa letter
           </Link>
@@ -278,14 +284,16 @@ export default function Home() {
               <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 32, color: '#7B1010' }}>Santa Claus</div>
             </div>
           </div>
-          <div style={{ padding: '16px 60px 28px', background: 'rgba(253,246,227,0.95)', borderTop: '1px solid rgba(139,90,43,0.1)', textAlign: 'center' }}>
-            <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '12px 36px', borderRadius: 3, fontSize: 14, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.06em' }}>
-              ✦ Generate your child&apos;s letter →
+          {/* CHANGE 1: Larger button, copy names the free offer and the time commitment */}
+          <div style={{ padding: '20px 40px 32px', background: 'rgba(253,246,227,0.95)', borderTop: '1px solid rgba(139,90,43,0.1)', textAlign: 'center' }}>
+            <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '16px 48px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
+              ✦ Get your child&apos;s free letter
             </Link>
+            <p style={{ fontSize: 12, color: 'rgba(44,21,8,0.45)', marginTop: 10, marginBottom: 0 }}>Free to generate · No credit card · Takes 2 minutes</p>
           </div>
         </div>
 
-        {/* Testimonials */}
+        {/* Testimonials — CTA injected after reviews inside the component */}
         <Testimonials />
 
         {/* How it works */}
@@ -308,8 +316,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* CHANGE 2: Lead magnet moved above pricing — lowest-friction email capture
-            should appear before the purchase decision, not after it */}
         <LeadMagnet />
 
         {/* Pricing */}
