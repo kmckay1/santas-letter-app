@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { ChildInfo } from '@/types'
 
 function Snowflakes() {
@@ -62,8 +62,9 @@ const LANGUAGES = [
   { code: 'fi', label: '🇫🇮 Suomi' },
 ]
 
-export default function CreatePage() {
+function CreateForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [form, setForm] = useState({
     name: '', age: '', behaviorRating: 8,
     behaviorNotes: '', wishes: ['', '', ''], parentNotes: '',
@@ -77,7 +78,14 @@ export default function CreatePage() {
     if (LANGUAGES.find(l => l.code === browserLang)) {
       setLanguage(browserLang)
     }
-  }, [])
+    // Pre-fill the name from the homepage preview handoff (/create?name=Sophia).
+    // Runs after the sessionStorage reset above so it is not wiped.
+    const nameParam = searchParams.get('name')
+    if (nameParam) {
+      const cleaned = nameParam.trim().slice(0, 50)
+      if (cleaned) setForm(prev => ({ ...prev, name: cleaned }))
+    }
+  }, [searchParams])
 
   const updateWish = (index: number, value: string) => {
     const updated = [...form.wishes]
@@ -229,7 +237,7 @@ export default function CreatePage() {
             {/* Behavior notes */}
             <div style={{ marginBottom: 24 }}>
               <label style={labelStyle}>What has Santa noticed this year?</label>
-              <span style={hintStyle}>Optional — specific details make the letter magical</span>
+              <span style={hintStyle}>Optional. Specific details make the letter magical</span>
               <textarea
                 placeholder="She helped her little brother with homework, started swimming lessons…"
                 value={form.behaviorNotes}
@@ -262,7 +270,7 @@ export default function CreatePage() {
             {/* Secret note */}
             <div style={{ marginBottom: 28 }}>
               <label style={labelStyle}>🤫 Secret note to Santa</label>
-              <span style={hintStyle}>Optional — your child will never see this</span>
+              <span style={hintStyle}>Optional. Your child will never see this</span>
               <textarea
                 placeholder="She's been going through a tough time at school and could use some encouragement…"
                 value={form.parentNotes}
@@ -304,5 +312,15 @@ export default function CreatePage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function CreatePage() {
+  return (
+    <Suspense fallback={
+      <main style={{ minHeight: '100vh', background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 60%)' }} />
+    }>
+      <CreateForm />
+    </Suspense>
   )
 }

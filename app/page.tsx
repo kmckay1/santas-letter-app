@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import EarlyBirdBanner from '../components/EarlyBirdBanner'
 
 function Snowflakes() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -49,9 +48,9 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
         <div style={{ fontSize: 64, marginBottom: 20, filter: 'drop-shadow(0 8px 24px rgba(200,56,43,0.5))' }}>🎅</div>
         <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 14 }}>✦ wait — don&apos;t go yet ✦</div>
         <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 14px', lineHeight: 1.25 }}>Your child&apos;s letter<br />from Santa is free</h2>
-        <p style={{ fontSize: 15, color: 'rgba(245,234,216,0.6)', margin: '0 0 32px', lineHeight: 1.75, fontStyle: 'italic' }}>It takes less than two minutes. No credit card needed — just a little Christmas magic.</p>
+        <p style={{ fontSize: 15, color: 'rgba(245,234,216,0.6)', margin: '0 0 32px', lineHeight: 1.75, fontStyle: 'italic' }}>It takes less than two minutes. No credit card needed, just a little Christmas magic.</p>
         <Link href="/create" onClick={onClose} style={{ display: 'block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 32px', borderRadius: 4, fontSize: 16, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)', marginBottom: 14 }}>
-          ✦ Write my child&apos;s free letter
+          ✦ Create my child&apos;s free letter
         </Link>
         <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(245,234,216,0.25)', fontSize: 12, cursor: 'pointer', fontFamily: 'Georgia, serif' }}>No thanks, I&apos;ll skip the magic</button>
       </div>
@@ -66,7 +65,7 @@ function VideoWaitlistBanner() {
         <div style={{ fontSize: 32, flexShrink: 0 }}>🎬</div>
         <div style={{ flex: 1, textAlign: 'left' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 4 }}>Coming October 2026</div>
-          <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 16, color: '#f5ead8', lineHeight: 1.3 }}>Personalised video from Santa — join the waitlist for 30% off</div>
+          <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 16, color: '#f5ead8', lineHeight: 1.3 }}>Personalised video from Santa. Join the waitlist for 30% off</div>
         </div>
         <div style={{ color: '#d4aa5a', fontSize: 18, flexShrink: 0 }}>→</div>
       </div>
@@ -74,48 +73,10 @@ function VideoWaitlistBanner() {
   )
 }
 
-function LeadMagnet() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return
-    setStatus('loading')
-    try {
-      const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
-      if (res.ok) setStatus('done')
-      else setStatus('error')
-    } catch { setStatus('error') }
-  }
-  return (
-    <div style={{ background: 'linear-gradient(135deg, rgba(212,170,90,0.08) 0%, rgba(180,130,50,0.04) 100%)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 12, padding: '36px 40px', marginBottom: 40, textAlign: 'center' }}>
-      <div style={{ fontSize: 36, marginBottom: 12 }}>🎁</div>
-      <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 10 }}>✦ free gift from santa&apos;s workshop ✦</div>
-      <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#f5ead8', fontWeight: 400, margin: '0 0 10px', lineHeight: 1.3 }}>5 Magical Christmas Activities for Your Kids</h2>
-      <p style={{ fontSize: 14, color: 'rgba(245,234,216,0.55)', margin: '0 0 28px', lineHeight: 1.75, fontStyle: 'italic', maxWidth: 420, marginLeft: 'auto', marginRight: 'auto' }}>From reindeer food to kindness countdowns — free ideas delivered instantly to your inbox.</p>
-      {status === 'done' ? (
-        <div style={{ padding: '16px 24px', background: 'rgba(212,170,90,0.1)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 8 }}>
-          <div style={{ fontSize: 24, marginBottom: 8 }}>✉️</div>
-          <div style={{ color: '#d4aa5a', fontSize: 15, fontFamily: "'Playfair Display', Georgia, serif" }}>Check your inbox — the magic is on its way!</div>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 10, maxWidth: 440, margin: '0 auto', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <input type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required style={{ flex: 1, minWidth: 220, padding: '13px 18px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(245,234,216,0.2)', borderRadius: 4, color: '#f5ead8', fontFamily: 'Georgia, serif', fontSize: 15, outline: 'none' }} />
-          <button type="submit" disabled={status === 'loading'} style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #d4aa5a, #a8802a)', color: '#0d1b2e', border: 'none', borderRadius: 4, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
-            {status === 'loading' ? 'Sending...' : '✦ Send me the ideas'}
-          </button>
-          {status === 'error' && <p style={{ width: '100%', color: '#f09595', fontSize: 12, margin: '4px 0 0', textAlign: 'center' }}>Something went wrong — please try again.</p>}
-        </form>
-      )}
-      <p style={{ fontSize: 11, color: 'rgba(245,234,216,0.25)', margin: '14px 0 0' }}>No spam · Unsubscribe anytime</p>
-    </div>
-  )
-}
-
-function Testimonials() {
+function Testimonials({ ctaHref, ctaLabel }: { ctaHref: string; ctaLabel: string }) {
   const testimonials = [
     {
-      quote: "My daughter burst into tears — happy ones — when I read her the letter. Santa mentioned her little act of kindness at school and she couldn't believe he knew. Worth every penny.",
+      quote: "My daughter burst into tears, happy ones, when I read her the letter. Santa mentioned her little act of kindness at school and she couldn't believe he knew. Worth every penny.",
       name: "Sarah M.",
       detail: "Mum of Lily, age 6 · United Kingdom",
       stars: 5,
@@ -127,7 +88,7 @@ function Testimonials() {
       stars: 5,
     },
     {
-      quote: "I was sceptical but the quality blew me away. The letter mentioned specific things about my kids — their names, their wishes, even something kind they'd done. Absolutely magical.",
+      quote: "I was sceptical but the quality blew me away. The letter mentioned specific things about my kids, their names, their wishes, even something kind they'd done. Absolutely magical.",
       name: "Emma R.",
       detail: "Mum of twins, age 5 · Australia",
       stars: 5,
@@ -154,10 +115,9 @@ function Testimonials() {
           </div>
         ))}
       </div>
-      {/* CHANGE 2: CTA after testimonials — catches readers at peak trust moment */}
       <div style={{ textAlign: 'center', marginBottom: 16 }}>
-        <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 40px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
-          ✦ Get your child&apos;s free Santa letter
+        <Link href={ctaHref} style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 40px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
+          ✦ {ctaLabel}
         </Link>
         <p style={{ fontSize: 12, color: 'rgba(245,234,216,0.4)', marginTop: 10 }}>Free to generate · No credit card needed · Takes 2 minutes</p>
       </div>
@@ -168,9 +128,9 @@ function Testimonials() {
 function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const faqs = [
-    { q: 'Is the letter really free?', a: 'Yes — completely free. Enter your child\'s details, generate their letter, and read the full thing at no cost. We\'ll send it to your email too. Paid options are available if you\'d like a beautifully designed PDF or a real printed letter posted to your door.' },
-    { q: 'Is this AI-generated?', a: 'Yes — each letter is written by AI, trained to write in the warm, magical voice of Santa Claus. Every letter is unique and personalised using the details you provide. We review our prompts carefully to ensure the letters feel genuinely special, not generic.' },
-    { q: 'When will my physical letter arrive?', a: 'Physical letters are printed and posted within 1–2 business days via USPS First Class Mail. Estimated delivery is 5–10 business days within the US. For guaranteed Christmas delivery, we recommend ordering by December 15.' },
+    { q: 'Is the letter really free?', a: 'Yes, completely free. Enter your child\'s details, generate their letter, and read the full thing at no cost. We\'ll send it to your email too. Paid options are available if you\'d like a beautifully designed PDF or a real printed letter posted to your door.' },
+    { q: 'Is this AI-generated?', a: 'Yes. Each letter is written by AI, trained to write in the warm, magical voice of Santa Claus. Every letter is unique and personalised using the details you provide. We review our prompts carefully to ensure the letters feel genuinely special, not generic.' },
+    { q: 'When will my physical letter arrive?', a: 'Physical letters are printed and posted within 1 to 2 business days via USPS First Class Mail. Estimated delivery is 5 to 10 business days within the US. For guaranteed Christmas delivery, we recommend ordering by December 15.' },
     { q: 'What countries do you ship to?', a: 'We currently ship physical letters to the US, UK, Canada, Australia, Ireland, Netherlands, Germany, France, Belgium, Spain, Italy, Portugal, Sweden, Norway, Denmark, Finland, and Poland. Digital PDFs are available worldwide.' },
     { q: 'Can I order for more than one child?', a: 'Yes! After your first order you\'ll see the option to add another child for just $15. Each child gets their own fully personalised letter mentioning their name, age, interests, and good deeds.' },
     { q: 'Is my child\'s information safe?', a: 'Absolutely. We take privacy seriously, especially when it comes to children\'s data. We only collect the information needed to write the letter, we never share it with third parties for marketing, and we comply with COPPA. Read our full Privacy Policy for details.' },
@@ -203,6 +163,14 @@ export default function Home() {
   const [showExitPopup, setShowExitPopup] = useState(false)
   const exitTriggered = useRef(false)
 
+  // Interactive preview: the visitor types their child's name and the demo
+  // letter + every CTA personalises to it. This is the homepage-to-/create hook.
+  const [childName, setChildName] = useState('')
+  const trimmedName = childName.trim()
+  const displayName = trimmedName || 'Emma'
+  const createHref = trimmedName ? `/create?name=${encodeURIComponent(trimmedName)}` : '/create'
+  const primaryCtaLabel = trimmedName ? `Create ${displayName}'s free letter` : "Create your child's free letter"
+
   useEffect(() => {
     if (sessionStorage.getItem('exit_popup_shown')) return
     const handleMouseLeave = (e: MouseEvent) => {
@@ -221,7 +189,6 @@ export default function Home() {
 
       {showExitPopup && <ExitIntentPopup onClose={() => setShowExitPopup(false)} />}
       <Snowflakes />
-      <EarlyBirdBanner />
 
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)', zIndex: 200 }} />
 
@@ -247,13 +214,18 @@ export default function Home() {
           A letter from Santa,<br /><em style={{ color: '#d4aa5a', fontStyle: 'italic' }}>written just for them</em>
         </h1>
 
-        <p style={{ fontSize: 17, color: 'rgba(245,234,216,0.75)', margin: '0 0 40px', lineHeight: 1.75, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
-          Personalised letters from the North Pole — free to read, beautiful to keep, magical to receive.
+        <p style={{ fontSize: 17, color: 'rgba(245,234,216,0.75)', margin: '0 0 14px', lineHeight: 1.75, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
+          Personalised letters from the North Pole. Free to read, beautiful to keep, magical to receive.
+        </p>
+
+        {/* AI-trust line: pre-empts the parent's quiet "will it feel robotic" worry */}
+        <p style={{ fontSize: 13, color: 'rgba(245,234,216,0.5)', margin: '0 0 36px', lineHeight: 1.7, maxWidth: 480, marginLeft: 'auto', marginRight: 'auto', fontStyle: 'italic' }}>
+          Every letter is uniquely written from the details you share. Nothing generic, nothing canned.
         </p>
 
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
-          <Link href="/create" style={{ background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 36px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)', display: 'inline-block' }}>
-            ✦ Get your child&apos;s free Santa letter
+          <Link href={createHref} style={{ background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 36px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)', display: 'inline-block' }}>
+            ✦ {primaryCtaLabel}
           </Link>
           <a href="#how-it-works" style={{ background: 'transparent', color: '#d4aa5a', padding: '16px 32px', borderRadius: 4, fontSize: 16, textDecoration: 'none', border: '1px solid rgba(212,170,90,0.35)', display: 'inline-block' }}>
             See how it works
@@ -265,36 +237,51 @@ export default function Home() {
           <span>1,247 letters sent to the North Pole this season</span>
         </div>
 
-        {/* Letter preview card */}
-        <div style={{ background: 'linear-gradient(175deg, #fffef9 0%, #fdf6e3 100%)', borderRadius: 6, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,90,43,0.25)', marginBottom: 48, textAlign: 'left' }}>
-          <div style={{ height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)' }} />
-          <div style={{ padding: '40px 60px' }}>
-            <div style={{ fontSize: 8, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(44,21,8,0.38)', marginBottom: 6, fontFamily: 'Georgia, serif' }}>From the desk of Santa Claus · North Pole</div>
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#150800', marginBottom: 18 }}>Dear Emma,</div>
-            <hr style={{ border: 'none', borderTop: '1px solid rgba(139,90,43,0.12)', marginBottom: 20 }} />
-            <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: '0 0 16px', fontFamily: "'Lora', Georgia, serif" }}>
-              My elves told me something wonderful — that this year you learned to share your favourite toys with your little brother, even when it was hard. I see everything, you know, and that made my heart as warm as fresh cookies from Mrs. Claus&apos;s oven.
-            </p>
-            <div style={{ filter: 'blur(5px)', userSelect: 'none' }}>
-              <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: 0, fontFamily: "'Lora', Georgia, serif" }}>
-                Your wish for the art set and the astronomy kit? Well, Mrs. Claus and I had a very long chat about that, and the reindeer have been extra busy this week loading up the sleigh with some very special surprises just for you. I cannot say more — but I think you will be pleased.
-              </p>
-            </div>
-            <div style={{ marginTop: 24, paddingTop: 18, borderTop: '1px solid rgba(139,90,43,0.1)' }}>
-              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 32, color: '#7B1010' }}>Santa Claus</div>
-            </div>
+        {/* Letter preview card — interactive name field drives personalisation */}
+        <div style={{ marginBottom: 48 }}>
+          <div style={{ marginBottom: 16, textAlign: 'center' }}>
+            <label htmlFor="preview-name" style={{ display: 'block', fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 12 }}>
+              Type your child&apos;s name to begin their letter
+            </label>
+            <input
+              id="preview-name"
+              type="text"
+              value={childName}
+              onChange={e => setChildName(e.target.value)}
+              placeholder="Your child's name"
+              maxLength={50}
+              style={{ width: '100%', maxWidth: 320, padding: '14px 20px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(212,170,90,0.35)', borderRadius: 4, color: '#f5ead8', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, textAlign: 'center', outline: 'none', letterSpacing: '0.02em' }}
+            />
           </div>
-          {/* CHANGE 1: Larger button, copy names the free offer and the time commitment */}
-          <div style={{ padding: '20px 40px 32px', background: 'rgba(253,246,227,0.95)', borderTop: '1px solid rgba(139,90,43,0.1)', textAlign: 'center' }}>
-            <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '16px 48px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
-              ✦ Get your child&apos;s free letter
-            </Link>
-            <p style={{ fontSize: 12, color: 'rgba(44,21,8,0.45)', marginTop: 10, marginBottom: 0 }}>Free to generate · No credit card · Takes 2 minutes</p>
+
+          <div style={{ background: 'linear-gradient(175deg, #fffef9 0%, #fdf6e3 100%)', borderRadius: 6, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,90,43,0.25)', textAlign: 'left' }}>
+            <div style={{ height: 5, background: 'linear-gradient(90deg, #6B0F0F, #c8382b 25%, #d4aa5a 50%, #c8382b 75%, #6B0F0F)' }} />
+            <div style={{ padding: '40px 60px' }}>
+              <div style={{ fontSize: 8, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(44,21,8,0.38)', marginBottom: 6, fontFamily: 'Georgia, serif' }}>From the desk of Santa Claus · North Pole</div>
+              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#150800', marginBottom: 18 }}>Dear {displayName},</div>
+              <hr style={{ border: 'none', borderTop: '1px solid rgba(139,90,43,0.12)', marginBottom: 20 }} />
+              <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: '0 0 16px', fontFamily: "'Lora', Georgia, serif" }}>
+                My elves told me something wonderful, that this year you learned to share your favourite toys with your little brother, even when it was hard. I see everything, you know, and that made my heart as warm as fresh cookies from Mrs. Claus&apos;s oven.
+              </p>
+              <div style={{ filter: 'blur(5px)', userSelect: 'none' }}>
+                <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: 0, fontFamily: "'Lora', Georgia, serif" }}>
+                  Your wish for the art set and the astronomy kit? Well, Mrs. Claus and I had a very long chat about that, and the reindeer have been extra busy this week loading up the sleigh with some very special surprises just for you. I cannot say more, but I think you will be pleased.
+                </p>
+              </div>
+              <div style={{ marginTop: 24, paddingTop: 18, borderTop: '1px solid rgba(139,90,43,0.1)' }}>
+                <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 32, color: '#7B1010' }}>Santa Claus</div>
+              </div>
+            </div>
+            <div style={{ padding: '20px 40px 32px', background: 'rgba(253,246,227,0.95)', borderTop: '1px solid rgba(139,90,43,0.1)', textAlign: 'center' }}>
+              <Link href={createHref} style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '16px 48px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
+                ✦ {trimmedName ? `Finish ${displayName}'s letter →` : "Finish your child's letter →"}
+              </Link>
+              <p style={{ fontSize: 12, color: 'rgba(44,21,8,0.45)', marginTop: 10, marginBottom: 0 }}>Free to generate · No credit card · Takes 2 minutes</p>
+            </div>
           </div>
         </div>
 
-        {/* Testimonials — CTA injected after reviews inside the component */}
-        <Testimonials />
+        <Testimonials ctaHref={createHref} ctaLabel={primaryCtaLabel} />
 
         {/* How it works */}
         <div id="how-it-works" style={{ marginBottom: 48 }}>
@@ -314,11 +301,14 @@ export default function Home() {
               </div>
             ))}
           </div>
+          <div style={{ textAlign: 'center', marginTop: 36 }}>
+            <Link href={createHref} style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 40px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
+              ✦ {primaryCtaLabel}
+            </Link>
+          </div>
         </div>
 
-        <LeadMagnet />
-
-        {/* Pricing */}
+        {/* Pricing — moved down near the FAQ so the page feels free until desire exists */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.2)', borderRadius: 8, padding: '28px 40px', marginBottom: 40 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 20 }}>✦ simple pricing ✦</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 16 }}>
@@ -336,8 +326,8 @@ export default function Home() {
             ))}
           </div>
           <div style={{ marginTop: 24, textAlign: 'center' }}>
-            <Link href="/create" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '13px 36px', borderRadius: 4, fontSize: 16, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 6px 20px rgba(200,56,43,0.4)' }}>
-              ✦ Start for free
+            <Link href={createHref} style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b, #9b1f1f)', color: '#fff', padding: '13px 36px', borderRadius: 4, fontSize: 16, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 6px 20px rgba(200,56,43,0.4)' }}>
+              ✦ {primaryCtaLabel}
             </Link>
             <p style={{ fontSize: 12, color: 'rgba(245,234,216,0.65)', marginTop: 12 }}>No credit card needed · Upgrade anytime</p>
           </div>
