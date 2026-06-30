@@ -93,16 +93,22 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
       email,
     }
 
+    // Persist the letter AND the email together. With email now captured on the
+    // form, this write banks the lead the moment generation completes — even if
+    // the user closes the tab before reading. Capture is best-effort: a storage
+    // failure must never block returning the letter to the user.
     let upgradeToken: string | null = null
     try {
       upgradeToken = await storeLetter(storedLetter)
-    } catch (kvErr) {
-      console.warn('KV storage unavailable:', kvErr)
+    } catch (storeErr) {
+      console.warn('Letter storage unavailable:', storeErr)
     }
 
+    // Email the free letter. Best-effort and non-blocking on the response:
+    // if Resend fails, the user still sees their letter on screen and the
+    // email row is already persisted above for Phase 2 to pick up.
     if (email) {
       try {
-        // Include the upgrade token so the email contains a secure tokenized upgrade URL
         await sendFreeLetterEmail(email, { ...storedLetter, upgradeToken: upgradeToken || undefined })
       } catch (emailErr) {
         console.warn('Email delivery failed:', emailErr)

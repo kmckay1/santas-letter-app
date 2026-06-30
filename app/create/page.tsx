@@ -69,6 +69,9 @@ function CreateForm() {
     name: '', age: '', behaviorRating: 8,
     behaviorNotes: '', wishes: ['', '', ''], parentNotes: '',
   })
+  // CHANGE 1: email is now collected on the form, framed as the delivery
+  // address. Captured here so it is banked before letter generation begins.
+  const [email, setEmail] = useState('')
   const [language, setLanguage] = useState('en')
   const [error, setError] = useState('')
 
@@ -101,8 +104,14 @@ function CreateForm() {
     const ageNum = Number(form.age)
     if (isNaN(ageNum) || ageNum < 1 || ageNum > 16) return setError('Please enter a valid age between 1 and 16')
     if (form.wishes.every(w => !w.trim())) return setError('Please add at least one wish')
-    const childData: ChildInfo = { ...form, recipientEmail: '' }
+    // CHANGE 1: email is required so we capture it before generation.
+    // Validated here, then carried to /preview via sessionStorage.
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return setError('Please enter a valid email so Santa knows where to send the letter')
+    }
+    const childData: ChildInfo = { ...form, recipientEmail: email.trim() }
     sessionStorage.setItem('santaChildInfo', JSON.stringify(childData))
+    sessionStorage.setItem('santaEmail', email.trim())
     sessionStorage.setItem('santaLanguage', language)
     sessionStorage.removeItem('santaLetterText')
     sessionStorage.removeItem('santaLetterId')
@@ -268,7 +277,7 @@ function CreateForm() {
             </div>
 
             {/* Secret note */}
-            <div style={{ marginBottom: 28 }}>
+            <div style={{ marginBottom: 24 }}>
               <label style={labelStyle}>🤫 Secret note to Santa</label>
               <span style={hintStyle}>Optional. Your child will never see this</span>
               <textarea
@@ -277,6 +286,21 @@ function CreateForm() {
                 onChange={e => setForm({ ...form, parentNotes: e.target.value })}
                 style={{ ...inputStyle, height: 76, resize: 'vertical' }}
                 maxLength={300}
+              />
+            </div>
+
+            {/* CHANGE 1: Email field, framed as delivery, required.
+                Reads as "where Santa sends it", not as a gate. */}
+            <div style={{ marginBottom: 28 }}>
+              <label style={labelStyle}>📬 Where should Santa send the letter?</label>
+              <span style={hintStyle}>Your email. The letter appears on the next screen and arrives here too.</span>
+              <input
+                type="email"
+                placeholder="parent@example.com"
+                value={email}
+                onChange={e => { setEmail(e.target.value); if (error) setError('') }}
+                style={inputStyle}
+                maxLength={120}
               />
             </div>
 

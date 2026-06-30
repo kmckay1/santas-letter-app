@@ -149,6 +149,111 @@ const TIER_MAP: Record<string, string> = {
 
 const EARLIEST_MAIL_DATE = '2026-11-22'
 
+// CHANGE 2: Animated loading state. The wait now has motion (a writing quill
+// with a glowing nib and a drifting underline) so 8-13 seconds reads as alive,
+// not frozen. Respects prefers-reduced-motion via the media query in the
+// injected <style> tag below.
+function GeneratingState({ name, genError, onRetry }: { name: string; genError: boolean; onRetry: () => void }) {
+  const messages = [
+    'Settling into his favourite chair by the fire',
+    `Reading what this year has held for ${name}`,
+    'Dipping the quill in North Pole ink',
+    'Choosing the words with care',
+    'Pressing the wax seal',
+  ]
+  const [msgIndex, setMsgIndex] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setMsgIndex(i => (i + 1) % messages.length), 2600)
+    return () => clearInterval(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name])
+
+  return (
+    <div style={{ textAlign: 'center', padding: '56px 24px' }}>
+      <style>{`
+        @keyframes sl-quill-bob {
+          0%, 100% { transform: translateY(0) rotate(-8deg); }
+          50% { transform: translateY(-6px) rotate(-4deg); }
+        }
+        @keyframes sl-nib-glow {
+          0%, 100% { opacity: 0.35; }
+          50% { opacity: 1; }
+        }
+        @keyframes sl-ink-draw {
+          0% { stroke-dashoffset: 280; }
+          70% { stroke-dashoffset: 0; }
+          100% { stroke-dashoffset: 0; }
+        }
+        @keyframes sl-spark {
+          0%, 100% { opacity: 0.2; transform: scale(0.8); }
+          50% { opacity: 0.9; transform: scale(1.15); }
+        }
+        @keyframes sl-fade {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .sl-quill { animation: sl-quill-bob 2.4s ease-in-out infinite; transform-origin: bottom center; }
+        .sl-nib { animation: sl-nib-glow 1.6s ease-in-out infinite; }
+        .sl-ink { stroke-dasharray: 280; animation: sl-ink-draw 5.2s ease-in-out infinite; }
+        .sl-spark { animation: sl-spark 2s ease-in-out infinite; }
+        .sl-msg { animation: sl-fade 0.5s ease; }
+        @media (prefers-reduced-motion: reduce) {
+          .sl-quill, .sl-nib, .sl-ink, .sl-spark { animation: none !important; }
+          .sl-nib { opacity: 0.9; }
+          .sl-ink { stroke-dashoffset: 0; }
+        }
+      `}</style>
+
+      <div style={{ position: 'relative', width: 180, height: 150, margin: '0 auto 28px' }}>
+        {/* parchment + quill scene */}
+        <svg width="180" height="150" viewBox="0 0 180 150" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+          <defs>
+            <linearGradient id="slPaper" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#fffef5" />
+              <stop offset="100%" stopColor="#f3e6c4" />
+            </linearGradient>
+          </defs>
+          {/* parchment */}
+          <rect x="34" y="38" width="112" height="96" rx="3" fill="url(#slPaper)" stroke="rgba(139,90,43,0.35)" strokeWidth="1.2" />
+          {/* ink line being drawn */}
+          <path className="sl-ink" d="M 48,66 Q 70,60 92,66 T 134,66 M 48,86 Q 66,81 84,86 T 120,86 M 48,106 Q 64,102 80,106" fill="none" stroke="rgba(109,14,14,0.55)" strokeWidth="2" strokeLinecap="round" />
+          {/* sparkles */}
+          <circle className="sl-spark" cx="40" cy="30" r="2.4" fill="#d4aa5a" style={{ transformOrigin: '40px 30px' }} />
+          <circle className="sl-spark" cx="150" cy="46" r="2" fill="#d4aa5a" style={{ transformOrigin: '150px 46px', animationDelay: '0.6s' }} />
+          <circle className="sl-spark" cx="146" cy="118" r="2.2" fill="#d4aa5a" style={{ transformOrigin: '146px 118px', animationDelay: '1.1s' }} />
+          {/* quill */}
+          <g className="sl-quill">
+            <path d="M 150,18 C 132,40 118,72 112,104 L 120,108 C 130,78 144,48 158,26 Z" fill="#f5ead8" stroke="rgba(139,90,43,0.5)" strokeWidth="1" />
+            <path d="M 150,18 C 138,42 126,72 116,104" fill="none" stroke="rgba(139,90,43,0.3)" strokeWidth="0.8" />
+            {/* nib tip glow */}
+            <circle className="sl-nib" cx="113" cy="106" r="3.6" fill="#d4aa5a" />
+          </g>
+        </svg>
+      </div>
+
+      <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 14 }}>
+        ✦ the north pole post office ✦
+      </div>
+      <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(22px, 5vw, 30px)', color: '#f5ead8', fontWeight: 400, margin: '0 0 18px', lineHeight: 1.3 }}>
+        Santa is writing {name}&apos;s letter
+      </h1>
+      <p key={msgIndex} className="sl-msg" style={{ color: 'rgba(245,234,216,0.6)', fontSize: 15, margin: '0 0 8px', fontStyle: 'italic', minHeight: 24 }}>
+        {messages[msgIndex]}…
+      </p>
+      <p style={{ color: 'rgba(245,234,216,0.3)', fontSize: 12, margin: '0 0 44px' }}>
+        This takes a few seconds. Please keep this window open.
+      </p>
+
+      {genError && (
+        <div>
+          <p style={{ color: '#f09595', marginBottom: 16 }}>Something went wrong. The elves are ready to try again.</p>
+          <button onClick={onRetry} style={{ background: '#c8382b', color: '#fff', border: 'none', padding: '11px 30px', borderRadius: 3, cursor: 'pointer', fontFamily: 'Georgia, serif', fontSize: 14 }}>Try again</button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function DeliveryDateModal({
   tier,
   onConfirm,
@@ -302,12 +407,11 @@ export default function PreviewPage() {
   const [child, setChild] = useState<ChildInfo | null>(null)
   const [letter, setLetter] = useState('')
   const [letterId, setLetterId] = useState('')
-  const [step, setStep] = useState<'generating' | 'email-gate' | 'done'>('generating')
+  // CHANGE 2: only two steps now. The email-gate step is gone because the
+  // email is captured on the form and passed into the single generate call.
+  const [step, setStep] = useState<'generating' | 'done'>('generating')
   const [email, setEmail] = useState('')
-  const [emailError, setEmailError] = useState('')
-  const [emailSubmitting, setEmailSubmitting] = useState(false)
   const [genError, setGenError] = useState(false)
-  const [dots, setDots] = useState('.')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [pendingTier, setPendingTier] = useState<string | null>(null)
   const [showDateModal, setShowDateModal] = useState(false)
@@ -320,31 +424,34 @@ export default function PreviewPage() {
     if (!stored) { router.push('/create'); return }
     const childData = JSON.parse(stored) as ChildInfo
     setChild(childData)
+    // CHANGE 1/2: email now comes from the form via sessionStorage.
+    // Fall back to recipientEmail on the child object for safety.
+    const storedEmail = sessionStorage.getItem('santaEmail') || childData.recipientEmail || ''
+    setEmail(storedEmail)
+
     const cachedLetter = sessionStorage.getItem('santaLetterText')
     const cachedLetterId = sessionStorage.getItem('santaLetterId')
     if (cachedLetter && cachedLetterId) {
       setLetter(cachedLetter)
       setLetterId(cachedLetterId)
-      setStep('email-gate')
+      setStep('done')
     } else {
-      generateLetter(childData)
+      generateLetter(childData, storedEmail)
     }
   }, [])
 
-  useEffect(() => {
-    if (step !== 'generating') return
-    const interval = setInterval(() => setDots(d => d.length >= 3 ? '.' : d + '.'), 600)
-    return () => clearInterval(interval)
-  }, [step])
-
-  async function generateLetter(childData: ChildInfo) {
+  // CHANGE 2: generate ONCE, with the email included, so the letter is
+  // stored and emailed in the same call. No second /api/generate request,
+  // no blurred gate. The email is banked the moment generation fires; if the
+  // user bails during the wait, /api/generate has already captured it.
+  async function generateLetter(childData: ChildInfo, recipientEmail: string) {
     setGenError(false)
     try {
       const language = sessionStorage.getItem('santaLanguage') || 'en'
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ child: childData, language }),
+        body: JSON.stringify({ child: childData, language, email: recipientEmail || undefined }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -354,33 +461,10 @@ export default function PreviewPage() {
         setLetterId(data.letterId)
         sessionStorage.setItem('santaLetterId', data.letterId)
       }
-      setStep('email-gate')
+      // Lead fires on successful completion now, since email was captured up front.
+      trackEvent('Lead', { content_name: 'free_letter_completed' })
+      setStep('done')
     } catch { setGenError(true) }
-  }
-
-  // CHANGE 3: handleEmail now tracks submitting state so the button
-  // shows a loading label and disables while the API call runs,
-  // preventing double-taps and making it clear something is happening.
-  const handleEmail = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setEmailError('Please enter a valid email address')
-      return
-    }
-    setEmailSubmitting(true)
-    const language = sessionStorage.getItem('santaLanguage') || 'en'
-    if (child) {
-      try {
-        await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ child, language, email }),
-        })
-      } catch { console.warn('Email delivery call failed') }
-    }
-    trackEvent('Lead', { content_name: 'email_gate_submission' })
-    setEmailSubmitting(false)
-    setStep('done')
   }
 
   const handleCheckoutClick = (tier: string) => {
@@ -466,82 +550,11 @@ export default function PreviewPage() {
         </div>
 
         {step === 'generating' && (
-          <div style={{ textAlign: 'center', padding: '64px 24px' }}>
-            <div style={{ fontSize: 80, marginBottom: 32, filter: 'drop-shadow(0 12px 32px rgba(200,56,43,0.6))' }}>🎅</div>
-            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(22px, 5vw, 30px)', color: '#f5ead8', fontWeight: 400, margin: '0 0 14px', lineHeight: 1.3 }}>
-              The North Pole Post Office<br />is writing {child?.name}&apos;s letter{dots}
-            </h1>
-            <p style={{ color: 'rgba(245,234,216,0.4)', fontSize: 15, margin: '0 0 52px', fontStyle: 'italic' }}>Santa is settling into his favourite chair ✨</p>
-            {genError && (
-              <div>
-                <p style={{ color: '#f09595', marginBottom: 16 }}>Something went wrong — the elves are trying again!</p>
-                <button onClick={() => child && generateLetter(child)} style={{ background: '#c8382b', color: '#fff', border: 'none', padding: '11px 30px', borderRadius: 3, cursor: 'pointer', fontFamily: 'Georgia, serif', fontSize: 14 }}>Try again</button>
-              </div>
-            )}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 40, opacity: 0.65 }}>
-              {['🕯️', '🎄', '🕯️'].map((e, i) => <span key={i} style={{ fontSize: 30 }}>{e}</span>)}
-            </div>
-          </div>
-        )}
-
-        {step === 'email-gate' && (
-          <div>
-            <div style={{ textAlign: 'center', marginBottom: 36 }}>
-              <div style={{ fontSize: 52, marginBottom: 18, filter: 'drop-shadow(0 6px 20px rgba(212,170,90,0.6))' }}>📜</div>
-              <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 12 }}>✦ delivered from the north pole ✦</div>
-              <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(22px, 5vw, 32px)', color: '#f5ead8', fontWeight: 400, margin: 0, lineHeight: 1.25 }}>
-                {child?.name}&apos;s letter is ready
-              </h1>
-            </div>
-            <div style={{ position: 'relative', marginBottom: 28, borderRadius: 3, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,170,90,0.25)' }}>
-              <div style={{ height: 7, background: 'linear-gradient(90deg, #5a0a0a, #9b1f1f 20%, #c8382b 40%, #d4aa5a 50%, #c8382b 60%, #9b1f1f 80%, #5a0a0a)' }} />
-              <div style={{ background: 'linear-gradient(175deg, #fffef5 0%, #fdf8e8 50%, #faf0d0 100%)', padding: 'clamp(20px, 4vw, 40px) clamp(16px, 4vw, 52px) 32px', filter: 'blur(5px)', maxHeight: 240, overflow: 'hidden', userSelect: 'none' }}>
-                <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(18px, 4vw, 24px)', color: '#150800', marginBottom: 20 }}>Dear {child?.name},</div>
-                {paragraphs}
-              </div>
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 20%, rgba(6,14,28,0.97) 85%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 32, gap: 8 }}>
-                <div style={{ fontSize: 28 }}>🔒</div>
-                <div style={{ color: 'rgba(245,234,216,0.8)', fontSize: 15, fontStyle: 'italic', textAlign: 'center', padding: '0 20px' }}>Enter your email to reveal the full letter</div>
-              </div>
-            </div>
-            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.25)', borderRadius: 8, padding: 'clamp(20px, 4vw, 32px) clamp(16px, 4vw, 36px)' }}>
-              <form onSubmit={handleEmail}>
-                <label style={{ display: 'block', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(245,234,216,0.5)', marginBottom: 12 }}>Your email address</label>
-                <input
-                  type="email"
-                  placeholder="parent@example.com"
-                  value={email}
-                  onChange={e => { setEmail(e.target.value); setEmailError('') }}
-                  disabled={emailSubmitting}
-                  style={{ width: '100%', padding: '14px 18px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(245,234,216,0.18)', borderRadius: 5, color: '#f5ead8', fontFamily: 'Georgia, serif', fontSize: 16, marginBottom: 14, boxSizing: 'border-box', outline: 'none', opacity: emailSubmitting ? 0.6 : 1 }}
-                />
-                {emailError && <p style={{ color: '#f09595', fontSize: 13, margin: '0 0 14px' }}>{emailError}</p>}
-                {/* CHANGE 3: Button shows loading state while API call runs */}
-                <button
-                  type="submit"
-                  disabled={emailSubmitting}
-                  style={{
-                    width: '100%',
-                    padding: '15px',
-                    background: emailSubmitting
-                      ? 'linear-gradient(135deg, #8a2820 0%, #6b1515 100%)'
-                      : 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 5,
-                    fontFamily: "'Playfair Display', Georgia, serif",
-                    fontSize: 18,
-                    cursor: emailSubmitting ? 'wait' : 'pointer',
-                    letterSpacing: '0.04em',
-                    boxShadow: '0 6px 24px rgba(200,56,43,0.45)',
-                    transition: 'background 0.2s',
-                  }}>
-                  {emailSubmitting ? '✦ Sending your letter...' : `✦ Reveal ${child?.name}'s letter`}
-                </button>
-                <p style={{ textAlign: 'center', marginTop: 14, fontSize: 12, color: 'rgba(245,234,216,0.4)', lineHeight: 1.7 }}>Free forever · No spam · Just Christmas magic</p>
-              </form>
-            </div>
-          </div>
+          <GeneratingState
+            name={child?.name || 'your child'}
+            genError={genError}
+            onRetry={() => child && generateLetter(child, email)}
+          />
         )}
 
         {step === 'done' && (
