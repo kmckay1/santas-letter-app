@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { sendPhysicalLetter } from '@/lib/lob'
+import { sendPhysicalLetter } from '@/lib/stannp'
 import { getLetter, getLetterByUpgradeToken, markLetterFulfilled } from '@/lib/storage'
 import { sendOrderConfirmationEmail, sendPremiumPDFEmail } from '@/lib/resend'
 import { generatePremiumPDF } from '@/lib/pdf'
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
               letterData.child,
               { content: letterData.letterText, childName, createdAt: letterData.createdAt }
             )
-            console.log(`✅ Physical letter sent immediately via Lob for ${childName}`)
+            console.log(`✅ Physical letter sent immediately via Stannp for ${childName}`)
 
             await supabase.from('scheduled_letters').insert({
               stripe_session_id: session.id,

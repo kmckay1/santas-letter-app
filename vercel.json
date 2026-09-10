@@ -1,16 +1,19 @@
 {
   "functions": {
-    "app/api/webhook/route.ts": {
+    "app/api/cron/phase2/route.ts": {
       "maxDuration": 60
     },
-    "app/api/cron/phase2/route.ts": {
+    "app/api/cron/send-letters/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/webhook/route.ts": {
       "maxDuration": 60
     }
   },
   "crons": [
     {
       "path": "/api/cron/send-letters",
-      "schedule": "0 9 * * *"
+      "schedule": "0 * * * *"
     },
     {
       "path": "/api/cron/phase2",
