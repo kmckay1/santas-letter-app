@@ -134,6 +134,10 @@ export async function sendPhysicalLetter(
     // Matches Lob's behaviour of mailing without a hard address-verification
     // gate, so a paid order is never silently dropped.
     post_unverified: 'true',
+    // Restores the postage class Lob used (mail_type: usps_first_class).
+    // Without it Stannp sends standard post, which is slower and would miss the
+    // Christmas delivery window. Costs more per piece than standard.
+    addons: 'FIRST_CLASS',
     tags: 'santas-letter',
   })
 
