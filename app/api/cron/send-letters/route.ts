@@ -17,6 +17,23 @@ const DEFAULT_CONCURRENCY = 3
 // batch rolls over cleanly instead of being killed mid-send by the 300s cap.
 const DEFAULT_TIME_BUDGET_MS = 240_000
 
+// --- Test isolation -------------------------------------------------------
+// Local runs talk to the same Supabase project as production, and the live
+// hourly cron has no STANNP_TEST_MODE — so anything it considers due gets real
+// mail at real cost. Seeded test rows therefore carry a send_after far in the
+// future, which production's `send_after <= today` filter can never match.
+//
+// A local run reaches those rows with ?dueBefore=YYYY-MM-DD, but only when
+// CRON_ALLOW_DATE_OVERRIDE is set. That variable lives in .env.local and must
+// never be added to Vercel: a valid CRON_SECRET alone must not unlock it.
+//
+// The override is additionally constrained to rows whose stripe_session_id
+// carries the test prefix. That constraint is the one that actually matters —
+// without it, an override run against the shared database would sweep up real
+// pending customer orders and mark them sent, destroying fulfilment state.
+const TEST_SESSION_PREFIX = 'cs_test_CRON_E2E_'
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
 function positiveIntEnv(name: string, fallback: number): number {
   const configured = Number(process.env[name])
   return Number.isInteger(configured) && configured > 0 ? configured : fallback
@@ -57,17 +74,40 @@ export async function GET(req: NextRequest) {
   const concurrency = positiveIntEnv('SEND_LETTERS_CONCURRENCY', DEFAULT_CONCURRENCY)
   const timeBudgetMs = positiveIntEnv('SEND_LETTERS_TIME_BUDGET_MS', DEFAULT_TIME_BUDGET_MS)
 
+  // Test-only: shift the due-date cutoff, restricted to seeded test rows.
+  const requestedCutoff = req.nextUrl.searchParams.get('dueBefore')
+  const overrideAllowed = process.env.CRON_ALLOW_DATE_OVERRIDE === 'true'
+  const testOverride = Boolean(overrideAllowed && requestedCutoff && ISO_DATE.test(requestedCutoff))
+  const cutoff = testOverride ? requestedCutoff! : today
+
+  if (requestedCutoff && !testOverride) {
+    console.warn(
+      `Ignoring ?dueBefore=${requestedCutoff} — ` +
+      (overrideAllowed ? 'not a YYYY-MM-DD date' : 'CRON_ALLOW_DATE_OVERRIDE is not set')
+    )
+  }
+  if (testOverride) {
+    console.warn(
+      `🧪 TEST MODE: due cutoff overridden to ${cutoff}, restricted to rows with ` +
+      `stripe_session_id like '${TEST_SESSION_PREFIX}%'. Real orders are unreachable.`
+    )
+  }
+
   // Fetch one batch of unsent letters due today or earlier. Oldest send_after
   // first so a backlog drains in the order it was scheduled rather than
   // starving the earliest orders.
-  const { data: letters, error } = await supabase
+  const dueBatch = supabase
     .from('scheduled_letters')
     .select('*')
     .eq('sent', false)
-    .lte('send_after', today)
+    .lte('send_after', cutoff)
     .order('send_after', { ascending: true })
     .order('created_at', { ascending: true })
     .limit(batchSize)
+
+  const { data: letters, error } = await (testOverride
+    ? dueBatch.like('stripe_session_id', `${TEST_SESSION_PREFIX}%`)
+    : dueBatch)
 
   if (error) {
     console.error('Error fetching scheduled letters:', error)
@@ -77,7 +117,8 @@ export async function GET(req: NextRequest) {
   if (!letters || letters.length === 0) {
     console.log('No letters due today')
     return NextResponse.json({
-      sent: 0, failed: 0, processed: 0, skipped: 0, remaining: 0,
+      sent: 0, failed: 0, processed: 0, skipped: 0, invalidAddress: 0, remindersSent: 0,
+      remaining: 0, testOverride: testOverride ? cutoff : false,
       batchSize, concurrency, elapsedMs: Date.now() - startedAt,
     })
   }
@@ -221,11 +262,15 @@ export async function GET(req: NextRequest) {
 
   // Count what is still due after this batch. Failures stay sent=false and are
   // counted here too, so a stuck letter shows up as a backlog that never clears.
-  const { count: remaining, error: countError } = await supabase
+  const remainingQuery = supabase
     .from('scheduled_letters')
     .select('*', { count: 'exact', head: true })
     .eq('sent', false)
-    .lte('send_after', today)
+    .lte('send_after', cutoff)
+
+  const { count: remaining, error: countError } = await (testOverride
+    ? remainingQuery.like('stripe_session_id', `${TEST_SESSION_PREFIX}%`)
+    : remainingQuery)
 
   if (countError) {
     console.error('Error counting remaining letters:', countError)
@@ -246,6 +291,7 @@ export async function GET(req: NextRequest) {
     skipped,
     invalidAddress,
     remindersSent,
+    testOverride: testOverride ? cutoff : false,
     processed: batch.length - skipped,
     remaining: remaining ?? 0,
     batchSize,
