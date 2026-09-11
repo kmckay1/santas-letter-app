@@ -10,13 +10,7 @@ export interface StoredLetter {
   fulfilled?: boolean
   upgradeToken?: string
   email?: string
-}
-
-function getSupabaseAnon() {
-  const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Supabase anon env vars not set')
-  return { url, key }
+  premiumPdfSentAt?: string | null
 }
 
 function getSupabaseAdmin() {
@@ -26,28 +20,12 @@ function getSupabaseAdmin() {
   return { url, key }
 }
 
-// Read operations use anon key — no elevated permissions needed for reads
-async function supabaseFetch(
-  path: string,
-  options: RequestInit = {}
-): Promise<Response> {
-  const { url, key } = getSupabaseAnon()
-  return fetch(`${url}/rest/v1${path}`, {
-    ...options,
-    // Opt out of Next.js fetch caching — server components otherwise cache GETs by default,
-    // which means the upgrade page would render stale fulfilled/tier values even after a purchase.
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': key,
-      'Authorization': `Bearer ${key}`,
-      'Prefer': 'return=minimal',
-      ...options.headers,
-    },
-  })
-}
-
-// Write operations use service-role key to bypass RLS
+// Every Supabase call goes through the service-role key. RLS is enabled on
+// `letters` with no policies — deliberately, because the table holds children's
+// personal data and must never be readable from a browser — so anon-key reads
+// return an empty result for rows that plainly exist. Reads therefore use the
+// same elevated key as writes, and this module must only ever be imported by
+// server code (route handlers and server components).
 async function supabaseAdminFetch(
   path: string,
   options: RequestInit = {}
@@ -64,6 +42,18 @@ async function supabaseAdminFetch(
       ...options.headers,
     },
   })
+}
+
+/**
+ * PostgREST answers a permission or transport failure with a non-2xx status, which
+ * is a completely different thing from "no such row". Conflating the two is what
+ * let a broken anon key look like a missing letter for 91 days, so transport
+ * failures throw and only an empty result set returns null.
+ */
+async function assertOk(res: Response, context: string): Promise<void> {
+  if (res.ok) return
+  const body = await res.text().catch(() => '<unreadable>')
+  throw new Error(`${context} failed: HTTP ${res.status} ${res.statusText} — ${body.slice(0, 300)}`)
 }
 
 export async function storeLetter(letter: StoredLetter): Promise<string | null> {
@@ -105,11 +95,11 @@ export async function storeLetter(letter: StoredLetter): Promise<string | null> 
 }
 
 export async function getLetter(id: string): Promise<StoredLetter | null> {
-  const res = await supabaseFetch(`/letters?id=eq.${id}&limit=1`, {
+  const res = await supabaseAdminFetch(`/letters?id=eq.${id}&limit=1`, {
     method: 'GET',
     headers: { 'Prefer': 'return=representation' },
   })
-  if (!res.ok) return null
+  await assertOk(res, `getLetter(${id})`)
   const rows = await res.json()
   if (!rows || rows.length === 0) return null
   const row = rows[0]
@@ -123,6 +113,7 @@ export async function getLetter(id: string): Promise<StoredLetter | null> {
     fulfilled: row.fulfilled,
     upgradeToken: row.upgrade_token,
     email: row.email,
+    premiumPdfSentAt: row.premium_pdf_sent_at ?? null,
   }
 }
 
@@ -131,11 +122,11 @@ export async function getLetterByUpgradeToken(token: string): Promise<StoredLett
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
   if (!uuidRegex.test(token)) return null
 
-  const res = await supabaseFetch(`/letters?upgrade_token=eq.${token}&limit=1`, {
+  const res = await supabaseAdminFetch(`/letters?upgrade_token=eq.${token}&limit=1`, {
     method: 'GET',
     headers: { 'Prefer': 'return=representation' },
   })
-  if (!res.ok) return null
+  await assertOk(res, 'getLetterByUpgradeToken')
   const rows = await res.json()
   if (!rows || rows.length === 0) return null
   const row = rows[0]
@@ -149,7 +140,20 @@ export async function getLetterByUpgradeToken(token: string): Promise<StoredLett
     fulfilled: row.fulfilled,
     upgradeToken: row.upgrade_token,
     email: row.email,
+    premiumPdfSentAt: row.premium_pdf_sent_at ?? null,
   }
+}
+
+/**
+ * Stamped as soon as the premium PDF email is accepted, so a retry of the webhook
+ * can tell "already delivered" from "not yet attempted" without re-emailing.
+ */
+export async function markPremiumPdfSent(id: string): Promise<void> {
+  const res = await supabaseAdminFetch(`/letters?id=eq.${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ premium_pdf_sent_at: new Date().toISOString() }),
+  })
+  await assertOk(res, `markPremiumPdfSent(${id})`)
 }
 
 export async function markLetterFulfilled(id: string, tier: string): Promise<void> {
