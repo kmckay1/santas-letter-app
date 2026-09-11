@@ -14,6 +14,83 @@ const PDFSHIFT_API_URL = 'https://api.pdfshift.io/v3/convert/pdf'
 // required mid-migration. Rename alongside the lob_letter_id column later.
 const STORAGE_BUCKET = 'lob-letters'
 
+// Stannp only validates US and GB addresses. Real addresses in DE, FR and AU all
+// come back is_valid:false, and CA street lines are not checked at all (a nonsense
+// street passes), so validating those countries would reject good orders while
+// giving false confidence about Canadian ones. Anything outside this set is
+// treated as deliverable and left to Stannp's own address handling at post time.
+const VALIDATABLE_COUNTRIES = new Set(['US', 'GB'])
+
+const VALIDATION_TIMEOUT_MS = 10_000
+
+/**
+ * `ok` answers one question: is it safe to put this in the mail?
+ * It is false ONLY when Stannp positively reported the address as undeliverable.
+ * Every other outcome — unsupported country, timeout, HTTP error, malformed
+ * response, missing key — fails open, because a validation outage must never
+ * masquerade as a bad address and strand a paid order.
+ */
+export type AddressCheck =
+  | { ok: true; reason: 'valid' | 'unsupported-country' | 'validation-unavailable'; detail?: string }
+  | { ok: false; reason: 'invalid' }
+
+export async function validateAddress(toAddress: MailAddress): Promise<AddressCheck> {
+  const country = (toAddress.address_country || '').toUpperCase()
+
+  if (!VALIDATABLE_COUNTRIES.has(country)) {
+    return { ok: true, reason: 'unsupported-country', detail: country || 'unknown' }
+  }
+
+  const apiKey = process.env.STANNP_API_KEY
+  if (!apiKey) {
+    return { ok: true, reason: 'validation-unavailable', detail: 'STANNP_API_KEY not set' }
+  }
+
+  const form = new URLSearchParams({
+    address1: toAddress.address_line1,
+    city: toAddress.address_city,
+    state: toAddress.address_state,
+    zipcode: toAddress.address_zip,
+    country,
+  })
+  if (toAddress.address_line2) {
+    form.set('address2', toAddress.address_line2)
+  }
+
+  try {
+    const response = await fetch(`${STANNP_API_URL}/addresses/validate`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Basic ' + Buffer.from(`${apiKey}:`).toString('base64'),
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: form.toString(),
+      signal: AbortSignal.timeout(VALIDATION_TIMEOUT_MS),
+    })
+
+    if (!response.ok) {
+      return { ok: true, reason: 'validation-unavailable', detail: `HTTP ${response.status}` }
+    }
+
+    const payload = await response.json().catch(() => null)
+    if (!payload?.success) {
+      return { ok: true, reason: 'validation-unavailable', detail: 'success:false from Stannp' }
+    }
+
+    // Only a definitive false blocks the mail; anything else is inconclusive.
+    if (payload.data?.is_valid === false) {
+      return { ok: false, reason: 'invalid' }
+    }
+    if (payload.data?.is_valid === true) {
+      return { ok: true, reason: 'valid' }
+    }
+    return { ok: true, reason: 'validation-unavailable', detail: 'is_valid missing from response' }
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err)
+    return { ok: true, reason: 'validation-unavailable', detail }
+  }
+}
+
 function getSupabaseAdmin() {
   return createClient(
     process.env.SUPABASE_URL!,

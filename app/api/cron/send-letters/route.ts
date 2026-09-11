@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { sendPhysicalLetter } from '@/lib/stannp'
+import { sendPhysicalLetter, validateAddress } from '@/lib/stannp'
+import { sendAddressCheckEmail } from '@/lib/resend'
 
 // Each letter takes roughly 10s end to end (PDFShift render, Supabase upload,
 // Stannp create). vercel.json allows this function 300s, so a batch of 25 run a
@@ -26,9 +27,13 @@ function positiveIntEnv(name: string, fallback: number): number {
 type ScheduledLetter = {
   id: string
   child_name: string
+  recipient_email: string | null
   shipping: Parameters<typeof sendPhysicalLetter>[0]
   child_info: Parameters<typeof sendPhysicalLetter>[1]
   letter_content: string
+  // undefined means the column is missing (migration not run yet), which is
+  // deliberately distinct from false (column present, reminder not yet sent).
+  address_reminder_sent?: boolean | null
 }
 
 function getSupabaseAdmin() {
@@ -87,9 +92,75 @@ export async function GET(req: NextRequest) {
   let sent = 0
   let failed = 0
   let skipped = 0
+  let invalidAddress = 0
+  let remindersSent = 0
+
+  /**
+   * One extra nudge beyond the checkout-time email, and only one. The customer
+   * already got an address email when they paid; this covers the case where they
+   * never acted on it. Guarded by address_reminder_sent so an hourly cron cannot
+   * turn a stuck order into a stream of identical emails.
+   */
+  async function sendAddressReminderOnce(letter: ScheduledLetter) {
+    if (letter.address_reminder_sent === undefined) {
+      console.warn(
+        `   reminder skipped for ${letter.id}: scheduled_letters.address_reminder_sent ` +
+        `column is missing — run the migration, otherwise this would email every run`
+      )
+      return
+    }
+    if (letter.address_reminder_sent) return
+    if (!letter.recipient_email) {
+      console.warn(`   reminder skipped for ${letter.id}: no recipient_email on the row`)
+      return
+    }
+
+    try {
+      await sendAddressCheckEmail(letter.recipient_email, letter.child_name, letter.shipping)
+    } catch (err) {
+      // Leave the flag false so the next run tries again; a send failure should
+      // not silently cost the customer their only reminder.
+      console.error(`   reminder email failed for ${letter.id}:`, err)
+      return
+    }
+
+    const { error: flagError } = await supabase
+      .from('scheduled_letters')
+      .update({ address_reminder_sent: true, address_reminder_sent_at: new Date().toISOString() })
+      .eq('id', letter.id)
+
+    if (flagError) {
+      console.error(
+        `🚨 REMINDER SENT BUT NOT RECORDED — ${letter.id} was emailed but ` +
+        `address_reminder_sent could not be set: ${flagError.message}. ` +
+        `It will be emailed again next run until this is fixed.`
+      )
+      return
+    }
+
+    remindersSent++
+    console.log(`   📧 one-time address reminder sent for ${letter.child_name}`)
+  }
 
   async function sendOne(letter: ScheduledLetter) {
     try {
+      // Orders are held for weeks before posting, so re-check the address right
+      // before it actually goes out. Fails open exactly as at checkout: only a
+      // definitive rejection holds the letter back.
+      const addressCheck = await validateAddress(letter.shipping)
+      if (!addressCheck.ok) {
+        invalidAddress++
+        console.warn(
+          `⚠️  Address still rejected for ${letter.child_name} (letter ${letter.id}) — ` +
+          `holding unsent, needs manual correction`
+        )
+        await sendAddressReminderOnce(letter)
+        return
+      }
+      if (addressCheck.reason !== 'valid') {
+        console.log(`Address check skipped for ${letter.child_name}: ${addressCheck.reason} (${addressCheck.detail})`)
+      }
+
       const result = await sendPhysicalLetter(
         letter.shipping,
         letter.child_info,
@@ -162,10 +233,19 @@ export async function GET(req: NextRequest) {
     console.log(`↩️  ${remaining} letters still due — the next scheduled run will continue`)
   }
 
+  if (invalidAddress > 0) {
+    console.warn(
+      `⚠️  ${invalidAddress} letter(s) held back on address validation. These stay in the ` +
+      `backlog and will be retried every run until the address is corrected.`
+    )
+  }
+
   return NextResponse.json({
     sent,
     failed,
     skipped,
+    invalidAddress,
+    remindersSent,
     processed: batch.length - skipped,
     remaining: remaining ?? 0,
     batchSize,

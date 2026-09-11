@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { sendPhysicalLetter } from '@/lib/stannp'
+import { sendPhysicalLetter, validateAddress } from '@/lib/stannp'
 import { getLetter, getLetterByUpgradeToken, markLetterFulfilled } from '@/lib/storage'
-import { sendOrderConfirmationEmail, sendPremiumPDFEmail } from '@/lib/resend'
+import { sendOrderConfirmationEmail, sendPremiumPDFEmail, sendAddressCheckEmail } from '@/lib/resend'
 import { generatePremiumPDF } from '@/lib/pdf'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
@@ -66,6 +66,10 @@ export async function POST(req: NextRequest) {
         console.log(`✅ Premium PDF emailed to ${recipientEmail}`)
       }
 
+      // Set when the postal service rejects the delivery address: the order is
+      // recorded but left unsent and unfulfilled until the customer confirms it.
+      let addressNeedsConfirmation = false
+
       // 2. Schedule or immediately send physical letter
       // Physical letters are clamped to never ship before the December delivery window,
       // regardless of customer-selected date. Set PHYSICAL_MAIL_EARLIEST_SEND env var
@@ -85,6 +89,13 @@ export async function POST(req: NextRequest) {
             address_country: shipping.address.country!,
           }
 
+          // Validate before committing to mail. Fails open: only a definitive
+          // rejection from Stannp pauses the order, never a timeout or outage.
+          const addressCheck = await validateAddress(shippingData)
+          if (addressCheck.ok && addressCheck.reason !== 'valid') {
+            console.log(`Address check skipped for ${childName}: ${addressCheck.reason} (${addressCheck.detail})`)
+          }
+
           const today = new Date().toISOString().split('T')[0]
           const earliestAllowed = process.env.PHYSICAL_MAIL_EARLIEST_SEND || '2026-11-22'
           const customerRequested = delivery_date || today
@@ -93,7 +104,31 @@ export async function POST(req: NextRequest) {
 
           const supabase = getSupabaseAdmin()
 
-          if (sendAfter <= today) {
+          if (!addressCheck.ok) {
+            // Undeliverable address. Record the order so it is not lost, leave it
+            // unsent, and ask the customer to confirm. Deliberately not marked
+            // fulfilled, so it stays visible as outstanding.
+            addressNeedsConfirmation = true
+
+            await supabase.from('scheduled_letters').insert({
+              stripe_session_id: session.id,
+              letter_id: resolvedLetterId,
+              child_name: childName,
+              recipient_email: recipientEmail,
+              tier,
+              shipping: shippingData,
+              letter_content: letterData.letterText,
+              child_info: letterData.child,
+              send_after: sendAfter,
+              sent: false,
+            })
+
+            await sendAddressCheckEmail(recipientEmail, childName, shippingData)
+            console.warn(
+              `⚠️  Address rejected by Stannp for ${childName} — order recorded unsent, ` +
+              `customer asked to confirm. session=${session.id}`
+            )
+          } else if (sendAfter <= today) {
             // Same-day send (only fires after Nov 22, 2026 in production)
             const result = await sendPhysicalLetter(
               shippingData,
@@ -137,10 +172,16 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // 3. Order confirmation for all tiers
+      // 3. Order confirmation for all tiers. The customer paid, so they always get
+      // a receipt — even when the address is being queried.
       await sendOrderConfirmationEmail(recipientEmail, childName, tier, resolvedLetterId)
-      await markLetterFulfilled(resolvedLetterId, tier)
-      console.log(`✅ Fulfilled ${tier} for ${childName}`)
+
+      if (addressNeedsConfirmation) {
+        console.warn(`⏸️  ${tier} for ${childName} awaiting address confirmation — not marked fulfilled`)
+      } else {
+        await markLetterFulfilled(resolvedLetterId, tier)
+        console.log(`✅ Fulfilled ${tier} for ${childName}`)
+      }
 
     } catch (err) {
       console.error('Fulfillment error:', err)

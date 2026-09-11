@@ -228,3 +228,70 @@ export async function sendPremiumPDFEmail(
     throw new Error(`Resend error in sendPremiumPDFEmail: ${result.error.message}`)
   }
 }
+export async function sendAddressCheckEmail(
+  email: string,
+  childName: string,
+  address: {
+    name: string
+    address_line1: string
+    address_line2?: string
+    address_city: string
+    address_state: string
+    address_zip: string
+    address_country: string
+  }
+): Promise<void> {
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    throw new Error(`sendAddressCheckEmail: invalid email address: ${email}`)
+  }
+
+  const { Resend } = await import('resend')
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const lines = [
+    address.name,
+    address.address_line1,
+    address.address_line2,
+    `${address.address_city}, ${address.address_state} ${address.address_zip}`,
+    address.address_country,
+  ].filter(Boolean)
+
+  const result = await resend.emails.send({
+    from: 'Santa Claus <santa@santasletter.ai>',
+    to: email,
+    subject: `✉️ Quick check on the address for ${childName}'s letter`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <body style="margin:0;padding:40px 20px;background:#0d1b2e;font-family:Georgia,serif;">
+        <div style="max-width:500px;margin:0 auto;text-align:center;">
+          <p style="font-size:48px;margin:0 0 20px;">📬</p>
+          <h1 style="font-size:24px;color:#f5ead8;font-weight:400;margin:0 0 12px;">One small thing before we post</h1>
+          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">Your order for ${childName} is safe and paid for — but the postal service didn't recognise the delivery address, so we've paused it rather than risk the letter going astray.</p>
+
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,170,90,0.2);border-radius:6px;padding:24px;text-align:left;margin-bottom:24px;">
+            <p style="color:#d4aa5a;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 10px;">Address we have</p>
+            ${lines.map(l => `<p style="color:#f5ead8;font-size:15px;margin:0 0 3px;">${l}</p>`).join('')}
+          </div>
+
+          <div style="background:rgba(212,170,90,0.06);border:1px solid rgba(212,170,90,0.18);border-radius:6px;padding:18px 22px;text-align:left;margin-bottom:24px;">
+            <p style="color:#d4aa5a;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 6px;">What to do</p>
+            <p style="color:rgba(245,234,216,0.6);font-size:12px;margin:0;line-height:1.7;">
+              If that looks right exactly as written, just reply "looks good" and we'll post it as-is.
+              If anything needs fixing — a missing apartment number, a wrong postcode — reply with the corrected address and an elf will update it.
+              There's plenty of time: letters are posted in late November.
+            </p>
+          </div>
+
+          <p style="color:rgba(245,234,216,0.3);font-size:11px;">Nothing else is needed from you, and no extra charge — we just want it to arrive.</p>
+        </div>
+      </body>
+      </html>
+    `,
+  })
+
+  if (result.error) {
+    console.error('Resend sendAddressCheckEmail failed:', result.error)
+    throw new Error(`Resend error in sendAddressCheckEmail: ${result.error.message}`)
+  }
+}
