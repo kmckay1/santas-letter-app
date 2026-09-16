@@ -215,6 +215,11 @@ export async function sendPhysicalLetter(
     // Without it Stannp sends standard post, which is slower and would miss the
     // Christmas delivery window. Costs more per piece than standard.
     addons: 'FIRST_CLASS',
+    // Required by Stannp support alongside FIRST_CLASS for mail containing
+    // personal information (USPS classification). Measured at no extra cost, and
+    // it demonstrably takes effect: the proof is returned from secure storage
+    // rather than the public bucket.
+    transactional: 'true',
     tags: 'santas-letter',
   })
 
