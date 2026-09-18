@@ -36,7 +36,7 @@ This is the simplest, most useful thing you can say. It turns the question back 
 
 This opens a conversation instead of closing one. It tells them you're taking the question seriously. It also gives you information about what specifically prompted the question, which matters.
 
-"Santa is one of those things that different families think about differently. In our family, we believe in the spirit of it — the giving, the magic, the whole thing."
+"Santa is one of those things that different families think about differently. In our family, we believe in the spirit of it: the giving, the magic, the whole thing."
 
 This is a good middle answer for a child who feels peer pressure but doesn't really want to be done with it. It's honest without being clinical.
 
@@ -76,7 +76,7 @@ A firm "of course Santa is real, don't be silly" to a child who has quietly cros
 
 However the talk goes, the day or week after is actually a window of opportunity.
 
-If your child is still in and just needed some reassurance, this is the perfect time to add something concrete. A letter that arrives by mail, addressed to them by name, mentioning the specific things they've been working on this year, a named pet, a particular interest — that kind of detail doesn't come from a template. It comes from somewhere that knows.
+If your child is still in and just needed some reassurance, this is the perfect time to add something concrete. A letter that arrives by mail, addressed to them by name, mentioning the specific things they've been working on this year, a named pet, a particular interest: that kind of detail doesn't come from a template. It comes from somewhere that knows.
 
 You can get a [personalized letter from Santa](/create) for free, or go with the physical mailed version if you want something they can hold onto. Either way, the timing matters. A letter that shows up right after the conversation does something no amount of reassurance can: it provides evidence. And a doubting child is specifically looking for evidence.
 

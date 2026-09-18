@@ -44,7 +44,7 @@ Gather these before you sit down to write. You won't use all of them, but having
 - Age
 - One specific kind or brave thing they did this year (an act of generosity, a moment of courage, a time they put someone else first)
 - One thing they've been working on (a skill, a subject, an activity)
-- The wish list (what they actually asked for — one to three items is plenty)
+- The wish list (what they actually asked for). One to three items is plenty.
 - Something they're navigating or adjusting to (a move, a school transition, a new sibling)
 - A named pet, if relevant
 - A named friend or teacher, if relevant

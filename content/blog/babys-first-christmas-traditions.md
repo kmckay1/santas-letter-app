@@ -64,6 +64,6 @@ The handprint and the photo are the lowest-lift. They require almost nothing and
 
 The letter requires a little more intention, but it rewards that intention proportionally. A single letter from Santa is a gift your child will remember for a few years. A letter every Christmas from year one to year eight is something they might read to their own children someday.
 
-If you want to start the series this year, you can [order a physical letter from Santa](https://www.santasletter.ai) for $29 — personalized from the details you provide and physically mailed before Christmas.
+If you want to start the series this year, you can [order a physical letter from Santa](https://www.santasletter.ai) for $29, personalized from the details you provide and physically mailed before Christmas.
 
 The first Christmas is the easiest one to let pass without starting anything. It's also the only one you get.

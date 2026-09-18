@@ -82,7 +82,7 @@ The Christmas Eve box earns its place in family memory by being the same, year a
 
 The families who do this well don't overthink the contents. They choose a few things that fit the age, execute them with care, and do the same thing again next year. That repetition is what creates [the feeling that makes traditions land for young children](https://www.santasletter.ai/blog/when-to-start-christmas-traditions-with-kids) in the first place.
 
-If you're building the box this year and haven't ordered a Santa letter, that's the single most impactful thing you can add. You can [order a personalized premium Santa letter](/create) for $9 — it's instant and printable the same day, and it'll be the part of the box they talk about longest.
+If you're building the box this year and haven't ordered a Santa letter, that's the single most impactful thing you can add. You can [order a personalized premium Santa letter](/create) for $9. It's instant and printable the same day, and it'll be the part of the box they talk about longest.
 
 ## Frequently Asked Questions
 

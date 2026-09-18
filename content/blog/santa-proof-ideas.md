@@ -1,9 +1,9 @@
 ---
 title: "Santa Proof: 12 Ways to Make Santa Feel Real"
-description: "Practical, specific ideas for physical Santa evidence that actually convinces kids. Boot prints, reindeer tracks, dropped clues — and how to make each one land."
+description: "Practical, specific ideas for physical Santa evidence that actually convinces kids. Boot prints, reindeer tracks, dropped clues, and how to make each one land."
 date: "2026-08-11"
 publishDate: "2026-08-11"
-excerpt: "The best Santa proof isn't elaborate. It's specific. Here are 12 ideas that work — and the one thing that ties all the physical evidence together into a story a doubting child can't easily explain away."
+excerpt: "The best Santa proof isn't elaborate. It's specific. Here are 12 ideas that work, and the one thing that ties all the physical evidence together into a story a doubting child can't easily explain away."
 ---
 
 There's a version of Santa evidence that doesn't work, and most parents have accidentally made it. A set of boot prints in the entryway. Cookies with a bite taken out. Carrots nibbled down to a stub on the front porch. All technically correct. All forgettable by noon on Christmas Day, because the child can see the seam. It looks like what it is: a staged scene.

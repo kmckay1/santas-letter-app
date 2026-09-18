@@ -1,6 +1,6 @@
 ---
 title: "USPS North Pole Postmark: How to Get One for Your Child (2026)"
-description: "The USPS North Pole postmark program is real, free, and wonderful — but you write the letter yourself, and one missed deadline or addressing mistake means no letter at all. Here's the complete step-by-step guide, plus what to do if you want the personalization and guarantee handled for you."
+description: "The USPS North Pole postmark program is real, free, and wonderful. But you write the letter yourself, and one missed deadline or addressing mistake means no letter at all. Here's the complete step-by-step guide, plus what to do if you want the personalization and guarantee handled for you."
 date: "2026-06-16"
 publishDate: "2026-06-16"
 excerpt: "The USPS North Pole postmark program is one of the most magical things the post office does. But most parents don't realize they have to write the letter themselves, mail two envelopes, and hit a tight December deadline. Here's everything you need to know to pull it off."

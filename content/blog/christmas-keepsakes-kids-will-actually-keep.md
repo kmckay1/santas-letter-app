@@ -74,4 +74,4 @@ The ornament with a hand impression was made from this baby's hand. The recipe b
 
 Keepsakes don't fail because people stopped caring. They fail because the objects weren't specific enough to carry the story forward.
 
-If you want to add a physical Santa letter to this year's keepsake collection, you can [order a physical Santa letter at SantasLetter.ai](https://www.santasletter.ai) — it takes about two minutes to fill in your child's details, and the letter arrives in an envelope ready to go in whatever memory box they'll open thirty years from now.
+If you want to add a physical Santa letter to this year's keepsake collection, you can [order a physical Santa letter at SantasLetter.ai](https://www.santasletter.ai). It takes about two minutes to fill in your child's details, and the letter arrives in an envelope ready to go in whatever memory box they'll open thirty years from now.

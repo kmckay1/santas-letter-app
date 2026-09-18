@@ -1,6 +1,6 @@
 ---
 title: "When to Start Christmas Traditions with Young Kids"
-description: "The question isn't which traditions to start — it's when each one actually registers for your child. A guide to developmental timing for parents of kids aged 0-5."
+description: "The question isn't which traditions to start. It's when each one actually registers for your child. A guide to developmental timing for parents of kids aged 0-5."
 date: "2026-08-18"
 publishDate: "2026-08-18"
 excerpt: "Some Christmas traditions are really for the parents until a child turns three or four. Others land at any age. Understanding the difference lets you start the right things at the right time, instead of feeling like you're performing Christmas for someone who isn't quite there yet."
@@ -30,7 +30,7 @@ Something shifts around age two. Kids start noticing the tree, responding to Chr
 
 What they don't yet have is a coherent story. Santa is a face on a cup, then a person in a mall, then a name in a song. Those three things don't necessarily connect for a two-year-old into a unified character with motivations, a workshop, a list, a delivery route. The narrative hasn't crystallized.
 
-This is the stage where sensory and ritual traditions land best. Putting ornaments on the tree. Making cookies. Driving to look at lights. Reading the same Christmas books every December. These work at age two precisely because they don't require the child to understand a story — they just require presence and repetition.
+This is the stage where sensory and ritual traditions land best. Putting ornaments on the tree. Making cookies. Driving to look at lights. Reading the same Christmas books every December. These work at age two precisely because they don't require the child to understand a story. They just require presence and repetition.
 
 The repetition is doing more work than it looks like. Every December that your child watches the same boxes come down from the attic, smells the same candle, hears the same handful of songs, they're building a felt sense of what Christmas is before they have the words for it. By the time they're five and can tell you exactly why they love Christmas, what they're describing is the accumulation of those earlier years.
 
@@ -38,7 +38,7 @@ The repetition is doing more work than it looks like. Every December that your c
 
 This is when it happens. Somewhere around three to four, the Santa narrative clicks into place. The abstract face-on-a-cup becomes a *person* who knows your child's name, who is watching, who will actually show up. Parents who've been through this will recognize the moment: you mention Santa offhandedly in October and your child goes completely still with attention.
 
-Everything that required understanding before now lands. The naughty-and-nice conversation means something. Writing a letter to Santa, or receiving one, carries real weight because the recipient is reading it. The Christmas Eve rituals — cookies and milk left out, reindeer food, listening for sounds on the roof — take on genuine stakes.
+Everything that required understanding before now lands. The naughty-and-nice conversation means something. Writing a letter to Santa, or receiving one, carries real weight because the recipient is reading it. The Christmas Eve rituals (cookies and milk left out, reindeer food, listening for sounds on the roof) take on genuine stakes.
 
 This is also the age when physical evidence starts to matter. [Making Santa feel real on Christmas Eve](https://www.santasletter.ai/blog/santa-proof-ideas) is something parents can largely skip before age three. For specific ideas on what to put in a Christmas Eve box at each age, [Christmas Eve box ideas for 2026](/blog/christmas-eve-box-ideas-2026) organizes them by developmental stage. At four, the bitten cookie and the coal dust by the fireplace are meaningful artifacts. The child is a detective now, assembling proof.
 

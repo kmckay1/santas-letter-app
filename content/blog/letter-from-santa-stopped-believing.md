@@ -1,6 +1,6 @@
 ---
 title: "What to Do When Your Child Stops Believing in Santa (You Have More Time Than You Think)"
-description: "If your child is starting to doubt Santa, you're not out of magic yet. Here's how to gently keep the wonder alive for one more Christmas — and why a personal letter from Santa still works."
+description: "If your child is starting to doubt Santa, you're not out of magic yet. Here's how to gently keep the wonder alive for one more Christmas, and why a personal letter from Santa still works."
 date: "2026-05-28"
 publishDate: "2026-05-28"
 excerpt: "A child asking 'is Santa real?' is rarely asking for a verdict. They're asking whether the magic is still allowed. Here's how to give them one more wonderful Christmas."
