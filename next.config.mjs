@@ -8,16 +8,27 @@ const nextConfig = {
     },
     experimental: {
       // lib/blog.ts reads content/blog through a path built at runtime, which
-      // @vercel/nft cannot follow. It happens to trace the files for /blog (that
-      // route prerenders each post at build time, so the reads are observed),
-      // but /sitemap.xml only ever calls readdirSync, so nothing is traced and
-      // the deployed function sees no content/blog at all.
+      // @vercel/nft cannot follow. Every route below runs in a deployed function
+      // and needs those files present at runtime, so each one names them
+      // explicitly rather than relying on nft to infer them.
       //
-      // That was harmless while the route was static and ran only at build time.
-      // Now that it revalidates, it runs in a Lambda, where the missing files
-      // made getAllPostSlugs() return [] and dropped every blog URL.
+      // /sitemap.xml is why this exists. It only ever calls readdirSync, nothing
+      // was traced, and once the route started revalidating it ran in a Lambda
+      // that could not see content/blog: getAllPostSlugs() returned [] and every
+      // blog URL silently vanished from the XML.
+      //
+      // /blog and /blog/[slug] did get their markdown traced, but only as a side
+      // effect of nft observing reads while posts were prerendered. That is the
+      // same implicit mechanism that failed for the sitemap, and it is not
+      // guaranteed by anything: /blog/[slug] is dynamic, so losing those traces
+      // would 404 every post rather than merely thin a file. Listing them makes
+      // the dependency explicit and survives refactors of how paths are built.
+      //
+      // The glob is re-expanded at each build, so new posts need no change here.
       outputFileTracingIncludes: {
         '/sitemap.xml': ['./content/blog/**/*.md'],
+        '/blog': ['./content/blog/**/*.md'],
+        '/blog/[slug]': ['./content/blog/**/*.md'],
       },
     },
   }
