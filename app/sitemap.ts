@@ -1,6 +1,13 @@
 import { MetadataRoute } from 'next'
 import { getAllPostSlugs } from '@/lib/blog'
 
+// Without this the route is fully static: getAllPostSlugs() runs once at build
+// time and the XML is frozen until the next deploy, so a post whose publishDate
+// passes never reaches the sitemap. It also makes the route eligible for
+// revalidatePath('/sitemap.xml'), which /api/cron/revalidate-blog calls hourly;
+// a static route has no cache entry for that call to purge.
+export const revalidate = 3600
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.santasletter.ai'
   const now = new Date()

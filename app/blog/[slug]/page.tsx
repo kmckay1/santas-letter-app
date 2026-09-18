@@ -2,8 +2,6 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getPost } from '@/lib/blog'
 
-export const revalidate = 3600
-
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const post = getPost(params.slug)
   if (!post) return {}
