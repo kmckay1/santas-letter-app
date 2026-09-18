@@ -78,7 +78,7 @@ However the talk goes, the day or week after is actually a window of opportunity
 
 If your child is still in and just needed some reassurance, this is the perfect time to add something concrete. A letter that arrives by mail, addressed to them by name, mentioning the specific things they've been working on this year, a named pet, a particular interest: that kind of detail doesn't come from a template. It comes from somewhere that knows.
 
-You can get a [personalized letter from Santa](/create) for free, or go with the physical mailed version if you want something they can hold onto. Either way, the timing matters. A letter that shows up right after the conversation does something no amount of reassurance can: it provides evidence. And a doubting child is specifically looking for evidence.
+You can get a [personalized letter from Santa](/create) for free, or order a [custom Santa letter](https://www.santasletter.ai) that arrives in the mail if you want something they can hold onto. Either way, the timing matters. A letter that shows up right after the conversation does something no amount of reassurance can: it provides evidence. And a doubting child is specifically looking for evidence.
 
 For more ways to make the story feel solid and three-dimensional, take a look at [physical evidence that makes Santa feel real](/blog/santa-proof-ideas). Small things add up. And if the conversation has crossed the threshold into the full truth, [the "becoming a Santa" letter](/blog/becoming-a-santa-letter) covers how to mark that moment with exactly the right words.
 

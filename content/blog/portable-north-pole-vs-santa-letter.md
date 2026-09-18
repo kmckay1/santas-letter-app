@@ -92,4 +92,4 @@ PNP designs for roughly ages 2-12. The video format tends to land best for young
 
 ---
 
-That's what a [personalized letter from Santa](https://www.santasletter.ai) gives them. Something real they can keep. We start at $9 for a premium PDF they can read right away, and $29 for a physical letter that arrives in their mailbox. [Start yours here](/create) and we'll take care of the rest.
+That's what a [custom Santa letter](https://www.santasletter.ai) gives them. Something real they can keep. We start at $9 for a premium PDF they can read right away, and $29 for a physical letter that arrives in their mailbox. [Start yours here](/create) and we'll take care of the rest.

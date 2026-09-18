@@ -96,7 +96,7 @@ If any of that sounds right for your family, you can [create a free personalized
 
 **If your child is 3-6 and you want a reaction moment on Christmas morning:** Portable North Pole for the video, layered with a letter if you want something they can keep.
 
-**If you want deep personalization and the letter to feel unmistakably about your child:** [SantasLetter.ai](https://www.santasletter.ai), either the $9 PDF if you'll print and present it yourself, or the $29 physical if you want it to arrive in the mail.
+**If you want deep personalization and the letter to feel unmistakably about your child:** our [custom Santa letter](https://www.santasletter.ai), either the $9 PDF if you'll print and present it yourself, or the $29 physical if you want it to arrive in the mail.
 
 **If budget is the primary constraint:** The USPS North Pole postmark program is free and produces a genuinely personal letter, because you write it yourself. The SantasLetter.ai free tier is also available with email signup.
 

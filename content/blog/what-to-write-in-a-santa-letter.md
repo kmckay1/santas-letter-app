@@ -53,7 +53,7 @@ Two or three of these details, used well, will carry a 300-word letter. More tha
 
 ## Two complete examples
 
-These aren't templates to fill in. They're examples of the wording mechanic in action. Read them to see how the structure works, then write your own.
+These aren't templates to fill in. They're examples of the wording mechanic in action. Read them to see how the structure works, then write your own. If you would rather start from something built around your own child's details, you can [create a free letter](/create) and rework it in your own words.
 
 ---
 
