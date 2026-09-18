@@ -133,4 +133,4 @@ The USPS recommends making it personal: a specific school subject your child is 
 
 ### What if I miss the deadline?
 
-If you've missed the USPS window, there are still options. A [personalized letter from Santa](https://www.santasletter.ai) that's physically mailed can arrive in two to five business days depending on when you order. The physical letter program runs through mid-December. If you're in the final days before Christmas, the instant PDF option delivers to your inbox in minutes. Neither has a postmark from Alaska, but both arrive, which is the thing that matters most on December 23.
+If you've missed the USPS window, there are still options. A [letter from Santa service](https://www.santasletter.ai) that mails the letter for you can have it arrive in two to five business days depending on when you order. The physical letter program runs through mid-December. If you're in the final days before Christmas, the instant PDF option delivers to your inbox in minutes. Neither has a postmark from Alaska, but both arrive, which is the thing that matters most on December 23.

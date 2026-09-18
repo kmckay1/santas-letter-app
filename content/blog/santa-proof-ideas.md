@@ -22,7 +22,7 @@ Here are twelve ideas that work. None of them require special supplies ordered s
 
 The most classic piece of evidence, and the most commonly done wrong. A generic boot print made with flour or cocoa powder says "adult made this." What makes it land is placement and context. Put the prints near whatever your child designated as Santa's entry point. If your house doesn't have a fireplace and you've been telling your child Santa uses the back door or comes through the garage, that's where the prints go. The specificity of matching the prints to the story your family has already been telling is what makes them feel real rather than decorative.
 
-If you want to add one detail that elevates this: make one print slightly smudged, as if Santa turned to look at something before heading toward the tree. That small imperfection reads as more real than a perfectly clean set of tracks.
+If you want to add one detail that makes this land: make one print slightly smudged, as if Santa turned to look at something before heading toward the tree. That small imperfection reads as more real than a perfectly clean set of tracks.
 
 ### A dropped item from Santa's coat or bag
 

@@ -16,7 +16,7 @@ That shift in question is worth taking seriously. These two experiences are doin
 
 ## What Portable North Pole Actually Is
 
-PNP is a digital experience platform. It's been running for 18 seasons and is genuinely well-made. Their core product is a personalized Santa video, which you customize with your child's name, photo, and a few details. Santa appears in a slick production, references the details you entered, and the whole thing runs a few minutes. There's a free version with basic personalization, and paid tiers that unlock more elaborate video options and additional products (pricing varies by season; check portablenorthpole.com for current rates).
+PNP is a digital experience platform. It's been running for 18 seasons and is genuinely well-made. Their core product is a personalized Santa video, which you customize with your child's name, photo, and a few details. Santa appears in a slick production, references the details you entered, and the whole thing runs a few minutes. There's a free version with basic personalization, and paid tiers that include more elaborate video options and additional products (pricing varies by season; check portablenorthpole.com for current rates).
 
 For Christmas 2025 they added something significant: a live, AI-powered "Talk to Santa" feature that lets your child have a real two-way voice conversation with Santa in real time. It's built on speech recognition, it references parental-supplied details, and by most accounts it works well for kids in the 4-9 range who are still firmly in believing mode. It's a genuine leap forward from a scripted video.
 
