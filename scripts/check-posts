@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+# Usage: scripts/check-posts [post.md ...]   with no arguments, checks every post in content/blog
+"""House style checks for the blog posts in content/blog.
+
+Failures are things that should block a commit. Warnings are targets rather than
+rules: most of the older posts predate them and are deliberately left alone, so
+treating them as failures would make the script useless as a gate.
+"""
+
+import os
+import re
+import sys
+
+BLOG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'content', 'blog')
+HOME_URL = 'https://www.santasletter.ai'
+
+BANNED = [
+    'magical journey',
+    'unlock',
+    'elevate',
+    'delve',
+    "in today's world",
+]
+
+TITLE_MIN, TITLE_MAX = 50, 60
+WORDS_MIN, WORDS_MAX = 1200, 1800
+
+
+def frontmatter_value(fm, key):
+    m = re.search(r'^%s:\s*"(.*)"\s*$' % key, fm, re.M)
+    return m.group(1) if m else ''
+
+
+def check(path):
+    raw = open(path, encoding='utf-8').read()
+    parts = raw.split('---')
+    fm, body = parts[1], '---'.join(parts[2:])
+
+    title = frontmatter_value(fm, 'title')
+    # Link text counts as prose; the URL does not.
+    words = len(re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', body).split())
+
+    # Dashes are checked against the whole file so frontmatter is covered too.
+    dashes = len(re.findall('[\u2014\u2013]', raw))
+
+    home_anchors = re.findall(r'\[([^\]]+)\]\(%s\)' % re.escape(HOME_URL), body)
+    repeated = sorted({a for a in home_anchors if home_anchors.count(a) > 1})
+
+    siblings = re.findall(r'\]\((?:%s)?/blog/([a-z0-9-]+)\)' % re.escape(HOME_URL), body)
+    missing = [s for s in siblings if not os.path.exists(os.path.join(BLOG_DIR, s + '.md'))]
+
+    banned = [b for b in BANNED if b in raw.lower()]
+
+    fails, warns = [], []
+
+    if dashes:
+        fails.append('%d em or en dash(es); house style uses comma, period, colon or parentheses' % dashes)
+
+    # At least one homepage link, and the anchor text must vary within a post.
+    if not home_anchors:
+        fails.append('no homepage link')
+    elif repeated:
+        fails.append('homepage anchor text repeats within the post: %s' % ', '.join(repeated))
+
+    # At least one sibling link. No upper cap: dense internal linking is intended.
+    if not siblings:
+        fails.append('no internal blog links')
+    if missing:
+        fails.append('internal link target does not exist: %s' % ', '.join(missing))
+
+    if banned:
+        fails.append('banned phrase(s): %s' % ', '.join(banned))
+
+    if not TITLE_MIN <= len(title) <= TITLE_MAX:
+        warns.append('title is %d chars, target %d-%d' % (len(title), TITLE_MIN, TITLE_MAX))
+    if not WORDS_MIN <= words <= WORDS_MAX:
+        warns.append('%d words, target %d-%d' % (words, WORDS_MIN, WORDS_MAX))
+
+    return fails, warns
+
+
+def main(argv):
+    paths = argv[1:]
+    if not paths:
+        paths = sorted(
+            os.path.join(BLOG_DIR, f) for f in os.listdir(BLOG_DIR) if f.endswith('.md')
+        )
+
+    total_fail = total_warn = 0
+    for path in paths:
+        fails, warns = check(path)
+        total_fail += len(fails)
+        total_warn += len(warns)
+        if not fails and not warns:
+            print('ok    %s' % os.path.basename(path)[:-3])
+            continue
+        print('%s  %s' % ('FAIL ' if fails else 'warn ', os.path.basename(path)[:-3]))
+        for f in fails:
+            print('        FAIL: %s' % f)
+        for w in warns:
+            print('        warn: %s' % w)
+
+    print('\n%d post(s): %d failure(s), %d warning(s)' % (len(paths), total_fail, total_warn))
+    return 1 if total_fail else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
