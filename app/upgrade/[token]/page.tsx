@@ -1,4 +1,4 @@
-import { getLetterByUpgradeToken } from '@/lib/storage'
+import { getLetterByUpgradeToken, tierGrants } from '@/lib/storage'
 import { notFound } from 'next/navigation'
 import UpgradeButtons from './UpgradeButtons'
 
@@ -15,8 +15,14 @@ export default async function UpgradePage({ params }: PageProps) {
     notFound()
   }
 
-  // If already fulfilled at premium or bundle tier, show a different message
-  const alreadyUpgraded = !!(letter.fulfilled && (letter.tier === 'premium' || letter.tier === 'bundle'))
+  // What this letter already has, tier by tier. This used to be a single
+  // all-or-nothing flag that disabled every button once a premium or bundle
+  // purchase landed, which blocked the physical upsell outright, and left every
+  // button enabled after a physical purchase. Entitlements are independent and
+  // accumulate, so each tier is offered or withheld on its own.
+  const owned = letter.fulfilled
+    ? tierGrants(letter.tier)
+    : { premium: false, physical: false }
 
   // Preview = first paragraph only (teaser)
   const firstParagraph = letter.letterText
@@ -47,7 +53,7 @@ export default async function UpgradePage({ params }: PageProps) {
           </p>
         </div>
 
-        {alreadyUpgraded && (
+        {(owned.premium || owned.physical) && (
           <div style={{
             background: 'rgba(212,170,90,0.08)',
             border: '1px solid rgba(212,170,90,0.3)',
@@ -57,7 +63,11 @@ export default async function UpgradePage({ params }: PageProps) {
             textAlign: 'center',
           }}>
             <p style={{ margin: 0, color: '#d4aa5a' }}>
-              You&rsquo;ve already upgraded this letter. Check your inbox for the PDF.
+              {owned.premium && owned.physical
+                ? 'You already have the PDF and the posted letter for this child.'
+                : owned.premium
+                  ? 'You already have the premium PDF for this letter. Check your inbox.'
+                  : 'The posted letter for this child is already ordered.'}
             </p>
           </div>
         )}
@@ -109,7 +119,7 @@ export default async function UpgradePage({ params }: PageProps) {
         <UpgradeButtons
           upgradeToken={params.token}
           childName={letter.child.name}
-          alreadyUpgraded={alreadyUpgraded}
+          owned={owned}
         />
 
         <p style={{ textAlign: 'center', marginTop: 40, fontSize: 11, color: 'rgba(245,234,216,0.25)' }}>

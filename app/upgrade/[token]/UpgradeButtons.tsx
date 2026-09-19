@@ -5,7 +5,7 @@ import { useState } from 'react'
 interface Props {
   upgradeToken: string
   childName: string
-  alreadyUpgraded: boolean
+  owned: { premium: boolean; physical: boolean }
 }
 
 interface Tier {
@@ -57,7 +57,17 @@ const TIERS: Tier[] = [
   },
 ]
 
-export default function UpgradeButtons({ upgradeToken, alreadyUpgraded }: Props) {
+// A tier is already owned when everything it grants has been paid for. Bundle is
+// therefore only closed off once both halves are owned; owning just the PDF still
+// leaves bundle available, and buying it adds the posted letter.
+function isOwned(tier: Tier['id'], owned: { premium: boolean; physical: boolean }): boolean {
+  if (tier === 'premium') return owned.premium
+  if (tier === 'physical') return owned.physical
+  if (tier === 'bundle') return owned.premium && owned.physical
+  return false
+}
+
+export default function UpgradeButtons({ upgradeToken, owned }: Props) {
   const [loading, setLoading] = useState<string | null>(null)
 
   async function handleUpgrade(tier: Tier['id']) {
@@ -142,7 +152,7 @@ export default function UpgradeButtons({ upgradeToken, alreadyUpgraded }: Props)
 
           <button
             onClick={() => handleUpgrade(tier.id)}
-            disabled={loading !== null || alreadyUpgraded}
+            disabled={loading !== null || isOwned(tier.id, owned)}
             style={{
               background: tier.highlight
                 ? 'linear-gradient(135deg,#c8382b,#9b1f1f)'
@@ -151,14 +161,14 @@ export default function UpgradeButtons({ upgradeToken, alreadyUpgraded }: Props)
               padding: '12px 16px',
               borderRadius: 4,
               border: tier.highlight ? 'none' : '1px solid rgba(245,234,216,0.2)',
-              cursor: (loading !== null || alreadyUpgraded) ? 'not-allowed' : 'pointer',
-              opacity: (loading !== null || alreadyUpgraded) ? 0.5 : 1,
+              cursor: (loading !== null || isOwned(tier.id, owned)) ? 'not-allowed' : 'pointer',
+              opacity: (loading !== null || isOwned(tier.id, owned)) ? 0.5 : 1,
               fontSize: 14,
               fontFamily: 'Georgia, serif',
               width: '100%',
             }}
           >
-            {loading === tier.id ? 'Loading...' : alreadyUpgraded ? 'Already upgraded' : `Get ${tier.title}`}
+            {loading === tier.id ? 'Loading...' : isOwned(tier.id, owned) ? 'Already purchased' : `Get ${tier.title}`}
           </button>
         </div>
       ))}

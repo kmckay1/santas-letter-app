@@ -167,6 +167,110 @@ export async function markLetterFulfilled(id: string, tier: string): Promise<voi
   }
 }
 
+// --- Tier entitlements ------------------------------------------------------
+// A letter accumulates entitlements across purchases. Buying premium and later
+// buying physical leaves the customer owning both, which is what `bundle`
+// encodes, so a second purchase must merge rather than overwrite. Overwriting
+// would strip the earlier entitlement and make the upgrade page offer something
+// already paid for.
+
+export function tierGrants(tier?: string | null): { premium: boolean; physical: boolean } {
+  return {
+    premium: tier === 'premium' || tier === 'bundle',
+    physical: tier === 'physical' || tier === 'bundle',
+  }
+}
+
+export function mergeTier(existing: string | null | undefined, incoming: string): string {
+  const a = tierGrants(existing)
+  const b = tierGrants(incoming)
+  const premium = a.premium || b.premium
+  const physical = a.physical || b.physical
+  if (premium && physical) return 'bundle'
+  if (premium) return 'premium'
+  if (physical) return 'physical'
+  // Neither grants a letter entitlement (addChild, or an unknown tier). Record
+  // the latest rather than inventing one.
+  return incoming
+}
+
+// --- Webhook session bookkeeping --------------------------------------------
+
+export interface WebhookSession {
+  stripeSessionId: string
+  letterId: string
+  tier: string
+  premiumPdfSentAt: string | null
+  completedAt: string | null
+}
+
+function rowToWebhookSession(row: Record<string, unknown>): WebhookSession {
+  return {
+    stripeSessionId: row.stripe_session_id as string,
+    letterId: row.letter_id as string,
+    tier: row.tier as string,
+    premiumPdfSentAt: (row.premium_pdf_sent_at as string) ?? null,
+    completedAt: (row.completed_at as string) ?? null,
+  }
+}
+
+// Claims a Stripe session for processing. Returns the row as it stood before this
+// call when the session has been seen before, or null when this call created it.
+//
+// A returned row with completedAt set means the handler already ran to completion
+// and the delivery is a replay. A returned row with completedAt null means an
+// earlier attempt started and did not finish; the caller should continue, because
+// each step is separately guarded.
+export async function claimWebhookSession(
+  stripeSessionId: string,
+  letterId: string,
+  tier: string
+): Promise<WebhookSession | null> {
+  const existing = await supabaseAdminFetch(
+    `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}&select=*`
+  )
+  if (!existing.ok) {
+    throw new Error(`webhook_sessions lookup failed: ${await existing.text()}`)
+  }
+  const found = await existing.json()
+  if (Array.isArray(found) && found.length > 0) return rowToWebhookSession(found[0])
+
+  const insert = await supabaseAdminFetch('/webhook_sessions', {
+    method: 'POST',
+    body: JSON.stringify({ stripe_session_id: stripeSessionId, letter_id: letterId, tier }),
+  })
+  if (insert.ok) return null
+
+  // 409 is the primary key rejecting a concurrent delivery of the same session.
+  // Re-read so the caller sees whatever that winner recorded.
+  if (insert.status === 409) {
+    const retry = await supabaseAdminFetch(
+      `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}&select=*`
+    )
+    if (retry.ok) {
+      const rows = await retry.json()
+      if (Array.isArray(rows) && rows.length > 0) return rowToWebhookSession(rows[0])
+    }
+  }
+  throw new Error(`webhook_sessions insert failed: ${await insert.text()}`)
+}
+
+export async function markSessionPremiumPdfSent(stripeSessionId: string): Promise<void> {
+  const res = await supabaseAdminFetch(
+    `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}`,
+    { method: 'PATCH', body: JSON.stringify({ premium_pdf_sent_at: new Date().toISOString() }) }
+  )
+  if (!res.ok) throw new Error(`webhook_sessions premium stamp failed: ${await res.text()}`)
+}
+
+export async function markSessionCompleted(stripeSessionId: string): Promise<void> {
+  const res = await supabaseAdminFetch(
+    `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}`,
+    { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString() }) }
+  )
+  if (!res.ok) throw new Error(`webhook_sessions completion stamp failed: ${await res.text()}`)
+}
+
 export function generateLetterId(childName: string): string {
   const timestamp = Date.now()
   const random = Math.random().toString(36).substring(2, 8)

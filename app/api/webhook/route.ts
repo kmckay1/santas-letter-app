@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { sendPhysicalLetter, validateAddress } from '@/lib/stannp'
-import { getLetter, getLetterByUpgradeToken, markLetterFulfilled, markPremiumPdfSent } from '@/lib/storage'
+import {
+  getLetter,
+  getLetterByUpgradeToken,
+  markLetterFulfilled,
+  markPremiumPdfSent,
+  claimWebhookSession,
+  markSessionPremiumPdfSent,
+  markSessionCompleted,
+  mergeTier,
+} from '@/lib/storage'
 import { sendOrderConfirmationEmail, sendPremiumPDFEmail, sendAddressCheckEmail } from '@/lib/resend'
 import { generatePremiumPDF } from '@/lib/pdf'
 import { createClient } from '@supabase/supabase-js'
@@ -64,24 +73,50 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Letter not found' }, { status: 500 })
       }
 
-      // Replay guard. Stripe redelivers on timeout as well as on error, and this
-      // handler does slow work (PDF render, Stannp send), so redelivery is likely
-      // rather than exotic. Once an order is fulfilled a replay must be a no-op.
-      if (letterData.fulfilled) {
-        console.log(`Session ${session.id} already fulfilled for ${childName} — acknowledging replay`)
+      // Replay guard, keyed on the Stripe session. Stripe redelivers on timeout as
+      // well as on error, and this handler does slow work (PDF render, Stannp
+      // send), so redelivery is likely rather than exotic.
+      //
+      // This used to ask whether the *letter* was fulfilled, which cannot tell a
+      // redelivery apart from a genuine second purchase. A customer who bought
+      // premium and later bought physical against the same letter produced a new,
+      // distinct session that was silently acknowledged as a replay: charged, and
+      // delivered nothing. Only the same session arriving twice is a replay.
+      const priorSession = await claimWebhookSession(session.id, resolvedLetterId, tier)
+      if (priorSession?.completedAt) {
+        console.log(
+          `Stripe session ${session.id} already processed at ${priorSession.completedAt} ` +
+          `(letter ${resolvedLetterId}, ${childName}) — acknowledging replay`
+        )
         return NextResponse.json({ received: true, replay: true })
+      }
+      if (priorSession) {
+        console.log(
+          `Stripe session ${session.id} was started but not completed — resuming; ` +
+          `each step below is separately guarded`
+        )
       }
 
       // 1. Generate & email premium PDF for premium and bundle tiers (always immediate)
       if (tier === 'premium' || tier === 'bundle') {
-        if (letterData.premiumPdfSentAt) {
-          console.log(`Premium PDF already sent for ${childName} at ${letterData.premiumPdfSentAt} — skipping`)
+        // Scoped to this session, not the letter. A customer who already owns a
+        // PDF from an earlier purchase and pays for another premium-bearing tier
+        // has bought a second delivery, so the letter-level stamp must not
+        // suppress it. Within one session, the stamp still makes a retry safe.
+        if (priorSession?.premiumPdfSentAt) {
+          console.log(
+            `Premium PDF already sent for session ${session.id} at ` +
+            `${priorSession.premiumPdfSentAt} — skipping`
+          )
         } else {
           console.log(`Generating premium PDF for ${childName}...`)
           const pdfBuffer = await generatePremiumPDF(letterData.child, letterData.letterText)
           await sendPremiumPDFEmail(recipientEmail, childName, pdfBuffer)
           // Stamped immediately after sending: a failure further down this handler
           // must not cost the customer a duplicate PDF on the retry.
+          await markSessionPremiumPdfSent(session.id)
+          // Letter-level record of the most recent send. Kept for history and
+          // support questions; no longer consulted as a guard.
           await markPremiumPdfSent(resolvedLetterId)
           console.log(`✅ Premium PDF emailed to ${recipientEmail}`)
         }
@@ -218,9 +253,20 @@ export async function POST(req: NextRequest) {
       if (addressNeedsConfirmation) {
         console.warn(`⏸️  ${tier} for ${childName} awaiting address confirmation — not marked fulfilled`)
       } else {
-        await markLetterFulfilled(resolvedLetterId, tier)
-        console.log(`✅ Fulfilled ${tier} for ${childName}`)
+        // Merge rather than overwrite: a second purchase adds an entitlement, it
+        // does not replace the one already paid for.
+        const nextTier = mergeTier(letterData.tier, tier)
+        await markLetterFulfilled(resolvedLetterId, nextTier)
+        console.log(
+          `✅ Fulfilled ${tier} for ${childName}` +
+          (nextTier === tier ? '' : ` (letter tier now ${nextTier})`)
+        )
       }
+
+      // Closed out even when the address is still being queried: the webhook's own
+      // work for this session is done, and a redelivery must not resend the
+      // confirmation email. What remains is the customer confirming their address.
+      await markSessionCompleted(session.id)
 
       return NextResponse.json({ received: true })
 
