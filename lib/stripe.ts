@@ -75,7 +75,6 @@ export async function createCheckoutSession({
     payment_method_types: ['card'],
     line_items: [{ price: price.priceId, quantity: 1 }],
     mode: 'payment',
-    allow_promotion_codes: true,
     // Pre-fill email only when provided (legacy flow). Upgrade flow lets Stripe collect.
     ...(recipientEmail && { customer_email: recipientEmail }),
     ...(needsShipping && {
@@ -83,9 +82,17 @@ export async function createCheckoutSession({
         allowed_countries: ['US', 'GB', 'NL', 'DE', 'FR', 'BE', 'AU', 'CA', 'IE', 'ES', 'IT', 'PT', 'SE', 'NO', 'DK', 'FI', 'PL'],
       },
     }),
-    ...(promoId && {
-      discounts: [{ promotion_code: promoId }],
-    }),
+    // Stripe rejects a session that carries both `discounts` and
+    // `allow_promotion_codes`, so these are spread as a single either/or rather
+    // than as two independent options. Setting both threw at session creation,
+    // which meant no checkout at all for that tier rather than a degraded promo.
+    //
+    // When a seasonal promotion is running it is applied automatically and the
+    // code box is not offered; outside those windows the customer can enter a
+    // dashboard-created code. The two are mutually exclusive by construction.
+    ...(promoId
+      ? { discounts: [{ promotion_code: promoId }] }
+      : { allow_promotion_codes: true }),
     success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}&letter_id=${letterId}&tier=${tier}&amount=${price.amount}`,
     cancel_url: cancelUrl,
     metadata: {
