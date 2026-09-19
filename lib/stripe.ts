@@ -93,7 +93,7 @@ export async function createCheckoutSession({
     ...(promoId
       ? { discounts: [{ promotion_code: promoId }] }
       : { allow_promotion_codes: true }),
-    success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}&letter_id=${letterId}&tier=${tier}&amount=${price.amount}`,
+    success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}&letter_id=${letterId}&tier=${tier}`,
     cancel_url: cancelUrl,
     metadata: {
       tier,

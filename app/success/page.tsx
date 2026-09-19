@@ -48,17 +48,50 @@ function SuccessContent() {
   const letterId = searchParams.get('letter_id') || ''
   const [upsellLoading, setUpsellLoading] = useState(false)
   const [upsellDone, setUpsellDone] = useState(false)
-  // Fire Meta Pixel Purchase event once on mount
+  // Fire Meta Pixel Purchase event once on mount.
+  //
+  // The value comes from the Stripe session rather than a URL parameter. The
+  // parameter held the tier's list price, fixed when success_url was built before
+  // checkout, so any order using a promotion code reported the undiscounted
+  // figure to Meta. The ref guard keeps the now-asynchronous effect to a single
+  // event under a remount.
+  const purchaseTracked = useRef(false)
   useEffect(() => {
+    if (purchaseTracked.current) return
+    purchaseTracked.current = true
+
     const tier = searchParams.get('tier') || 'unknown'
-    const amountCents = parseInt(searchParams.get('amount') || '0', 10)
-    const value = amountCents > 0 ? amountCents / 100 : undefined
-    trackEvent('Purchase', {
-      value,
-      currency: 'USD',
-      content_name: tier,
-      content_type: 'product',
-    })
+    const sessionId = searchParams.get('session_id')
+
+    async function trackPurchase() {
+      let value: number | undefined
+      let currency = 'USD'
+
+      if (sessionId) {
+        try {
+          const res = await fetch(
+            `/api/checkout-total?session_id=${encodeURIComponent(sessionId)}`
+          )
+          if (res.ok) {
+            const data = await res.json()
+            if (typeof data.amountTotal === 'number') value = data.amountTotal / 100
+            if (typeof data.currency === 'string') currency = data.currency.toUpperCase()
+          }
+        } catch {
+          // Leave value undefined. Reporting the conversion without revenue is
+          // better than reporting a number already known to be wrong.
+        }
+      }
+
+      trackEvent('Purchase', {
+        value,
+        currency,
+        content_name: tier,
+        content_type: 'product',
+      })
+    }
+
+    trackPurchase()
   }, [searchParams])
 
   const handleAddChild = async () => {
