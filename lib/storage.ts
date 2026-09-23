@@ -380,6 +380,23 @@ export async function countReferralGrants(code: string): Promise<number> {
   return Array.isArray(rows) ? rows.length : 0
 }
 
+// Letters that were referred but have not been through the grant path yet. This
+// is the sweep's work queue: the /preview trigger misses anyone who closes the
+// tab before it fires, and those rows sit here until the cron picks them up.
+//
+// Ordered oldest first so a backlog drains in arrival order rather than
+// starving the earliest ones.
+export async function listPendingReferralGrants(limit: number): Promise<string[]> {
+  const res = await supabaseAdminFetch(
+    `/letters?referred_by_code=not.is.null&referral_premium_granted_at=is.null` +
+      `&select=id&order=created_at.asc&limit=${limit}`,
+    { method: 'GET', headers: { 'Prefer': 'return=representation' } }
+  )
+  await assertOk(res, 'listPendingReferralGrants')
+  const rows = await res.json()
+  return Array.isArray(rows) ? rows.map((r: { id: string }) => r.id) : []
+}
+
 // Claims the grant for one letter. The `is.null` predicate makes this atomic:
 // whichever concurrent call updates the row first gets the rows back, and every
 // other call matches nothing. Returns false when the grant was already claimed,

@@ -8,6 +8,9 @@
     },
     "app/api/webhook/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/referral-sweep/route.ts": {
+      "maxDuration": 300
     }
   },
   "crons": [
@@ -22,6 +25,10 @@
     {
       "path": "/api/cron/revalidate-blog",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/referral-sweep",
+      "schedule": "15 * * * *"
     }
   ]
 }
