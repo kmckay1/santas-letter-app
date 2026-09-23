@@ -5,15 +5,14 @@ import {
   getLetter,
   getLetterByUpgradeToken,
   markLetterFulfilled,
-  markPremiumPdfSent,
   claimWebhookSession,
   markSessionPremiumPdfSent,
   markSessionCompleted,
   mergeTier,
 } from '@/lib/storage'
-import { sendOrderConfirmationEmail, sendPremiumPDFEmail, sendAddressCheckEmail } from '@/lib/resend'
-import { generatePremiumPDF } from '@/lib/pdf'
+import { sendOrderConfirmationEmail, sendAddressCheckEmail } from '@/lib/resend'
 import { createClient } from '@supabase/supabase-js'
+import { deliverPremiumPdf } from '@/lib/fulfillment'
 import Stripe from 'stripe'
 
 function getSupabaseAdmin() {
@@ -110,14 +109,13 @@ export async function POST(req: NextRequest) {
           )
         } else {
           console.log(`Generating premium PDF for ${childName}...`)
-          const pdfBuffer = await generatePremiumPDF(letterData.child, letterData.letterText)
-          await sendPremiumPDFEmail(recipientEmail, childName, pdfBuffer)
+          // Shared with the referral grant. Renders, emails, and writes the
+          // letter-level record; the session-scoped guard below stays here
+          // because it is this caller's rule, not the shared path's.
+          await deliverPremiumPdf(letterData, recipientEmail)
           // Stamped immediately after sending: a failure further down this handler
           // must not cost the customer a duplicate PDF on the retry.
           await markSessionPremiumPdfSent(session.id)
-          // Letter-level record of the most recent send. Kept for history and
-          // support questions; no longer consulted as a guard.
-          await markPremiumPdfSent(resolvedLetterId)
           console.log(`✅ Premium PDF emailed to ${recipientEmail}`)
         }
       }
