@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto'
 import { ChildInfo } from '@/types'
 
 export interface StoredLetter {
@@ -11,6 +12,9 @@ export interface StoredLetter {
   upgradeToken?: string
   email?: string
   premiumPdfSentAt?: string | null
+  referralCode?: string | null
+  referredByCode?: string | null
+  referralPremiumGrantedAt?: string | null
 }
 
 function getSupabaseAdmin() {
@@ -56,42 +60,94 @@ async function assertOk(res: Response, context: string): Promise<void> {
   throw new Error(`${context} failed: HTTP ${res.status} ${res.statusText} — ${body.slice(0, 300)}`)
 }
 
-export async function storeLetter(letter: StoredLetter): Promise<string | null> {
-  const { url, key } = getSupabaseAdmin()
-  // Use return=representation so we can read back the auto-generated upgrade_token
-  const res = await fetch(
-    `${url}/rest/v1/letters`,
-    {
-      method: 'POST',
-      cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': key,
-        'Authorization': `Bearer ${key}`,
-        'Prefer': 'return=representation',
-      },
-      body: JSON.stringify({
-        id: letter.id,
-        child_name: letter.child.name,
-        child_age: letter.child.age,
-        child_data: letter.child,
-        letter_text: letter.letterText,
-        language: letter.language,
-        created_at: letter.createdAt,
-        fulfilled: false,
-        // Store email so Phase 2 nurture sequence can find recipients later.
-        // Stored lowercase so the unsubscribe lookup (which lowercases) matches.
-        email: letter.email ? letter.email.toLowerCase().trim() : null,
-      }),
-    }
-  )
-  if (!res.ok) {
-    const err = await res.text()
-    throw new Error(`Supabase insert failed: ${err}`)
+// Omits 0/O and 1/I so a code survives being read aloud or retyped from a
+// screenshot. 32^6 is about 1.07 billion, so a collision is already unlikely at
+// this scale; the unique index is what actually guarantees it, and storeLetter
+// retries on the rejection rather than trusting the odds.
+const REFERRAL_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+const REFERRAL_CODE_LENGTH = 6
+
+export function generateReferralCode(): string {
+  const bytes = randomBytes(REFERRAL_CODE_LENGTH)
+  let code = ''
+  for (let i = 0; i < REFERRAL_CODE_LENGTH; i++) {
+    code += REFERRAL_ALPHABET[bytes[i] % REFERRAL_ALPHABET.length]
   }
-  const rows = await res.json()
-  const row = Array.isArray(rows) ? rows[0] : rows
-  return row?.upgrade_token || null
+  return code
+}
+
+export interface StoredLetterResult {
+  upgradeToken: string | null
+  referralCode: string | null
+}
+
+export async function storeLetter(letter: StoredLetter): Promise<StoredLetterResult> {
+  const { url, key } = getSupabaseAdmin()
+
+  // The referral code is generated here rather than by the caller so every letter
+  // gets one by construction. A draw can in principle collide with an existing
+  // code, which the unique index rejects with a 409; retry with a fresh draw a
+  // few times before giving up.
+  const MAX_CODE_ATTEMPTS = 5
+  let lastError = ''
+
+  for (let attempt = 1; attempt <= MAX_CODE_ATTEMPTS; attempt++) {
+    const referralCode = generateReferralCode()
+
+    // Use return=representation so we can read back the auto-generated upgrade_token
+    const res = await fetch(
+      `${url}/rest/v1/letters`,
+      {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': key,
+          'Authorization': `Bearer ${key}`,
+          'Prefer': 'return=representation',
+        },
+        body: JSON.stringify({
+          id: letter.id,
+          child_name: letter.child.name,
+          child_age: letter.child.age,
+          child_data: letter.child,
+          letter_text: letter.letterText,
+          language: letter.language,
+          created_at: letter.createdAt,
+          fulfilled: false,
+          // Store email so Phase 2 nurture sequence can find recipients later.
+          // Stored lowercase so the unsubscribe lookup (which lowercases) matches.
+          email: letter.email ? letter.email.toLowerCase().trim() : null,
+          referral_code: referralCode,
+          // Recorded for every referred signup, including ones that will not earn a
+          // grant, so the attribution ratio counts what actually happened. Stored
+          // uppercase because codes are compared case-insensitively.
+          referred_by_code: letter.referredByCode
+            ? letter.referredByCode.toUpperCase().trim()
+            : null,
+        }),
+      }
+    )
+
+    if (res.ok) {
+      const rows = await res.json()
+      const row = Array.isArray(rows) ? rows[0] : rows
+      return {
+        upgradeToken: row?.upgrade_token || null,
+        referralCode: row?.referral_code || referralCode,
+      }
+    }
+
+    lastError = await res.text()
+
+    // 409 from the referral code index means this draw was taken. Any other 409
+    // is a different constraint (a duplicate letter id, say) and retrying the
+    // same insert would only fail the same way.
+    const isCodeCollision = res.status === 409 && lastError.includes('letters_referral_code_key')
+    if (!isCodeCollision) break
+  }
+
+  throw new Error(`Supabase insert failed: ${lastError}`)
 }
 
 export async function getLetter(id: string): Promise<StoredLetter | null> {

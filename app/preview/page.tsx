@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChildInfo } from '@/types'
+import { readStoredReferral } from '@/lib/referral'
+import ShareBlock from './ShareBlock'
 import { trackEvent } from '@/lib/pixel'
 
 function Snowflakes() {
@@ -407,6 +409,7 @@ export default function PreviewPage() {
   const [child, setChild] = useState<ChildInfo | null>(null)
   const [letter, setLetter] = useState('')
   const [letterId, setLetterId] = useState('')
+  const [referralCode, setReferralCode] = useState('')
   // CHANGE 2: only two steps now. The email-gate step is gone because the
   // email is captured on the form and passed into the single generate call.
   const [step, setStep] = useState<'generating' | 'done'>('generating')
@@ -434,6 +437,7 @@ export default function PreviewPage() {
     if (cachedLetter && cachedLetterId) {
       setLetter(cachedLetter)
       setLetterId(cachedLetterId)
+      setReferralCode(sessionStorage.getItem('santaReferralCode') || '')
       setStep('done')
     } else {
       generateLetter(childData, storedEmail)
@@ -451,7 +455,14 @@ export default function PreviewPage() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ child: childData, language, email: recipientEmail || undefined }),
+        body: JSON.stringify({
+          child: childData,
+          language,
+          email: recipientEmail || undefined,
+          // Whatever ?ref= this visitor arrived with, if it is still inside the
+          // 30-day window. Null is the normal case.
+          referredByCode: readStoredReferral(),
+        }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -460,6 +471,10 @@ export default function PreviewPage() {
       if (data.letterId) {
         setLetterId(data.letterId)
         sessionStorage.setItem('santaLetterId', data.letterId)
+      }
+      if (data.referralCode) {
+        setReferralCode(data.referralCode)
+        sessionStorage.setItem('santaReferralCode', data.referralCode)
       }
       // Lead fires on successful completion now, since email was captured up front.
       trackEvent('Lead', { content_name: 'free_letter_completed' })
@@ -664,6 +679,8 @@ export default function PreviewPage() {
                 Free copy noted for {email} · All payments secured by Stripe
               </p>
             </div>
+
+            <ShareBlock code={referralCode} />
           </div>
         )}
       </div>

@@ -23,10 +23,11 @@ const LANGUAGE_NAMES: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { child, language = 'en', email } = await req.json() as {
+    const { child, language = 'en', email, referredByCode } = await req.json() as {
       child: ChildInfo
       language?: string
       email?: string
+      referredByCode?: string | null
     }
 
     if (!child?.name || !child?.age) {
@@ -91,6 +92,9 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
       language,
       createdAt: new Date().toISOString(),
       email,
+      // Carried from ?ref= on the landing page. Recorded whatever its value: an
+      // unknown or capped code still counts as a referred signup.
+      referredByCode: typeof referredByCode === 'string' ? referredByCode : null,
     }
 
     // Persist the letter AND the email together. With email now captured on the
@@ -98,8 +102,11 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
     // the user closes the tab before reading. Capture is best-effort: a storage
     // failure must never block returning the letter to the user.
     let upgradeToken: string | null = null
+    let referralCode: string | null = null
     try {
-      upgradeToken = await storeLetter(storedLetter)
+      const stored = await storeLetter(storedLetter)
+      upgradeToken = stored.upgradeToken
+      referralCode = stored.referralCode
     } catch (storeErr) {
       console.warn('Letter storage unavailable:', storeErr)
     }
@@ -115,7 +122,7 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
       }
     }
 
-    return NextResponse.json({ letter: letterText, letterId })
+    return NextResponse.json({ letter: letterText, letterId, referralCode })
 
   } catch (err) {
     console.error(err)

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { captureReferralFromUrl } from '@/lib/referral'
 import Link from 'next/link'
 
 function Snowflakes() {
@@ -155,6 +156,13 @@ export default function Home() {
   const displayName = trimmedName || 'Emma'
   const createHref = trimmedName ? `/create?name=${encodeURIComponent(trimmedName)}` : '/create'
   const primaryCtaLabel = trimmedName ? `Create ${displayName}'s free letter` : "Create your child's free letter"
+
+  // Referral links land here as santasletter.ai/?ref=CODE. Captured before
+  // anything else on the page so a visitor who bounces straight to /create still
+  // carries the attribution.
+  useEffect(() => {
+    captureReferralFromUrl(window.location.search)
+  }, [])
 
   useEffect(() => {
     if (sessionStorage.getItem('exit_popup_shown')) return
