@@ -170,6 +170,9 @@ export async function getLetter(id: string): Promise<StoredLetter | null> {
     upgradeToken: row.upgrade_token,
     email: row.email,
     premiumPdfSentAt: row.premium_pdf_sent_at ?? null,
+    referralCode: row.referral_code ?? null,
+    referredByCode: row.referred_by_code ?? null,
+    referralPremiumGrantedAt: row.referral_premium_granted_at ?? null,
   }
 }
 
@@ -197,6 +200,9 @@ export async function getLetterByUpgradeToken(token: string): Promise<StoredLett
     upgradeToken: row.upgrade_token,
     email: row.email,
     premiumPdfSentAt: row.premium_pdf_sent_at ?? null,
+    referralCode: row.referral_code ?? null,
+    referredByCode: row.referred_by_code ?? null,
+    referralPremiumGrantedAt: row.referral_premium_granted_at ?? null,
   }
 }
 
@@ -325,6 +331,71 @@ export async function markSessionCompleted(stripeSessionId: string): Promise<voi
     { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString() }) }
   )
   if (!res.ok) throw new Error(`webhook_sessions completion stamp failed: ${await res.text()}`)
+}
+
+// --- Referral grants --------------------------------------------------------
+
+// How many free premium grants a single referral code can earn. Each grant costs
+// a PDF render and an email, so this bounds what one code can spend. Referrals
+// past the cap are still recorded on the letter, they just do not grant, which
+// keeps the signup ratio honest while capping the cost.
+export const REFERRAL_GRANT_CAP = 5
+
+export async function getLetterByReferralCode(code: string): Promise<StoredLetter | null> {
+  const res = await supabaseAdminFetch(
+    `/letters?referral_code=eq.${encodeURIComponent(code)}&limit=1`,
+    { method: 'GET', headers: { 'Prefer': 'return=representation' } }
+  )
+  await assertOk(res, `getLetterByReferralCode(${code})`)
+  const rows = await res.json()
+  if (!rows || rows.length === 0) return null
+  const row = rows[0]
+  return {
+    id: row.id,
+    child: row.child_data,
+    letterText: row.letter_text,
+    language: row.language,
+    createdAt: row.created_at,
+    tier: row.tier,
+    fulfilled: row.fulfilled,
+    upgradeToken: row.upgrade_token,
+    email: row.email,
+    premiumPdfSentAt: row.premium_pdf_sent_at ?? null,
+    referralCode: row.referral_code ?? null,
+    referredByCode: row.referred_by_code ?? null,
+    referralPremiumGrantedAt: row.referral_premium_granted_at ?? null,
+  }
+}
+
+// Grants already earned by a code. Counts referee rows only, because a grant is
+// always stamped on the letter that received it.
+export async function countReferralGrants(code: string): Promise<number> {
+  const res = await supabaseAdminFetch(
+    `/letters?referred_by_code=eq.${encodeURIComponent(code)}` +
+      `&referral_premium_granted_at=not.is.null&select=id`,
+    { method: 'GET', headers: { 'Prefer': 'count=exact' } }
+  )
+  await assertOk(res, `countReferralGrants(${code})`)
+  const rows = await res.json()
+  return Array.isArray(rows) ? rows.length : 0
+}
+
+// Claims the grant for one letter. The `is.null` predicate makes this atomic:
+// whichever concurrent call updates the row first gets the rows back, and every
+// other call matches nothing. Returns false when the grant was already claimed,
+// which is the signal to deliver nothing.
+export async function claimReferralGrant(letterId: string): Promise<boolean> {
+  const res = await supabaseAdminFetch(
+    `/letters?id=eq.${encodeURIComponent(letterId)}&referral_premium_granted_at=is.null`,
+    {
+      method: 'PATCH',
+      headers: { 'Prefer': 'return=representation' },
+      body: JSON.stringify({ referral_premium_granted_at: new Date().toISOString() }),
+    }
+  )
+  await assertOk(res, `claimReferralGrant(${letterId})`)
+  const rows = await res.json()
+  return Array.isArray(rows) && rows.length > 0
 }
 
 export function generateLetterId(childName: string): string {

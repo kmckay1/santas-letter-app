@@ -479,6 +479,18 @@ export default function PreviewPage() {
       // Lead fires on successful completion now, since email was captured up front.
       trackEvent('Lead', { content_name: 'free_letter_completed' })
       setStep('done')
+
+      // Referral grant runs after the letter is on screen. Two PDF renders
+      // inline would add seconds to the wait the user is already sitting
+      // through. Best-effort: the endpoint decides whether anything is owed,
+      // and is safe to call for letters that were never referred.
+      if (data.letterId) {
+        fetch('/api/referral/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ letterId: data.letterId }),
+        }).catch(() => {})
+      }
     } catch { setGenError(true) }
   }
 
