@@ -1,5 +1,6 @@
 import { StoredLetter } from './storage'
 import { generateUnsubscribeUrl } from './unsubscribe'
+import { referralLinkFor } from '@/lib/referral'
 
 // Install: npm install resend
 // Get API key at resend.com — free tier is very generous
@@ -30,6 +31,25 @@ export async function sendFreeLetterEmail(
     : `https://santasletter.ai/create`
 
   const unsubscribeUrl = generateUnsubscribeUrl(email)
+
+  // Rendered only when the letter actually has a code. storeLetter never fails
+  // the letter on account of the code, so it can legitimately be absent, and an
+  // empty share block is worse than none.
+  const referralLink = letter.referralCode ? referralLinkFor(letter.referralCode) : null
+  const referralSection = referralLink
+    ? `
+          <!-- Referral -->
+          <div style="margin-top:20px;padding:28px;background:rgba(255,255,255,0.04);border:1px solid rgba(212,170,90,0.2);border-radius:6px;text-align:center;">
+            <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#d4aa5a;margin:0 0 10px;">Pass it on</p>
+            <p style="font-size:18px;color:#f5ead8;margin:0 0 8px;font-family:Georgia,serif;">Give a friend&rsquo;s child a free letter from Santa</p>
+            <p style="font-size:13px;color:rgba(245,234,216,0.5);margin:0 0 18px;line-height:1.6;">Share your link. When they write their letter,<br>you both get the premium illustrated PDF free.</p>
+            <a href="${referralLink}"
+               style="display:inline-block;background:rgba(0,0,0,0.3);border:1px solid rgba(245,234,216,0.16);color:#f5ead8;padding:12px 18px;border-radius:4px;text-decoration:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;word-break:break-all;">
+              ${referralLink}
+            </a>
+          </div>
+`
+    : ''
 
   const result = await resend.emails.send({
     from: 'Santa Claus <santa@santasletter.ai>',
@@ -74,6 +94,7 @@ export async function sendFreeLetterEmail(
             </a>
           </div>
 
+${referralSection}
           <p style="text-align:center;margin-top:24px;font-size:11px;color:rgba(245,234,216,0.25);">
             SantasLetter.ai · Made with ❤ in San Francisco<br>
             <a href="${unsubscribeUrl}" style="color:rgba(245,234,216,0.3);">Unsubscribe</a>

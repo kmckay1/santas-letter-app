@@ -116,7 +116,13 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
     // email row is already persisted above for Phase 2 to pick up.
     if (email) {
       try {
-        await sendFreeLetterEmail(email, { ...storedLetter, upgradeToken: upgradeToken || undefined })
+        await sendFreeLetterEmail(email, {
+          ...storedLetter,
+          upgradeToken: upgradeToken || undefined,
+          // Read back from the insert, so the share link in the email is the
+          // same code the share block on /preview shows.
+          referralCode,
+        })
       } catch (emailErr) {
         console.warn('Email delivery failed:', emailErr)
       }
