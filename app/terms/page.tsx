@@ -11,7 +11,7 @@ export default function TermsPage() {
         </div>
 
         <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, color: '#6B0F0F', fontWeight: 400, marginBottom: 8 }}>Terms of Service</h1>
-        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: May 2, 2026</p>
+        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: September 24, 2026</p>
 
         <p style={{ fontSize: 15, lineHeight: 1.85, marginBottom: 24 }}>
           Welcome to SantasLetter.ai. By using our website and services, you agree to these Terms of Service. Please read them carefully. If you do not agree, do not use our service.
@@ -32,11 +32,11 @@ We offer free letter previews, premium downloadable PDF letters, and physical le
             title: '3. Payments and Refunds',
             content: `All payments are processed securely through Stripe. Prices are listed in USD.
 
-Digital products (PDF letters): By completing your purchase and clicking through to receive your letter, you acknowledge that the digital product is delivered immediately and you consent to immediate delivery. All sales of digital products are final and non-refundable once the PDF has been delivered to your email, except as required by applicable law.
+Digital products (PDF letters): The PDF is emailed to you immediately after purchase. Digital products are generally non-refundable once the PDF has been delivered to your email, but we may issue a refund at our discretion if you are not satisfied, and we will always issue one where applicable law requires it.
 
 Physical letters: If your physical letter does not arrive within 14 days of your expected delivery date, or arrives damaged, please contact us at hello@santasletter.ai and we will arrange a reprint or refund at our discretion.
 
-EU and UK customers: Where applicable consumer protection law grants you a right of withdrawal, that right does not apply to digital products that have been fully delivered with your prior express consent. By purchasing a digital letter, you provide that express consent and acknowledge that you waive your right of withdrawal once delivery has occurred. Physical letters are subject to the standard 14-day right of withdrawal under EU and UK law, provided the letter has not been opened or used.
+EU and UK customers: Where applicable consumer protection law grants you a right of withdrawal, that right does not apply to digital products that have been fully delivered with your prior express consent. Please be aware that PDF letters are delivered immediately after purchase, and that immediate digital delivery may affect your right of withdrawal under EU and UK law. Physical letters are subject to the standard 14-day right of withdrawal under EU and UK law, provided the letter has not been opened or used.
 
 If you experience a technical issue that prevents delivery of your digital product, contact us within 7 days at hello@santasletter.ai and we will resolve it promptly.`
           },
