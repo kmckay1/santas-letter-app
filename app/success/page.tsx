@@ -132,8 +132,8 @@ function SuccessContent() {
             <div style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(212,170,90,0.6)', marginBottom: 16 }}>What happens next</div>
             {[
               { icon: '📧', text: 'Your PDF will arrive by email within a few minutes' },
-              { icon: '📬', text: 'Physical letters are printed and posted within 1–2 business days' },
-              { icon: '🎄', text: 'Delivery guaranteed before Christmas Eve' },
+              { icon: '📬', text: 'Physical letters are held until late November, then posted on the date you chose at checkout (November 22 at the earliest)' },
+              { icon: '🎄', text: 'Earlier posting dates give the best chance of Christmas delivery' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 14 }}>
                 <span style={{ fontSize: 20, lineHeight: 1.4 }}>{item.icon}</span>
