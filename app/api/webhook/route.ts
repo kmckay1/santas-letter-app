@@ -14,6 +14,8 @@ import { sendOrderConfirmationEmail, sendAddressCheckEmail } from '@/lib/resend'
 import { createClient } from '@supabase/supabase-js'
 import { deliverPremiumPdf } from '@/lib/fulfillment'
 import Stripe from 'stripe'
+import * as Sentry from '@sentry/nextjs'
+import { sendAlert } from '@/lib/alert'
 
 function getSupabaseAdmin() {
   return createClient(
@@ -44,6 +46,8 @@ export async function POST(req: NextRequest) {
 
     if (!recipientEmail) {
       console.error('No recipient email found in session metadata or customer_details')
+      Sentry.captureMessage(`Paid order with no recipient email — session=${session.id}`, 'error')
+      await sendAlert(`🚨 Paid order with no recipient email. Stripe session ${session.id}. Returning 500 so Stripe retries.`)
       // Refuse to acknowledge: a 200 here told Stripe a paid order was handled
       // when nothing had been delivered. A 500 keeps it visible and retried.
       return NextResponse.json({ error: 'No recipient email' }, { status: 500 })
@@ -71,6 +75,8 @@ export async function POST(req: NextRequest) {
           `🚨 PAID ORDER WITH NO LETTER — session=${session.id} letterId=${letterId} ` +
           `upgradeToken=${upgradeToken}. Returning 500 so Stripe retries.`
         )
+        Sentry.captureException(new Error(`Paid order with no letter — session=${session.id}`))
+        await sendAlert(`🚨 PAID ORDER WITH NO LETTER. Stripe session ${session.id}. Returning 500 so Stripe retries.`)
         return NextResponse.json({ error: 'Letter not found' }, { status: 500 })
       }
 
@@ -247,6 +253,8 @@ export async function POST(req: NextRequest) {
           // premium PDF already sent for a bundle is stamped on the session above,
           // so Stripe's retries will not send it twice.
           console.error(`No shipping address found for physical order — session=${session.id}. Returning 500 so Stripe retries.`)
+          Sentry.captureMessage(`Physical order with no shipping address — session=${session.id}`, 'error')
+          await sendAlert(`🚨 Paid ${tier} order with no shipping address. Stripe session ${session.id}. Not fulfilled; returning 500 so Stripe retries.`)
           return NextResponse.json({ error: 'No shipping address' }, { status: 500 })
         }
       }
@@ -286,6 +294,8 @@ export async function POST(req: NextRequest) {
       // business outcome, acknowledged with a 200, because no amount of retrying
       // fixes a customer's typo.
       console.error(`Fulfillment error for session ${session.id}:`, err)
+      Sentry.captureException(err, { tags: { stripe_session: session.id } })
+      await sendAlert(`🚨 Fulfillment error for Stripe session ${session.id}: ${err instanceof Error ? err.message : String(err)}. Returning 500 so Stripe retries.`)
       return NextResponse.json({ error: 'Fulfillment failed' }, { status: 500 })
     }
   }

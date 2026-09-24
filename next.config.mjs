@@ -1,3 +1,5 @@
+import { withSentryConfig } from '@sentry/nextjs/config'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     eslint: {
@@ -33,4 +35,12 @@ const nextConfig = {
     },
   }
   
-  export default nextConfig
+  // Source maps upload only when SENTRY_AUTH_TOKEN, SENTRY_ORG and
+  // SENTRY_PROJECT are set in the build environment; without them the build
+  // still succeeds and Sentry shows minified stack traces.
+  export default withSentryConfig(nextConfig, {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    silent: !process.env.CI,
+  })

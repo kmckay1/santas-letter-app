@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { sendPhysicalLetter, validateAddress, STORAGE_BUCKET } from '@/lib/stannp'
 import { sendAddressCheckEmail } from '@/lib/resend'
+import * as Sentry from '@sentry/nextjs'
+import { sendAlert } from '@/lib/alert'
 
 // Each letter takes roughly 10s end to end (PDFShift render, Supabase upload,
 // Stannp create). vercel.json allows this function 300s, so a batch of 25 run a
@@ -229,6 +231,11 @@ export async function GET(req: NextRequest) {
           `went to Stannp as ${result.id} but the DB update failed: ${updateError.message}. ` +
           `Mark it sent manually or it will be mailed again.`
         )
+        Sentry.captureMessage(`Mailed but not recorded — scheduled_letters ${letter.id}, Stannp ${result.id}`, 'fatal')
+        await sendAlert(
+          `🚨 MAILED BUT NOT RECORDED. scheduled_letters row ${letter.id} went to Stannp as ${result.id} ` +
+          `but could not be marked sent. Mark it sent manually or the next run mails it again.`
+        )
         failed++
         return
       }
@@ -248,6 +255,11 @@ export async function GET(req: NextRequest) {
       }
     } catch (err) {
       console.error(`❌ Failed to send letter for ${letter.child_name}:`, err)
+      Sentry.captureException(err, { tags: { scheduled_letter: letter.id } })
+      await sendAlert(
+        `❌ Failed to send physical letter, scheduled_letters row ${letter.id}: ` +
+        `${err instanceof Error ? err.message : String(err)}. Retries next hourly run.`
+      )
       failed++
     }
   }
