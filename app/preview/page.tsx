@@ -461,6 +461,9 @@ export default function PreviewPage() {
           // Whatever ?ref= this visitor arrived with, if it is still inside the
           // 30-day window. Null is the normal case.
           referredByCode: readStoredReferral(),
+          // The opt-in ticked on /create. Anything but an explicit 'true',
+          // including a missing key, means no marketing email.
+          marketingConsent: sessionStorage.getItem('santaMarketingConsent') === 'true',
         }),
       })
       const data = await res.json()

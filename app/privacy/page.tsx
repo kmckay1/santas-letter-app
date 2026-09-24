@@ -25,7 +25,8 @@ export default function PrivacyPage() {
   • Email address (required to deliver your free letter and any paid products)
   • Child information you enter into the letter form: first name, age, interests, and behaviour notes you choose to share
   • Payment information processed securely through Stripe — we never store card details
-  • Shipping address when you order a physical letter (processed via Lob.com)
+  • Shipping address when you order a physical letter (processed via Stannp)
+  • Letter content, which is sent to PDFShift to render the PDF version of your letter
 
 We also collect limited technical data automatically: IP address, browser type, and pages visited, used solely for security and performance purposes.`
           },
@@ -35,7 +36,7 @@ We also collect limited technical data automatically: IP address, browser type, 
 
   • Generate and deliver your personalised Santa letter
   • Send your purchased PDF or physical letter
-  • Send transactional emails related to your order
+  • Send transactional emails related to your order, and, after you create a free letter, a short series of marketing emails about our products, which you can unsubscribe from at any time using the link in any of them
   • Improve our service and troubleshoot issues
   • Comply with legal obligations
 
@@ -54,9 +55,10 @@ If you believe we have inadvertently collected information from a child without 
             content: `We share your information only with trusted service providers necessary to operate our service:
 
   • Stripe — payment processing
-  • Anthropic — AI letter generation (letter content only, no personal identifiers)
-  • Resend — transactional email delivery
-  • Lob.com — physical letter printing and mailing (shipping address only)
+  • Anthropic — AI letter generation (receives the child's first name, age, behaviour rating and notes, wishes, and any private note you add, in order to write the letter)
+  • Resend — transactional and marketing email delivery
+  • Stannp — physical letter printing and mailing (receives the full letter content and the mailing address)
+  • PDFShift — PDF rendering (receives the letter content and the child's name, and for physical orders also the mailing address)
   • Supabase — secure data storage
   • Vercel — website hosting and analytics
   • Meta (Facebook) — advertising measurement via the Meta Pixel, where applicable

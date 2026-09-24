@@ -15,6 +15,7 @@ export interface StoredLetter {
   referralCode?: string | null
   referredByCode?: string | null
   referralPremiumGrantedAt?: string | null
+  marketingConsent?: boolean
 }
 
 function getSupabaseAdmin() {
@@ -125,6 +126,9 @@ export async function storeLetter(letter: StoredLetter): Promise<StoredLetterRes
           referred_by_code: letter.referredByCode
             ? letter.referredByCode.toUpperCase().trim()
             : null,
+          // Opt-in to marketing email from the /create checkbox. Stored as a
+          // strict boolean so a missing value is never read as consent.
+          marketing_consent: letter.marketingConsent === true,
         }),
       }
     )

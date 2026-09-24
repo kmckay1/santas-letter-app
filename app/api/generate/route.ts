@@ -100,11 +100,12 @@ async function isRateLimited(req: NextRequest, email: unknown): Promise<boolean>
 
 export async function POST(req: NextRequest) {
   try {
-    const { child, language = 'en', email, referredByCode } = await req.json() as {
+    const { child, language = 'en', email, referredByCode, marketingConsent = false } = await req.json() as {
       child: ChildInfo
       language?: string
       email?: string
       referredByCode?: string | null
+      marketingConsent?: boolean
     }
 
     if (await isRateLimited(req, email)) {
@@ -186,6 +187,8 @@ Separate paragraphs with a blank line. Maximum 380 words. Make every sentence ea
       // Carried from ?ref= on the landing page. Recorded whatever its value: an
       // unknown or capped code still counts as a referred signup.
       referredByCode: typeof referredByCode === 'string' ? referredByCode : null,
+      // Only a literal true counts as opting in to marketing email.
+      marketingConsent: marketingConsent === true,
     }
 
     // Persist the letter AND the email together. With email now captured on the

@@ -72,6 +72,9 @@ function CreateForm() {
   // CHANGE 1: email is now collected on the form, framed as the delivery
   // address. Captured here so it is banked before letter generation begins.
   const [email, setEmail] = useState('')
+  // Opt-in to marketing email. Unchecked by default: consent has to be an
+  // active choice, separate from asking for the letter itself.
+  const [marketingConsent, setMarketingConsent] = useState(false)
   const [language, setLanguage] = useState('en')
   const [error, setError] = useState('')
 
@@ -113,6 +116,7 @@ function CreateForm() {
     sessionStorage.setItem('santaChildInfo', JSON.stringify(childData))
     sessionStorage.setItem('santaEmail', email.trim())
     sessionStorage.setItem('santaLanguage', language)
+    sessionStorage.setItem('santaMarketingConsent', marketingConsent ? 'true' : 'false')
     sessionStorage.removeItem('santaLetterText')
     sessionStorage.removeItem('santaLetterId')
     router.push('/preview')
@@ -317,6 +321,19 @@ function CreateForm() {
                 <p style={{ color: '#f09595', fontSize: 13, margin: 0 }}>{error}</p>
               </div>
             )}
+
+            {/* Marketing opt-in */}
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 20, cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={marketingConsent}
+                onChange={e => setMarketingConsent(e.target.checked)}
+                style={{ marginTop: 3, accentColor: '#d4aa5a', cursor: 'pointer', flexShrink: 0 }}
+              />
+              <span style={{ fontSize: 13, color: 'rgba(245,234,216,0.75)', lineHeight: 1.6 }}>
+                Send me occasional emails about SantasLetter.ai products (optional, unsubscribe anytime)
+              </span>
+            </label>
 
             {/* Submit */}
             <button type="submit" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', border: 'none', borderRadius: 5, fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, cursor: 'pointer', letterSpacing: '0.04em', boxShadow: '0 6px 24px rgba(200,56,43,0.45)' }}>
