@@ -42,7 +42,7 @@ If you experience a technical issue that prevents delivery of your digital produ
           },
           {
             title: '4. Delivery',
-            content: `Physical letters are printed and mailed via USPS First Class Mail through our fulfilment partner Lob.com. Estimated delivery is 5–10 business days within the United States.
+            content: `Physical letters are printed and mailed via USPS First Class Mail through our fulfilment partner Stannp. Estimated delivery is 5–10 business days within the United States. Physical letters are held until late November and mailed on the posting date you choose at checkout (November 22 at the earliest), so this delivery window counts from the date your letter is mailed, not the date you place your order.
 
 International delivery times vary. We are not responsible for delays caused by postal services, customs, or circumstances beyond our control.
 
