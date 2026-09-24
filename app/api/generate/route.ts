@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createHash } from 'crypto'
 import Anthropic from '@anthropic-ai/sdk'
+import { kv } from '@vercel/kv'
 import { ChildInfo } from '@/types'
 import { storeLetter, generateLetterId } from '@/lib/storage'
 import { sendFreeLetterEmail } from '@/lib/resend'
@@ -56,6 +58,46 @@ function validateInput(child: ChildInfo, email: unknown): string | null {
   return null
 }
 
+// Each request here costs an Opus call and sends up to four emails, and the
+// route is public, so it is rate limited before any other work.
+const EMAIL_LIMIT = 3
+const EMAIL_WINDOW_SECONDS = 24 * 60 * 60
+const IP_LIMIT = 10
+const IP_WINDOW_SECONDS = 60 * 60
+
+function clientIp(req: NextRequest): string {
+  // x-forwarded-for can be a list; the first entry is the client.
+  const forwarded = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+  return forwarded || req.headers.get('x-real-ip')?.trim() || 'unknown'
+}
+
+// Increments the counter for a key, starting its window on the first hit.
+// Returns true once the count is past the limit.
+async function overLimit(key: string, limit: number, windowSeconds: number): Promise<boolean> {
+  const count = await kv.incr(key)
+  if (count === 1) await kv.expire(key, windowSeconds)
+  return count > limit
+}
+
+// Fails open: if KV is missing or down, the request goes through. Losing the
+// limiter for a while is better than losing letter generation, and the
+// server-side validation below still caps what each request can cost.
+async function isRateLimited(req: NextRequest, email: unknown): Promise<boolean> {
+  try {
+    // The email is hashed so parents' addresses are not copied into the KV store.
+    if (typeof email === 'string' && email.trim()) {
+      const emailHash = createHash('sha256').update(email.toLowerCase().trim()).digest('hex')
+      if (await overLimit(`rate:email:${emailHash}:generate`, EMAIL_LIMIT, EMAIL_WINDOW_SECONDS)) {
+        return true
+      }
+    }
+    return await overLimit(`rate:ip:${clientIp(req)}:generate`, IP_LIMIT, IP_WINDOW_SECONDS)
+  } catch (err) {
+    console.warn('Rate limiter unavailable, allowing request:', err)
+    return false
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { child, language = 'en', email, referredByCode } = await req.json() as {
@@ -63,6 +105,13 @@ export async function POST(req: NextRequest) {
       language?: string
       email?: string
       referredByCode?: string | null
+    }
+
+    if (await isRateLimited(req, email)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
     }
 
     if (!child?.name || !child?.age) {
