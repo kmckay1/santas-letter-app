@@ -1,6 +1,7 @@
 import { StoredLetter } from './storage'
 import { generateUnsubscribeUrl, unsubscribeHeaders } from './unsubscribe'
 import { referralLinkFor } from '@/lib/referral'
+import { COMPANY_POSTAL_ADDRESS } from '@/lib/email-footer'
 
 function escapeHtml(s: string): string {
   return s
@@ -105,7 +106,7 @@ export async function sendFreeLetterEmail(
 
 ${referralSection}
           <p style="text-align:center;margin-top:24px;font-size:11px;color:rgba(245,234,216,0.25);">
-            SantasLetter.ai · Made with ❤ in San Francisco<br>
+            ${COMPANY_POSTAL_ADDRESS}<br>
             <a href="${unsubscribeUrl}" style="color:rgba(245,234,216,0.3);">Unsubscribe</a>
           </p>
         </div>

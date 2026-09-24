@@ -1,5 +1,6 @@
 import { StoredLetter } from './storage'
 import { generateUnsubscribeUrl, unsubscribeHeaders } from './unsubscribe'
+import { COMPANY_POSTAL_ADDRESS } from '@/lib/email-footer'
 
 // Phase 2 nurture sequence — fires on Day 3, Day 7, Day 14 post letter generation.
 // Sender identity matches Phase 1 (santa@santasletter.ai) so emails thread naturally.
@@ -38,7 +39,7 @@ function emailShell(opts: {
     </div>
 
     <p style="text-align:center;margin-top:24px;font-size:11px;color:rgba(245,234,216,0.25);">
-      SantasLetter.ai · Made with ❤ in San Francisco<br>
+      ${COMPANY_POSTAL_ADDRESS}<br>
       <a href="${opts.unsubscribeUrl}" style="color:rgba(245,234,216,0.3);">Unsubscribe</a>
     </p>
   </div>
