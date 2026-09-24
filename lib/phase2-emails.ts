@@ -1,5 +1,5 @@
 import { StoredLetter } from './storage'
-import { generateUnsubscribeUrl } from './unsubscribe'
+import { generateUnsubscribeUrl, unsubscribeHeaders } from './unsubscribe'
 
 // Phase 2 nurture sequence — fires on Day 3, Day 7, Day 14 post letter generation.
 // Sender identity matches Phase 1 (santa@santasletter.ai) so emails thread naturally.
@@ -117,6 +117,7 @@ export async function sendMrsClausEmail(letter: StoredLetter): Promise<void> {
     from: 'Santa Claus <santa@santasletter.ai>',
     to: letter.email,
     subject: `I told Mrs. Claus about ${letter.child.name}`,
+    headers: unsubscribeHeaders(letter.email),
     html: emailShell({ bodyHtml: body, unsubscribeUrl }),
   })
 
@@ -159,6 +160,7 @@ export async function sendKeepsakeUpgradeEmail(letter: StoredLetter): Promise<vo
     from: 'Santa Claus <santa@santasletter.ai>',
     to: letter.email,
     subject: `About ${letter.child.name}'s letter...`,
+    headers: unsubscribeHeaders(letter.email),
     html: emailShell({ bodyHtml: body, unsubscribeUrl }),
   })
 
@@ -202,6 +204,7 @@ export async function sendPhysicalMailPreviewEmail(letter: StoredLetter): Promis
     from: 'Santa Claus <santa@santasletter.ai>',
     to: letter.email,
     subject: `One more thing about ${letter.child.name}'s letter`,
+    headers: unsubscribeHeaders(letter.email),
     html: emailShell({ bodyHtml: body, unsubscribeUrl }),
   })
 
