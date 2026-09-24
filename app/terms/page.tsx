@@ -46,7 +46,7 @@ If you experience a technical issue that prevents delivery of your digital produ
 
 International delivery times vary. We are not responsible for delays caused by postal services, customs, or circumstances beyond our control.
 
-For Christmas delivery, we strongly recommend ordering physical letters by December 15 for US addresses and December 1 for international addresses. We cannot guarantee Christmas delivery for orders placed after these dates.`
+For Christmas delivery, we recommend ordering physical letters as early as possible. Orders placed close to Christmas may not arrive in time, especially during the busy holiday postal period, so we cannot guarantee delivery before Christmas Day.`
           },
           {
             title: '5. Content and Acceptable Use',

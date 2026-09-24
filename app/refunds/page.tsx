@@ -9,14 +9,14 @@ export default function RefundsPage() {
           </div>
   
           <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, color: '#6B0F0F', fontWeight: 400, marginBottom: 8 }}>Refunds & Delivery</h1>
-          <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: April 19, 2026</p>
+          <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: September 24, 2026</p>
   
           {[
             {
               title: 'Digital Products — PDF Letters',
               content: `PDF letters are delivered instantly to your email address upon successful payment.
   
-  Because digital products are delivered immediately, all PDF sales are final and non-refundable once the file has been sent to your inbox.
+  PDF letters are generally non-refundable once the file has been sent to your inbox, but we may issue a refund at our discretion if you are not satisfied, and we will always issue one where applicable law requires it.
   
   If you did not receive your PDF within 10 minutes of purchase, please check your spam folder and then contact us at hello@santasletter.ai — we will resend it promptly.
   
@@ -24,9 +24,9 @@ export default function RefundsPage() {
             },
             {
               title: 'Physical Letters — Printing & Postage',
-              content: `Physical letters are printed and dispatched within 1–2 business days of your order via USPS First Class Mail.
+              content: `Physical letters are held until late November, then printed and dispatched via USPS First Class Mail on the posting date you choose at checkout (November 22 at the earliest).
   
-  Estimated delivery times:
+  Estimated delivery times, counted from the dispatch date rather than the order date:
   - United States: 5–10 business days
   - United Kingdom, Canada, Australia: 10–21 business days
   - Europe: 10–21 business days
@@ -35,10 +35,10 @@ export default function RefundsPage() {
   These are estimates and not guarantees. Delays caused by postal services, customs, or circumstances beyond our control are outside our responsibility.`,
             },
             {
-              title: 'Christmas Delivery Guarantee',
-              content: `We strongly recommend ordering physical letters by December 15 for delivery before Christmas Day.
+              title: 'Christmas Delivery Timing',
+              content: `We recommend ordering physical letters as early as possible. Letters are posted from November 22 onwards, on the posting date you choose at checkout, and then take the delivery times listed above to arrive.
   
-  We cannot guarantee Christmas delivery for physical orders placed after December 15, due to postal service volumes during the holiday period. Digital PDFs are always delivered instantly regardless of the time of year.`,
+  Orders placed close to Christmas may not arrive in time, especially during the busy holiday postal period, so we cannot guarantee delivery before Christmas Day. Digital PDFs are always delivered instantly regardless of the time of year.`,
             },
             {
               title: 'Physical Letter Refunds',
