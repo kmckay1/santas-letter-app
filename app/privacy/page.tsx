@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         </div>
 
         <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, color: '#6B0F0F', fontWeight: 400, marginBottom: 8 }}>Privacy Policy</h1>
-        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: May 2, 2026</p>
+        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: September 24, 2026</p>
 
         <p style={{ fontSize: 15, lineHeight: 1.85, marginBottom: 24 }}>
           SantasLetter.ai (&ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) is committed to protecting the privacy of the families who use our service. This Privacy Policy explains how we collect, use, and safeguard your information when you visit santasletter.ai.
@@ -36,7 +36,8 @@ We also collect limited technical data automatically: IP address, browser type, 
 
   • Generate and deliver your personalised Santa letter
   • Send your purchased PDF or physical letter
-  • Send transactional emails related to your order, and, after you create a free letter, a short series of marketing emails about our products, which you can unsubscribe from at any time using the link in any of them
+  • Send transactional emails related to your order
+  • Send marketing emails about our products, only if you opt in, whether by ticking the checkbox when you create a letter or by signing up for one of our email lists. You can unsubscribe at any time using the link in any email.
   • Improve our service and troubleshoot issues
   • Comply with legal obligations
 
@@ -92,7 +93,7 @@ To exercise any of these rights, contact us at privacy@santasletter.ai.`
   • Right to data portability: you can request your data in a portable format
   • Right to object: you can object to our processing of your personal information
 
-The lawful basis for our processing is the performance of our contract with you (delivering the letter you ordered) and your consent (for marketing communications, where applicable).
+The lawful basis for our processing is the performance of our contract with you (delivering the letter you ordered). For marketing emails, the lawful basis is your consent: we send them only if you opt in, whether by ticking the checkbox when you create a letter or by signing up for one of our email lists, and you can withdraw that consent at any time using the unsubscribe link in any email we send.
 
 To exercise any of these rights, contact privacy@santasletter.ai. We will respond within 30 days. If you are not satisfied with our response, you have the right to lodge a complaint with your local data protection authority.
 
