@@ -146,7 +146,6 @@ const TIER_MAP: Record<string, string> = {
   'Premium PDF': 'premium',
   'The bundle': 'bundle',
   'Real mail': 'physical',
-  'Add a child': 'addChild',
 }
 
 const EARLIEST_MAIL_DATE = '2026-11-22'
@@ -653,7 +652,6 @@ export default function PreviewPage() {
                   { label: 'Premium PDF', price: '$9', emoji: '📄', desc: 'Illustrated parchment design, print-ready at home', highlight: false, cta: 'Select' },
                   { label: 'The bundle', price: '$35', emoji: '🎁', desc: 'Premium PDF (instant) + posted letter for December', highlight: true, cta: '✦ Get the bundle' },
                   { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Hand-stamped & posted, arriving in December', highlight: false, cta: 'Select' },
-                  { label: 'Add a child', price: '+$15', emoji: '⭐', desc: 'Another child gets their own magical letter', highlight: false, cta: 'Select' },
                 ].map(opt => {
                   const tier = TIER_MAP[opt.label]
                   const isLoading = checkoutLoading === tier

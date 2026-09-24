@@ -21,6 +21,41 @@ const LANGUAGE_NAMES: Record<string, string> = {
   fi: 'Finnish',
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Returns a message describing the first violation, or null when the input is
+// acceptable. Limits match the maxLength attributes on /create.
+function validateInput(child: ChildInfo, email: unknown): string | null {
+  if (typeof child.name !== 'string') return 'Child name must be text'
+  const name = child.name.trim()
+  if (name.length < 1 || name.length > 50) return 'Child name must be between 1 and 50 characters'
+
+  const age = Number(child.age)
+  if (!Number.isInteger(age) || age < 1 || age > 16) return 'Age must be a whole number between 1 and 16'
+
+  if (child.behaviorNotes != null) {
+    if (typeof child.behaviorNotes !== 'string') return 'Behavior notes must be text'
+    if (child.behaviorNotes.length > 500) return 'Behavior notes must be 500 characters or fewer'
+  }
+
+  if (child.parentNotes != null) {
+    if (typeof child.parentNotes !== 'string') return 'Parent notes must be text'
+    if (child.parentNotes.length > 300) return 'Parent notes must be 300 characters or fewer'
+  }
+
+  if (!Array.isArray(child.wishes)) return 'Wishes must be a list'
+  for (const wish of child.wishes) {
+    if (typeof wish !== 'string') return 'Each wish must be text'
+    if (wish.length > 100) return 'Each wish must be 100 characters or fewer'
+  }
+
+  if (typeof email !== 'string' || email.length > 120 || !EMAIL_PATTERN.test(email)) {
+    return 'A valid email address of 120 characters or fewer is required'
+  }
+
+  return null
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { child, language = 'en', email, referredByCode } = await req.json() as {
@@ -32,6 +67,13 @@ export async function POST(req: NextRequest) {
 
     if (!child?.name || !child?.age) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+    }
+
+    // The form enforces these limits too, but only in the browser. This route is
+    // public and every request pays for an Opus call, so the server holds the line.
+    const invalid = validateInput(child, email)
+    if (invalid) {
+      return NextResponse.json({ error: invalid }, { status: 400 })
     }
 
     const wishList = child.wishes

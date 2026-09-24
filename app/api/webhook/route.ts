@@ -44,7 +44,9 @@ export async function POST(req: NextRequest) {
 
     if (!recipientEmail) {
       console.error('No recipient email found in session metadata or customer_details')
-      return NextResponse.json({ received: true })
+      // Refuse to acknowledge: a 200 here told Stripe a paid order was handled
+      // when nothing had been delivered. A 500 keeps it visible and retried.
+      return NextResponse.json({ error: 'No recipient email' }, { status: 500 })
     }
 
     try {
@@ -240,7 +242,12 @@ export async function POST(req: NextRequest) {
             }
           }
         } else {
-          console.error('No shipping address found for physical order')
+          // Stop before the confirmation email and the fulfilled flag: a paid
+          // physical order with nowhere to post it must stay outstanding. A
+          // premium PDF already sent for a bundle is stamped on the session above,
+          // so Stripe's retries will not send it twice.
+          console.error(`No shipping address found for physical order — session=${session.id}. Returning 500 so Stripe retries.`)
+          return NextResponse.json({ error: 'No shipping address' }, { status: 500 })
         }
       }
 

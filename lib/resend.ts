@@ -2,6 +2,14 @@ import { StoredLetter } from './storage'
 import { generateUnsubscribeUrl } from './unsubscribe'
 import { referralLinkFor } from '@/lib/referral'
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 // Install: npm install resend
 // Get API key at resend.com — free tier is very generous
 
@@ -73,7 +81,7 @@ export async function sendFreeLetterEmail(
             <div style="height:6px;background:linear-gradient(90deg,#5a0a0a,#c8382b 30%,#d4aa5a 50%,#c8382b 70%,#5a0a0a);"></div>
             <div style="padding:40px 44px;">
               <p style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(100,50,20,0.45);margin:0 0 8px;font-family:Georgia,serif;">The Official North Pole Post Office</p>
-              <p style="font-family:Georgia,serif;font-size:24px;color:#150800;margin:0 0 24px;">Dear ${letter.child.name},</p>
+              <p style="font-family:Georgia,serif;font-size:24px;color:#150800;margin:0 0 24px;">Dear ${escapeHtml(letter.child.name)},</p>
               <hr style="border:none;border-top:1px solid rgba(139,90,43,0.15);margin:0 0 24px;">
               ${letterHtml}
               <div style="margin-top:32px;padding-top:20px;border-top:1px solid rgba(139,90,43,0.12);">
@@ -144,12 +152,12 @@ export async function sendOrderConfirmationEmail(
         <div style="max-width:500px;margin:0 auto;text-align:center;">
           <p style="font-size:48px;margin:0 0 20px;">🎅</p>
           <h1 style="font-size:24px;color:#f5ead8;font-weight:400;margin:0 0 12px;">Order confirmed!</h1>
-          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">${childName}'s ${tierLabels[tier] || tier} is being prepared at the North Pole</p>
+          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">${escapeHtml(childName)}'s ${tierLabels[tier] || tier} is being prepared at the North Pole</p>
           
           <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,170,90,0.2);border-radius:6px;padding:24px;text-align:left;margin-bottom:24px;">
             <p style="color:#d4aa5a;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 8px;">Your order</p>
             <p style="color:#f5ead8;font-size:16px;margin:0 0 4px;">${tierLabels[tier] || tier}</p>
-            <p style="color:rgba(245,234,216,0.5);font-size:13px;margin:0;">For: ${childName}</p>
+            <p style="color:rgba(245,234,216,0.5);font-size:13px;margin:0;">For: ${escapeHtml(childName)}</p>
             ${includesPDF ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:12px 0 0;">📄 <strong style="color:rgba(245,234,216,0.85);">Premium PDF:</strong> Sent to this email shortly — check your inbox.</p>` : ''}
             ${includesPhysical ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:8px 0 0;">📬 <strong style="color:rgba(245,234,216,0.85);">Physical letter:</strong> Hand-stamped and mailed from the North Pole in late November so it arrives in December — when Christmas magic feels closest.</p>` : ''}
           </div>
@@ -158,7 +166,7 @@ export async function sendOrderConfirmationEmail(
           <div style="background:rgba(212,170,90,0.06);border:1px solid rgba(212,170,90,0.18);border-radius:6px;padding:18px 22px;text-align:left;margin-bottom:24px;">
             <p style="color:#d4aa5a;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 6px;">What happens next</p>
             <p style="color:rgba(245,234,216,0.6);font-size:12px;margin:0;line-height:1.7;">
-              Santa's elves will keep ${childName}'s letter safe at the North Pole until late November, then hand-stamp and post it so it lands in your mailbox in early-to-mid December. We'll email you the moment it ships.
+              Santa's elves will keep ${escapeHtml(childName)}'s letter safe at the North Pole until late November, then hand-stamp and post it so it lands in your mailbox in early-to-mid December. We'll email you the moment it ships.
             </p>
           </div>
           ` : ''}
@@ -215,14 +223,14 @@ export async function sendPremiumPDFEmail(
           <div style="background:linear-gradient(160deg,#1a2d45,#0f1f33);border:1px solid rgba(212,170,90,0.3);border-radius:6px;padding:36px 40px;text-align:center;margin-bottom:24px;">
             <div style="font-size:52px;margin-bottom:16px;">📜</div>
             <h1 style="font-size:22px;color:#f5ead8;font-weight:400;margin:0 0 10px;font-family:Georgia,serif;">
-              ${childName}'s letter is ready!
+              ${escapeHtml(childName)}'s letter is ready!
             </h1>
             <p style="font-size:14px;color:rgba(245,234,216,0.6);margin:0 0 24px;line-height:1.7;">
               Attached is the official premium PDF — beautifully illustrated<br>and ready to print or save forever.
             </p>
             <div style="background:rgba(212,170,90,0.08);border:1px solid rgba(212,170,90,0.2);border-radius:4px;padding:14px 20px;display:inline-block;">
               <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#d4aa5a;margin:0 0 4px;">Attached file</p>
-              <p style="font-size:13px;color:#f5ead8;margin:0;">📎 Santas-Letter-${childName.replace(/\s+/g, '-')}.pdf</p>
+              <p style="font-size:13px;color:#f5ead8;margin:0;">📎 Santas-Letter-${escapeHtml(childName.replace(/\s+/g, '-'))}.pdf</p>
             </div>
           </div>
 
@@ -288,7 +296,7 @@ export async function sendAddressCheckEmail(
         <div style="max-width:500px;margin:0 auto;text-align:center;">
           <p style="font-size:48px;margin:0 0 20px;">📬</p>
           <h1 style="font-size:24px;color:#f5ead8;font-weight:400;margin:0 0 12px;">One small thing before we post</h1>
-          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">Your order for ${childName} is safe and paid for — but the postal service didn't recognise the delivery address, so we've paused it rather than risk the letter going astray.</p>
+          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">Your order for ${escapeHtml(childName)} is safe and paid for — but the postal service didn't recognise the delivery address, so we've paused it rather than risk the letter going astray.</p>
 
           <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,170,90,0.2);border-radius:6px;padding:24px;text-align:left;margin-bottom:24px;">
             <p style="color:#d4aa5a;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 10px;">Address we have</p>
