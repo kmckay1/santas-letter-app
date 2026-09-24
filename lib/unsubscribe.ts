@@ -44,7 +44,7 @@ export function generateUnsubscribeUrl(email: string): string {
   const lowered = email.toLowerCase().trim()
   const token = generateUnsubscribeToken(lowered)
   const params = new URLSearchParams({ email: lowered, token })
-  return `https://santasletter.ai/unsubscribe?${params.toString()}`
+  return `https://www.santasletter.ai/unsubscribe?${params.toString()}`
 }
 
 /**
@@ -56,7 +56,7 @@ export function generateOneClickUnsubscribeUrl(email: string): string {
   const lowered = email.toLowerCase().trim()
   const token = generateUnsubscribeToken(lowered)
   const params = new URLSearchParams({ email: lowered, token })
-  return `https://santasletter.ai/api/unsubscribe-one-click?${params.toString()}`
+  return `https://www.santasletter.ai/api/unsubscribe-one-click?${params.toString()}`
 }
 
 /**

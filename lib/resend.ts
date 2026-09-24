@@ -1,5 +1,5 @@
 import { StoredLetter } from './storage'
-import { generateUnsubscribeUrl } from './unsubscribe'
+import { generateUnsubscribeUrl, unsubscribeHeaders } from './unsubscribe'
 import { referralLinkFor } from '@/lib/referral'
 
 function escapeHtml(s: string): string {
@@ -63,6 +63,7 @@ export async function sendFreeLetterEmail(
     from: 'Santa Claus <santa@santasletter.ai>',
     to: email,
     subject: `🎅 A letter from Santa, just for ${letter.child.name}`,
+    headers: unsubscribeHeaders(email),
     html: `
       <!DOCTYPE html>
       <html>
