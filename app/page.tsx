@@ -116,10 +116,10 @@ function FAQ() {
   const faqs = [
     { q: 'Is the letter really free?', a: 'Yes, completely free. Enter your child\'s details, generate their letter, and read the full thing at no cost. We\'ll send it to your email too. Paid options are available if you\'d like a beautifully designed PDF or a real printed letter posted to your door.' },
     { q: 'Is this AI-generated?', a: 'Yes. Each letter is written by AI, trained to write in the warm, magical voice of Santa Claus. Every letter is unique and personalised using the details you provide. We review our prompts carefully to ensure the letters feel genuinely special, not generic.' },
-    { q: 'When will my physical letter arrive?', a: 'Physical letters are printed and posted within 1 to 2 business days via USPS First Class Mail. Estimated delivery is 5 to 10 business days within the US. For guaranteed Christmas delivery, we recommend ordering by December 15.' },
+    { q: 'When will my physical letter arrive?', a: 'Physical letters are held until late November, then posted via USPS First Class Mail on the date you choose at checkout (November 22 at the earliest). Delivery usually takes 5 to 10 business days within the US from that posting date. We recommend ordering as early as possible, as we can\'t guarantee Christmas delivery for late orders.' },
     { q: 'What countries do you ship to?', a: 'We currently ship physical letters to the US, UK, Canada, Australia, Ireland, Netherlands, Germany, France, Belgium, Spain, Italy, Portugal, Sweden, Norway, Denmark, Finland, and Poland. Digital PDFs are available worldwide.' },
-    { q: 'Can I order for more than one child?', a: 'Yes! After your first order you\'ll see the option to add another child for just $15. Each child gets their own fully personalised letter mentioning their name, age, interests, and good deeds.' },
-    { q: 'Is my child\'s information safe?', a: 'Absolutely. We take privacy seriously, especially when it comes to children\'s data. We only collect the information needed to write the letter, we never share it with third parties for marketing, and we comply with COPPA. Read our full Privacy Policy for details.' },
+    { q: 'Can I order for more than one child?', a: 'Yes. Fill in the letter form once for each child, and each one gets their own fully personalised letter mentioning their name, age, interests, and good deeds. You can then choose a PDF or posted letter for each child separately.' },
+    { q: 'Is my child\'s information safe?', a: 'Absolutely. We take privacy seriously, especially when it comes to children\'s data. We only collect the information needed to write the letter, and we comply with COPPA. Read our full Privacy Policy for details.' },
   ]
   return (
     <div style={{ marginBottom: 40 }}>
@@ -330,7 +330,7 @@ export default function Home() {
 
         <div style={{ background: 'rgba(200,56,43,0.1)', border: '1px solid rgba(200,56,43,0.3)', borderRadius: 8, padding: '16px 24px', marginBottom: 40 }}>
           <span style={{ color: '#f09595', fontSize: 13 }}>
-            🎄 Order physical letters by <strong style={{ color: '#f5ead8' }}>December 15</strong> for guaranteed Christmas delivery
+            🎄 Order physical letters <strong style={{ color: '#f5ead8' }}>as early as possible</strong>. They are posted from November 22, and late orders may not arrive by Christmas
           </span>
         </div>
 
