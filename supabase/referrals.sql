@@ -71,7 +71,8 @@ end $$;
 --          count(*)                                             as total,
 --          round(100.0 * count(*) filter (where referred_by_code is not null)
 --                / nullif(count(*), 0), 1)                      as pct
---   from letters;
+--   from letters
+--   where not is_test;
 
 -- Grants already earned by one code, which is what the cap of 5 is checked
 -- against before a grant is made.
@@ -86,6 +87,6 @@ end $$;
 --          count(*)                                                   as signups,
 --          count(*) filter (where referral_premium_granted_at is not null) as granted
 --   from letters
---   where referred_by_code is not null
+--   where referred_by_code is not null and not is_test
 --   group by referred_by_code
 --   order by signups desc;

@@ -27,6 +27,7 @@ export type ReferralOutcome =
   | 'unknown_code'
   | 'self_referral'
   | 'cap_reached'
+  | 'test_letter'
 
 export interface ReferralResult {
   outcome: ReferralOutcome
@@ -44,6 +45,9 @@ function ownsPremium(letter: StoredLetter): boolean {
 // the same PDF would simply be sent twice.
 async function grantPremium(letter: StoredLetter): Promise<boolean> {
   if (!letter.email) return false
+  // Never deliver a free PDF to one of the owner's test letters. A real referee
+  // who arrived through a test letter's link still gets theirs.
+  if (letter.isTest) return false
   if (ownsPremium(letter)) return false
 
   await deliverPremiumPdf(letter, letter.email)
@@ -61,6 +65,9 @@ export async function processReferralClaim(letterId: string): Promise<ReferralRe
 
   const code = referee.referredByCode
   if (!code) return { outcome: 'not_referred', ...NOTHING }
+
+  // Test referrals made through /preview earn nothing on either side.
+  if (referee.isTest) return { outcome: 'test_letter', ...NOTHING, code }
 
   // Already settled. Checked before any further lookup so repeat calls are cheap.
   if (referee.referralPremiumGrantedAt) return { outcome: 'already_granted', ...NOTHING, code }

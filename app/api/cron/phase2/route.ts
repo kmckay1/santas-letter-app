@@ -79,6 +79,8 @@ async function processDay(opts: {
     // Only people who ticked the marketing opt-in on /create. Letters created
     // before the checkbox existed default to false and are excluded.
     .eq('marketing_consent', true)
+    // The owner's own test letters never receive the sequence.
+    .eq('is_test', false)
     .is(opts.sentAtColumn, null)
     .lte('created_at', opts.createdAtMaxIso)
 

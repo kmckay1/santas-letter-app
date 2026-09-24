@@ -16,6 +16,9 @@ export interface StoredLetter {
   referredByCode?: string | null
   referralPremiumGrantedAt?: string | null
   marketingConsent?: boolean
+  // Set on the owner's own test rows (kylemckay22 addresses). Test letters are
+  // excluded from marketing, the referral sweep and referral grants.
+  isTest?: boolean
 }
 
 function getSupabaseAdmin() {
@@ -177,6 +180,7 @@ export async function getLetter(id: string): Promise<StoredLetter | null> {
     referralCode: row.referral_code ?? null,
     referredByCode: row.referred_by_code ?? null,
     referralPremiumGrantedAt: row.referral_premium_granted_at ?? null,
+    isTest: row.is_test === true,
   }
 }
 
@@ -207,6 +211,7 @@ export async function getLetterByUpgradeToken(token: string): Promise<StoredLett
     referralCode: row.referral_code ?? null,
     referredByCode: row.referred_by_code ?? null,
     referralPremiumGrantedAt: row.referral_premium_granted_at ?? null,
+    isTest: row.is_test === true,
   }
 }
 
@@ -368,6 +373,7 @@ export async function getLetterByReferralCode(code: string): Promise<StoredLette
     referralCode: row.referral_code ?? null,
     referredByCode: row.referred_by_code ?? null,
     referralPremiumGrantedAt: row.referral_premium_granted_at ?? null,
+    isTest: row.is_test === true,
   }
 }
 
@@ -393,7 +399,7 @@ export async function countReferralGrants(code: string): Promise<number> {
 export async function listPendingReferralGrants(limit: number): Promise<string[]> {
   const res = await supabaseAdminFetch(
     `/letters?referred_by_code=not.is.null&referral_premium_granted_at=is.null` +
-      `&select=id&order=created_at.asc&limit=${limit}`,
+      `&is_test=eq.false&select=id&order=created_at.asc&limit=${limit}`,
     { method: 'GET', headers: { 'Prefer': 'return=representation' } }
   )
   await assertOk(res, 'listPendingReferralGrants')
