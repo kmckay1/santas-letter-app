@@ -631,7 +631,7 @@ export default function PreviewPage() {
                     <div style={{ flex: 1, height: 0.8, background: 'linear-gradient(90deg, transparent, rgba(139,90,43,0.3) 50%, transparent)' }} />
                   </div>
                   <div style={{ textAlign: 'center', fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: 10, letterSpacing: '0.08em', color: 'rgba(139,90,43,0.3)' }}>
-                    Delivered with love from the North Pole · Christmas Eve Guaranteed
+                    Delivered with love from the North Pole
                   </div>
                 </div>
               </div>
