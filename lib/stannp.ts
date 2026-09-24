@@ -12,7 +12,13 @@ const PDFSHIFT_API_URL = 'https://api.pdfshift.io/v3/convert/pdf'
 
 // Reuses the bucket the Lob flow already writes to, so no new Supabase setup is
 // required mid-migration. Rename alongside the lob_letter_id column later.
-const STORAGE_BUCKET = 'lob-letters'
+// Exported so the send cron deletes from the same bucket it uploaded to.
+export const STORAGE_BUCKET = 'lob-letters'
+
+// The letter PDF carries a child's name and home address, so the bucket is
+// private and Stannp gets a short-lived signed URL. An hour covers the
+// letters/create call, which fetches the file while it runs.
+const SIGNED_URL_TTL_SECONDS = 3600
 
 // Stannp only validates US and GB addresses. Real addresses in DE, FR and AU all
 // come back is_valid:false, and CA street lines are not checked at all (a nonsense
@@ -169,15 +175,22 @@ async function uploadPdfToSupabase(pdf: Buffer, fileName: string): Promise<strin
     .from(STORAGE_BUCKET)
     .upload(fileName, pdf, { contentType: 'application/pdf', upsert: true })
   if (error) throw new Error('Supabase upload error: ' + error.message)
-  const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(fileName)
-  return data.publicUrl
+  const { data, error: signError } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .createSignedUrl(fileName, SIGNED_URL_TTL_SECONDS)
+  // Never hand Stannp a URL that cannot be fetched: that would be a paid send
+  // of a blank or failed letter. Throwing leaves the row unsent for a retry.
+  if (signError || !data?.signedUrl) {
+    throw new Error('Supabase signed URL error: ' + (signError?.message ?? 'no URL returned'))
+  }
+  return data.signedUrl
 }
 
 export async function sendPhysicalLetter(
   toAddress: MailAddress,
   child: ChildInfo,
   letter: { content: string; childName: string; createdAt: string }
-): Promise<{ id: string; expectedDelivery: string }> {
+): Promise<{ id: string; expectedDelivery: string; filePath: string }> {
   const apiKey = process.env.STANNP_API_KEY
   if (!apiKey) throw new Error('STANNP_API_KEY env var not set')
 
@@ -189,7 +202,8 @@ export async function sendPhysicalLetter(
   // millisecond, and the upload uses upsert, which would silently overwrite the
   // first PDF and mail one child the other's letter.
   const suffix = Math.random().toString(36).slice(2, 8)
-  const fileUrl = await uploadPdfToSupabase(pdf, `letter-${slug}-${Date.now()}-${suffix}.pdf`)
+  const filePath = `letter-${slug}-${Date.now()}-${suffix}.pdf`
+  const fileUrl = await uploadPdfToSupabase(pdf, filePath)
 
   const { firstname, lastname } = splitName(toAddress.name)
 
@@ -247,5 +261,7 @@ export async function sendPhysicalLetter(
   return {
     id: String(payload.data.id),
     expectedDelivery: estimateDelivery(),
+    // Returned so the caller can delete the PDF once the send is recorded.
+    filePath,
   }
 }

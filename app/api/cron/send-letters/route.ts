@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { sendPhysicalLetter, validateAddress } from '@/lib/stannp'
+import { sendPhysicalLetter, validateAddress, STORAGE_BUCKET } from '@/lib/stannp'
 import { sendAddressCheckEmail } from '@/lib/resend'
 
 // Each letter takes roughly 10s end to end (PDFShift render, Supabase upload,
@@ -235,6 +235,17 @@ export async function GET(req: NextRequest) {
 
       console.log(`✅ Sent letter for ${letter.child_name}, Stannp ID: ${result.id}`)
       sent++
+
+      // Stannp has the letter and the row is marked sent, so the PDF (a child's
+      // name and home address) has no further use. A failed delete is logged,
+      // never thrown: the send is done and must not be retried over cleanup.
+      // Anything left behind is caught by scripts/purge-old-letters.ts.
+      const { error: removeError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .remove([result.filePath])
+      if (removeError) {
+        console.warn(`   PDF cleanup failed for ${letter.id} (${result.filePath}): ${removeError.message}`)
+      }
     } catch (err) {
       console.error(`❌ Failed to send letter for ${letter.child_name}:`, err)
       failed++
