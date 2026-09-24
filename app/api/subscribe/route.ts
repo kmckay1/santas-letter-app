@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
-import { generateUnsubscribeUrl } from '@/lib/unsubscribe'
+import { generateUnsubscribeUrl, unsubscribeHeaders } from '@/lib/unsubscribe'
+import { COMPANY_POSTAL_ADDRESS } from '@/lib/email-footer'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -57,6 +58,7 @@ async function sendVideoWaitlistEmail(email: string) {
     from: 'Santa\'s Letter <hello@santasletter.ai>',
     to: email,
     subject: '🎬 You\'re on the list — Personalised Santa Video coming this Christmas',
+    headers: unsubscribeHeaders(email),
     html: `
 <!DOCTYPE html>
 <html>
@@ -118,7 +120,8 @@ async function sendVideoWaitlistEmail(email: string) {
 
     <div style="background:#6B0F0F;padding:16px 40px;text-align:center;">
       <div style="font-size:11px;color:rgba(212,170,90,0.7);line-height:1.8;">
-        SantasLetter.ai · Official North Pole Post Office<br>
+        Official North Pole Post Office<br>
+        ${COMPANY_POSTAL_ADDRESS}<br>
         <a href="https://www.santasletter.ai/privacy" style="color:rgba(212,170,90,0.5);text-decoration:none;">Privacy Policy</a>
         &nbsp;·&nbsp;
         <a href="${unsubscribeUrl}" style="color:rgba(212,170,90,0.5);text-decoration:none;">Unsubscribe</a>
@@ -138,6 +141,7 @@ async function sendLeadMagnetEmail(email: string) {
     from: 'Santa\'s Letter <hello@santasletter.ai>',
     to: email,
     subject: '🎄 Your 5 Magical Christmas Activities from Santa\'s Workshop',
+    headers: unsubscribeHeaders(email),
     html: `
 <!DOCTYPE html>
 <html>
@@ -232,7 +236,8 @@ async function sendLeadMagnetEmail(email: string) {
 
     <div style="background:#6B0F0F;padding:16px 40px;text-align:center;">
       <div style="font-size:11px;color:rgba(212,170,90,0.7);line-height:1.8;">
-        SantasLetter.ai · Official North Pole Post Office<br>
+        Official North Pole Post Office<br>
+        ${COMPANY_POSTAL_ADDRESS}<br>
         <a href="https://www.santasletter.ai/privacy" style="color:rgba(212,170,90,0.5);text-decoration:none;">Privacy Policy</a>
         &nbsp;·&nbsp;
         <a href="${unsubscribeUrl}" style="color:rgba(212,170,90,0.5);text-decoration:none;">Unsubscribe</a>
