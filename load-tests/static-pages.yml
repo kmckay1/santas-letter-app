@@ -1,0 +1,46 @@
+# Load test: static pages only.
+#
+#   npx artillery run load-tests/static-pages.yml
+#
+# Ramps from 5 to 50 requests per second over 2 minutes against production.
+# Each virtual user makes exactly one request, so the arrival rate is the
+# request rate. The three scenarios have equal weight, so the pages are hit in
+# roughly equal shares, picked at random per request.
+#
+# Keep this file to GET requests on static pages. Never add /api/generate,
+# /api/checkout or any other POST or API route: those call paid services
+# (Anthropic, PDFShift, Stannp, Resend) and write to the production database,
+# which local runs share (see TESTING.md).
+
+config:
+  target: "https://www.santasletter.ai"
+  phases:
+    - name: "Ramp 5 to 50 requests per second"
+      duration: 120
+      arrivalRate: 5
+      rampTo: 50
+
+scenarios:
+  - name: "Home"
+    weight: 1
+    flow:
+      - get:
+          url: "/"
+          headers:
+            user-agent: "santasletter-loadtest (artillery)"
+
+  - name: "Create form"
+    weight: 1
+    flow:
+      - get:
+          url: "/create"
+          headers:
+            user-agent: "santasletter-loadtest (artillery)"
+
+  - name: "Blog index"
+    weight: 1
+    flow:
+      - get:
+          url: "/blog"
+          headers:
+            user-agent: "santasletter-loadtest (artillery)"
