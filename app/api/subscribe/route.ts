@@ -54,10 +54,10 @@ export async function POST(req: NextRequest) {
 
 async function sendVideoWaitlistEmail(email: string) {
   const unsubscribeUrl = generateUnsubscribeUrl(email)
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: 'Santa\'s Letter <hello@santasletter.ai>',
     to: email,
-    subject: '🎬 You\'re on the list — Personalised Santa Video coming this Christmas',
+    subject: '🎬 You\'re on the list — Santa video idea',
     headers: unsubscribeHeaders(email),
     html: `
 <!DOCTYPE html>
@@ -77,25 +77,24 @@ async function sendVideoWaitlistEmail(email: string) {
     <div style="padding:40px 48px;">
 
       <p style="font-size:16px;color:#2c1a0e;line-height:1.8;margin:0 0 24px;font-style:italic;">
-        Ho ho ho! You're officially on the waitlist for our most magical creation yet — a personalised video message from Santa Claus, made just for your child.
+        Ho ho ho! You're on the waitlist for an idea we're exploring: a personalised video message from Santa Claus, made just for your child.
       </p>
 
       <div style="height:1px;background:rgba(200,146,42,0.3);margin:0 0 32px;"></div>
 
       <div style="margin-bottom:32px;">
-        <div style="font-family:Georgia,serif;font-size:20px;color:#6B0F0F;font-style:italic;margin-bottom:14px;">What you'll get</div>
+        <div style="font-family:Georgia,serif;font-size:20px;color:#6B0F0F;font-style:italic;margin-bottom:14px;">What it would include</div>
         <ul style="font-size:14px;color:#2c1a0e;line-height:1.9;margin:0;padding:0 0 0 20px;">
-          <li>A custom video where Santa speaks your child's name</li>
+          <li>A custom video where Santa would speak your child's name</li>
           <li>Mentions of their wishes, kind deeds, and personality</li>
-          <li>HD quality, downloadable, ready to share with family</li>
-          <li>30% off launch price for being on the early list</li>
+          <li>An HD video you could download and share with family</li>
         </ul>
       </div>
 
       <div style="margin-bottom:40px;">
-        <div style="font-family:Georgia,serif;font-size:20px;color:#6B0F0F;font-style:italic;margin-bottom:14px;">When to expect it</div>
+        <div style="font-family:Georgia,serif;font-size:20px;color:#6B0F0F;font-style:italic;margin-bottom:14px;">Is it happening?</div>
         <p style="font-size:14px;color:#2c1a0e;line-height:1.8;margin:0;">
-          Launching October 2026 — in time for Christmas. We'll email you the moment it's ready, with your exclusive 30% early-access discount built in. No spam, no daily updates, just the launch.
+          There's no confirmed launch yet. Whether we build it depends on how this Christmas season goes, and joining the waitlist helps us see how much interest there is. If it does go ahead, waitlist members will hear about it first. No spam and no updates in the meantime.
         </p>
       </div>
 
@@ -103,7 +102,7 @@ async function sendVideoWaitlistEmail(email: string) {
 
       <div style="text-align:center;margin-bottom:32px;">
         <p style="font-size:15px;color:#2c1a0e;line-height:1.8;margin:0 0 20px;font-style:italic;">
-          While you wait, would your child love a free personalised letter from Santa? It's a perfect way to start the magic.
+          In the meantime, would your child love a free personalised letter from Santa? It's a perfect way to start the magic.
         </p>
         <a href="https://www.santasletter.ai/create" style="display:inline-block;background:#6B0F0F;color:#d4aa5a;padding:14px 36px;text-decoration:none;font-family:Georgia,serif;font-size:15px;letter-spacing:0.06em;border:1px solid #d4aa5a;">
           ✦ Create a free letter from Santa →
@@ -133,11 +132,16 @@ async function sendVideoWaitlistEmail(email: string) {
 </html>
     `,
   })
+
+  if (result.error) {
+    console.error('Resend sendVideoWaitlistEmail failed:', result.error)
+    throw new Error(`Resend error in sendVideoWaitlistEmail: ${result.error.message}`)
+  }
 }
 
 async function sendLeadMagnetEmail(email: string) {
   const unsubscribeUrl = generateUnsubscribeUrl(email)
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: 'Santa\'s Letter <hello@santasletter.ai>',
     to: email,
     subject: '🎄 Your 5 Magical Christmas Activities from Santa\'s Workshop',
@@ -249,4 +253,9 @@ async function sendLeadMagnetEmail(email: string) {
 </html>
     `,
   })
+
+  if (result.error) {
+    console.error('Resend sendLeadMagnetEmail failed:', result.error)
+    throw new Error(`Resend error in sendLeadMagnetEmail: ${result.error.message}`)
+  }
 }

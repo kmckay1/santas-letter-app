@@ -63,7 +63,7 @@ export default function VideoWaitlistPage() {
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 24 }}>
             <div style={{ width: 48, height: 1, background: 'linear-gradient(90deg, transparent, rgba(212,170,90,0.6))' }} />
-            <span style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a' }}>Coming October 2026</span>
+            <span style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a' }}>An idea we&apos;re exploring</span>
             <div style={{ width: 48, height: 1, background: 'linear-gradient(90deg, rgba(212,170,90,0.6), transparent)' }} />
           </div>
 
@@ -97,7 +97,7 @@ export default function VideoWaitlistPage() {
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 18px', background: 'rgba(212,170,90,0.08)', border: '1px solid rgba(212,170,90,0.25)', borderRadius: 100, fontSize: 13, color: '#d4aa5a' }}>
             <span style={{ fontSize: 14 }}>✦</span>
-            <span>Early waitlist members get 30% off launch price</span>
+            <span>Waitlist members will be first to know, and first in line for early pricing if it happens</span>
           </div>
         </div>
 
@@ -140,32 +140,22 @@ export default function VideoWaitlistPage() {
           </div>
         </div>
 
-        {/* Pricing tease */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.2)', borderRadius: 10, padding: '32px 40px', marginBottom: 48, textAlign: 'center' }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 18 }}>✦ launch pricing ✦</div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: 18, marginBottom: 12, flexWrap: 'wrap' }}>
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, color: 'rgba(245,234,216,0.4)', textDecoration: 'line-through' }}>$34.99</div>
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 44, color: '#d4aa5a' }}>$24.50</div>
-          </div>
-          <div style={{ fontSize: 13, color: 'rgba(245,234,216,0.7)' }}>Waitlist members only · 30% off forever for early supporters</div>
-        </div>
-
         {/* Email capture */}
         <div id="signup" style={{ background: 'linear-gradient(135deg, rgba(212,170,90,0.08) 0%, rgba(180,130,50,0.04) 100%)', border: '1px solid rgba(212,170,90,0.3)', borderRadius: 12, padding: '40px 44px', marginBottom: 56, textAlign: 'center' }}>
           <div style={{ fontSize: 36, marginBottom: 14 }}>🎁</div>
           <div style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 12 }}>✦ join the waitlist ✦</div>
           <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 12px', lineHeight: 1.3 }}>
-            Be first when Santa starts filming
+            Hear first if Santa starts filming
           </h2>
           <p style={{ fontSize: 14, color: 'rgba(245,234,216,0.65)', margin: '0 0 28px', lineHeight: 1.7, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto' }}>
-            We&apos;ll email you the moment the video product launches in October — with your 30% early-access discount built in.
+            We&apos;ll email you only if and when this becomes a real product. There&apos;s no price or discount to announce yet, just a heads-up if it happens.
           </p>
 
           {status === 'success' ? (
             <div style={{ background: 'rgba(76, 175, 80, 0.08)', border: '1px solid rgba(76, 175, 80, 0.3)', padding: '20px 28px', borderRadius: 8, maxWidth: 460, margin: '0 auto' }}>
               <div style={{ fontSize: 28, marginBottom: 8 }}>✦</div>
               <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, color: '#f5ead8', marginBottom: 6 }}>You&apos;re on the list</div>
-              <div style={{ fontSize: 13, color: 'rgba(245,234,216,0.7)' }}>Check your inbox for confirmation. We&apos;ll be in touch when Santa is ready to film.</div>
+              <div style={{ fontSize: 13, color: 'rgba(245,234,216,0.7)' }}>Check your inbox for confirmation. We&apos;ll only be in touch if Santa starts filming.</div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 10, maxWidth: 460, margin: '0 auto', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -187,7 +177,7 @@ export default function VideoWaitlistPage() {
               {status === 'error' && <p style={{ width: '100%', color: '#f09595', fontSize: 12, margin: '4px 0 0' }}>Something went wrong — please check your email and try again.</p>}
             </form>
           )}
-          <p style={{ fontSize: 11, color: 'rgba(245,234,216,0.3)', margin: '14px 0 0' }}>No spam · One launch email · Unsubscribe anytime</p>
+          <p style={{ fontSize: 11, color: 'rgba(245,234,216,0.3)', margin: '14px 0 0' }}>No spam · At most one email, only if it launches · Unsubscribe anytime</p>
         </div>
 
         {/* FAQ */}
@@ -196,10 +186,10 @@ export default function VideoWaitlistPage() {
           <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 28px', textAlign: 'center' }}>Frequently asked</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {[
-              { q: 'When does the video product launch?', a: 'October 2026, in time for Christmas. We\'ll email everyone on the waitlist the moment it goes live.' },
+              { q: 'When does the video product launch?', a: 'There\'s no confirmed launch. Whether we build it depends on how this Christmas season goes, and joining the waitlist helps us see how much interest there is. If it does go ahead, everyone on the waitlist will hear about it first.' },
               { q: 'How is the video personalised?', a: 'You provide your child\'s name, age, a wish or two, and something kind they did this year. We use this to create a custom video where Santa speaks directly to them, by name.' },
-              { q: 'Will I be charged when I join the waitlist?', a: 'No — joining the waitlist is completely free. You\'ll only pay if and when you decide to order a video after launch, and you\'ll get 30% off as a thank you for being early.' },
-              { q: 'Can I still order a letter today?', a: 'Yes! Letters are available now at SantasLetter.ai/create. The video is a separate product launching later this year.' },
+              { q: 'Will I be charged when I join the waitlist?', a: 'No — joining the waitlist is completely free. You\'ll only pay if and when you decide to order a video after launch, and if it happens, waitlist members will get first access and the best early pricing we can offer.' },
+              { q: 'Can I still order a letter today?', a: 'Yes! Letters are available now at SantasLetter.ai/create. The video is a separate idea we\'re still exploring.' },
               { q: 'What if I change my mind?', a: 'You can unsubscribe from the waitlist anytime — no questions asked, no spam.' },
             ].map((f, i) => (
               <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.15)', borderRadius: 8, padding: '20px 24px' }}>
