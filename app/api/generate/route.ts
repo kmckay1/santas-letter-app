@@ -5,6 +5,7 @@ import { kv } from '@vercel/kv'
 import { ChildInfo } from '@/types'
 import { storeLetter, generateLetterId } from '@/lib/storage'
 import { sendFreeLetterEmail } from '@/lib/resend'
+import * as Sentry from '@sentry/nextjs'
 
 const client = new Anthropic()
 
@@ -24,6 +25,28 @@ const LANGUAGE_NAMES: Record<string, string> = {
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// The prompt tells the model never to quote the private behavior rating, but a
+// prompt is not a guarantee, and a child told they scored "3 out of 10" is the
+// failure that matters. These catch the forms seen in practice.
+const RATING_LEAK_PATTERNS: RegExp[] = [
+  /\d+\s*\/\s*10\b/,
+  /\bout\s+of\s+(?:ten|10)\b/i,
+  /\b(?:one|two|three|four|five|six|seven|eight|nine|ten)\s+out\s+of\b/i,
+]
+
+// Returns the first matching phrase, or null when the letter is clean.
+function findRatingLeak(text: string): string | null {
+  for (const pattern of RATING_LEAK_PATTERNS) {
+    const match = text.match(pattern)
+    if (match) return match[0]
+  }
+  return null
+}
+
+function letterTextOf(message: Anthropic.Message): string {
+  return message.content[0]?.type === 'text' ? message.content[0].text : ''
+}
 
 // Returns a message describing the first violation, or null when the input is
 // acceptable. Limits match the maxLength attributes on /create.
@@ -136,7 +159,8 @@ export async function POST(req: NextRequest) {
       ? `\nWRITE THE ENTIRE LETTER IN ${languageName.toUpperCase()}. Every word must be in ${languageName}. Santa speaks all languages fluently.`
       : ''
 
-    const message = await client.messages.create({
+    // Kept as one request object so a regeneration sends exactly the same prompt.
+    const letterRequest: Anthropic.MessageCreateParamsNonStreaming = {
       model: 'claude-opus-4-5',
       max_tokens: 1200,
       messages: [{
@@ -155,7 +179,7 @@ ${languageInstruction}
 
 Child's name: ${child.name}
 Age: ${child.age}
-Behavior rating (1-10, 10 = saintly): ${child.behaviorRating}/10
+Behavior rating (1-10, 10 = saintly; private, for tone only): ${child.behaviorRating}/10
 What Santa has observed: ${child.behaviorNotes || 'Generally thoughtful and kind this year'}
 Their Christmas wishes:
 ${wishList}
@@ -170,11 +194,29 @@ Write a letter with EXACTLY this structure — no salutation, no sign-off, those
 
 - NEVER invent specific physical details about the child's home (room layout, furniture placement, views from windows) — you only know what has been explicitly told to you.
 - NEVER invent specific events, moments, or stories about the child that were not explicitly provided. If behavior notes are empty, speak generally about their character, not made-up scenes.                                                                                                                                                                                                    
+- NEVER state, quote, or refer to the behavior rating in any form: no numbers, no scores, no scales (not "eight out of ten", not "a solid 8", not "eight times out of ten", nothing numeric). The rating is only for calibrating your tone and is never for the child to see. Convey warmth in proportion to it through word choice alone.
 Separate paragraphs with a blank line. Maximum 380 words. Make every sentence earn its place.`,
       }],
-    })
+    }
 
-    const letterText = message.content[0].type === 'text' ? message.content[0].text : ''
+    let letterText = letterTextOf(await client.messages.create(letterRequest))
+
+    // Regenerate once if the letter quotes the rating. A second leak is reported
+    // but the letter is still returned: the parent should never be left without
+    // one. The letter text and child's details stay out of the logs and Sentry.
+    const leak = findRatingLeak(letterText)
+    if (leak) {
+      console.warn(`Letter quoted the behavior rating ("${leak}"); regenerating once`)
+      letterText = letterTextOf(await client.messages.create(letterRequest))
+      const secondLeak = findRatingLeak(letterText)
+      if (secondLeak) {
+        console.error(`Regenerated letter still quotes the behavior rating ("${secondLeak}"); returning it anyway`)
+        Sentry.captureMessage('Letter still quotes the behavior rating after one regeneration', {
+          level: 'error',
+          tags: { rating_leak: secondLeak },
+        })
+      }
+    }
 
     const letterId = generateLetterId(child.name)
     const storedLetter = {
