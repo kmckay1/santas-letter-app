@@ -59,58 +59,6 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
   )
 }
 
-function Testimonials({ ctaHref, ctaLabel }: { ctaHref: string; ctaLabel: string }) {
-  const testimonials = [
-    {
-      quote: "My daughter burst into tears, happy ones, when I read her the letter. Santa mentioned her little act of kindness at school and she couldn't believe he knew. Worth every penny.",
-      name: "Sarah M.",
-      detail: "Mum of Lily, age 6 · United Kingdom",
-      stars: 5,
-    },
-    {
-      quote: "The letter arrived beautifully printed and felt so official. My son kept it on his bedside table for weeks. Already ordered one for his sister for this Christmas.",
-      name: "James T.",
-      detail: "Dad of Oliver, age 8 · United States",
-      stars: 5,
-    },
-    {
-      quote: "I was sceptical but the quality blew me away. The letter mentioned specific things about my kids, their names, their wishes, even something kind they'd done. Absolutely magical.",
-      name: "Emma R.",
-      detail: "Mum of twins, age 5 · Australia",
-      stars: 5,
-    },
-  ]
-
-  return (
-    <div style={{ marginBottom: 32 }}>
-      <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8, textAlign: 'center' }}>✦ what parents are saying ✦</div>
-      <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: '#f5ead8', fontWeight: 400, margin: '0 0 32px', textAlign: 'center' }}>Real families, real magic</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginBottom: 32 }}>
-        {testimonials.map((t, i) => (
-          <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.18)', borderRadius: 12, padding: '28px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ color: '#d4aa5a', fontSize: 16, letterSpacing: 3 }}>
-              {'★'.repeat(t.stars)}
-            </div>
-            <p style={{ fontSize: 14, color: 'rgba(245,234,216,0.8)', lineHeight: 1.8, margin: 0, fontStyle: 'italic', flex: 1 }}>
-              &ldquo;{t.quote}&rdquo;
-            </p>
-            <div>
-              <div style={{ fontSize: 13, color: '#f5ead8', fontWeight: 500, marginBottom: 2 }}>{t.name}</div>
-              <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.4)' }}>{t.detail}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{ textAlign: 'center', marginBottom: 16 }}>
-        <Link href={ctaHref} style={{ display: 'inline-block', background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 40px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)' }}>
-          ✦ {ctaLabel}
-        </Link>
-        <p style={{ fontSize: 12, color: 'rgba(245,234,216,0.4)', marginTop: 10 }}>Free to generate · No credit card needed · Takes 2 minutes</p>
-      </div>
-    </div>
-  )
-}
-
 function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const faqs = [
@@ -216,18 +164,13 @@ export default function Home() {
           Every letter is uniquely written from the details you share. Nothing generic, nothing canned.
         </p>
 
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
+        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 64 }}>
           <Link href={createHref} style={{ background: 'linear-gradient(135deg, #c8382b 0%, #9b1f1f 100%)', color: '#fff', padding: '16px 36px', borderRadius: 4, fontSize: 17, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.04em', boxShadow: '0 8px 28px rgba(200,56,43,0.45)', display: 'inline-block' }}>
             ✦ {primaryCtaLabel}
           </Link>
           <a href="#how-it-works" style={{ background: 'transparent', color: '#d4aa5a', padding: '16px 32px', borderRadius: 4, fontSize: 16, textDecoration: 'none', border: '1px solid rgba(212,170,90,0.35)', display: 'inline-block' }}>
             See how it works
           </a>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 64, fontSize: 13, color: 'rgba(245,234,216,0.65)' }}>
-          <span style={{ color: '#d4aa5a', letterSpacing: 2 }}>★★★★★</span>
-          <span>1,247 letters sent to the North Pole this season</span>
         </div>
 
         {/* Letter preview card — interactive name field drives personalisation */}
@@ -273,8 +216,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        <Testimonials ctaHref={createHref} ctaLabel={primaryCtaLabel} />
 
         {/* How it works */}
         <div id="how-it-works" style={{ marginBottom: 48 }}>
