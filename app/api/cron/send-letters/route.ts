@@ -159,7 +159,7 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-      await sendAddressCheckEmail(letter.recipient_email, letter.child_name, letter.shipping)
+      await sendAddressCheckEmail(letter.recipient_email, letter.child_name, letter.shipping, { isReminder: true })
     } catch (err) {
       // Leave the flag false so the next run tries again; a send failure should
       // not silently cost the customer their only reminder.

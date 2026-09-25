@@ -161,14 +161,14 @@ export async function sendOrderConfirmationEmail(
             <p style="color:#f5ead8;font-size:16px;margin:0 0 4px;">${tierLabels[tier] || tier}</p>
             <p style="color:rgba(245,234,216,0.5);font-size:13px;margin:0;">For: ${escapeHtml(childName)}</p>
             ${includesPDF ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:12px 0 0;">📄 <strong style="color:rgba(245,234,216,0.85);">Premium PDF:</strong> Sent to this email shortly — check your inbox.</p>` : ''}
-            ${includesPhysical ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:8px 0 0;">📬 <strong style="color:rgba(245,234,216,0.85);">Physical letter:</strong> Hand-stamped and mailed from the North Pole in late November so it arrives in December — when Christmas magic feels closest.</p>` : ''}
+            ${includesPhysical ? `<p style="color:rgba(245,234,216,0.5);font-size:13px;margin:8px 0 0;">📬 <strong style="color:rgba(245,234,216,0.85);">Physical letter:</strong> Printed and mailed on the posting date you chose (November 22 at the earliest), and usually arrives 5 to 10 business days after posting.</p>` : ''}
           </div>
 
           ${includesPhysical ? `
           <div style="background:rgba(212,170,90,0.06);border:1px solid rgba(212,170,90,0.18);border-radius:6px;padding:18px 22px;text-align:left;margin-bottom:24px;">
             <p style="color:#d4aa5a;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 6px;">What happens next</p>
             <p style="color:rgba(245,234,216,0.6);font-size:12px;margin:0;line-height:1.7;">
-              Santa's elves will keep ${escapeHtml(childName)}'s letter safe at the North Pole until late November, then hand-stamp and post it so it lands in your mailbox in early-to-mid December. We'll email you the moment it ships.
+              Santa's elves will keep ${escapeHtml(childName)}'s letter safe at the North Pole until the posting date you chose (November 22 at the earliest), then print and post it. It usually arrives 5 to 10 business days after posting. If there's a problem with the delivery address, we'll email you before it goes out.
             </p>
           </div>
           ` : ''}
@@ -270,11 +270,19 @@ export async function sendAddressCheckEmail(
     address_state: string
     address_zip: string
     address_country: string
-  }
+  },
+  // True for the one-time reminder the posting cron sends once the letter's
+  // posting date has arrived and it is being held for the address. By then
+  // "there's plenty of time" is no longer true.
+  { isReminder = false }: { isReminder?: boolean } = {}
 ): Promise<void> {
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     throw new Error(`sendAddressCheckEmail: invalid email address: ${email}`)
   }
+
+  const timingLine = isReminder
+    ? 'Your posting date has arrived, so we\'ll send the letter as soon as you confirm the address.'
+    : 'There\'s plenty of time: letters are posted on the date you chose, between November 22 and December 22.'
 
   const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)
@@ -310,7 +318,7 @@ export async function sendAddressCheckEmail(
             <p style="color:rgba(245,234,216,0.6);font-size:12px;margin:0;line-height:1.7;">
               If that looks right exactly as written, just reply "looks good" and we'll post it as-is.
               If anything needs fixing — a missing apartment number, a wrong postcode — reply with the corrected address and an elf will update it.
-              There's plenty of time: letters are posted in late November.
+              ${timingLine}
             </p>
           </div>
 
