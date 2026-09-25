@@ -191,10 +191,10 @@ export async function sendPhysicalMailPreviewEmail(letter: StoredLetter): Promis
     ${paragraph('Dear friend,')}
     ${paragraph(`It's been two weeks since ${childName}'s letter arrived. The workshop has been quiet, the elves are at their benches, and the air smells of pine and woodsmoke. We're getting closer.`)}
     ${paragraph('I wanted to share one thing for later.')}
-    ${paragraph(`In November and December, when Christmas is properly close, I send real letters by post. Hand-stamped, addressed in the old way, dropped into the mail so they arrive in your mailbox the way they did when you were small.`)}
-    ${paragraph(`The same letter I wrote for ${childName} — but the kind that arrives with a postmark and a North Pole stamp. The kind a child finds, runs to the kitchen with, and reads at the breakfast table.`)}
-    ${paragraph(`If you'd like one this year, the link will be open when November comes. You can save it now:`)}
-    ${ctaButtonSoft(upgradeUrl, 'Save for later →')}
+    ${paragraph(`In November and December, when Christmas is properly close, I send real letters by post. Printed, addressed, and dropped into the mail so they arrive in your mailbox the way they did when you were small.`)}
+    ${paragraph(`The same letter I wrote for ${childName} — printed on paper, with the North Pole postmark on the page itself, and delivered to your door. The kind a child finds, runs to the kitchen with, and reads at the breakfast table.`)}
+    ${paragraph(`If you'd like one this year, you can order anytime, and letters go out from November 22. Here's the link for whenever you're ready:`)}
+    ${ctaButtonSoft(upgradeUrl, 'See the posted letter →')}
     ${paragraph('No need to act on it today. I just wanted you to have it.')}
     ${paragraph('Christmas is coming. Mrs. Claus is already counting cookies.')}
     ${signature('With love,')}
