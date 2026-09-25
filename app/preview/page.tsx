@@ -268,9 +268,9 @@ function DeliveryDateModal({
   const maxDate = '2026-12-22'
 
   const presets = [
-    { id: 'early', label: 'Early December', sub: 'Arrives Dec 1–7', sendDate: '2026-11-22' },
-    { id: 'mid', label: 'Mid-December', sub: 'Arrives Dec 8–15', sendDate: '2026-11-30' },
-    { id: 'late', label: 'Late December', sub: 'Arrives Dec 16–22', sendDate: '2026-12-08' },
+    { id: 'early', label: 'Early December', sub: 'Usually arrives Dec 1–7', sendDate: '2026-11-22' },
+    { id: 'mid', label: 'Mid-December', sub: 'Usually arrives Dec 8–15', sendDate: '2026-11-30' },
+    { id: 'late', label: 'Late December', sub: 'Usually arrives Dec 16–22', sendDate: '2026-12-08' },
   ]
 
   const [selectedPreset, setSelectedPreset] = useState<string>('early')
@@ -302,7 +302,7 @@ function DeliveryDateModal({
           Choose your delivery window
         </h2>
         <p style={{ fontSize: 13, color: 'rgba(245,234,216,0.55)', margin: '0 0 28px', lineHeight: 1.7, fontStyle: 'italic' }}>
-          Letters are hand-stamped and mailed in late November so they arrive in December — when Christmas magic feels closest.
+          Letters are printed and mailed from November 22, on the date you choose below. Delivery typically takes 5 to 10 business days from your posting date.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18, textAlign: 'left' }}>
@@ -653,8 +653,8 @@ export default function PreviewPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 18 }}>
                 {[
                   { label: 'Premium PDF', price: '$9', emoji: '📄', desc: 'Illustrated parchment design, print-ready at home', highlight: false, cta: 'Select' },
-                  { label: 'The bundle', price: '$35', emoji: '🎁', desc: 'Premium PDF (instant) + posted letter for December', highlight: true, cta: '✦ Get the bundle' },
-                  { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Hand-stamped & posted, arriving in December', highlight: false, cta: 'Select' },
+                  { label: 'The bundle', price: '$35', emoji: '🎁', desc: 'Premium PDF (instant) + posted letter', highlight: true, cta: '✦ Get the bundle' },
+                  { label: 'Real mail', price: '$29', emoji: '✉️', desc: 'Printed & posted, arrives 5 to 10 business days after posting', highlight: false, cta: 'Select' },
                 ].map(opt => {
                   const tier = TIER_MAP[opt.label]
                   const isLoading = checkoutLoading === tier
@@ -685,7 +685,7 @@ export default function PreviewPage() {
               </div>
               <div style={{ background: 'rgba(212,170,90,0.08)', border: '1px solid rgba(212,170,90,0.25)', borderRadius: 8, padding: '14px 20px', textAlign: 'center', marginBottom: 14 }}>
                 <span style={{ color: '#d4aa5a', fontSize: 12, letterSpacing: '0.04em' }}>
-                  📬 Physical letters are hand-stamped and mailed in late November · <strong style={{ color: '#f5ead8' }}>Arriving in December</strong>
+                  📬 Physical letters are printed and mailed from November 22, on the date you choose at checkout · <strong style={{ color: '#f5ead8' }}>Arrives 5 to 10 business days after posting</strong>
                 </span>
               </div>
               <p style={{ textAlign: 'center', fontSize: 11, color: 'rgba(245,234,216,0.18)', margin: 0, lineHeight: 1.7 }}>
