@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { captureReferralFromUrl } from '@/lib/referral'
+import { COMPANY_POSTAL_ADDRESS } from '@/lib/email-footer'
 import Link from 'next/link'
 
 function Snowflakes() {
@@ -276,7 +277,7 @@ export default function Home() {
         </div>
 
         <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.55)', lineHeight: 1.8 }}>
-          SantasLetter.ai · Made with ❤ in San Francisco · © {new Date().getFullYear()}
+          {COMPANY_POSTAL_ADDRESS} · © {new Date().getFullYear()}
           <br />
           <a href="/blog" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Blog</a>
           <a href="/privacy" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Privacy Policy</a>

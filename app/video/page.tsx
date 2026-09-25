@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { trackCustomEvent } from '@/lib/pixel'
+import { COMPANY_POSTAL_ADDRESS } from '@/lib/email-footer'
 
 export default function VideoWaitlistPage() {
   const [email, setEmail] = useState('')
@@ -74,26 +75,8 @@ export default function VideoWaitlistPage() {
           </h1>
 
           <p style={{ fontSize: 18, color: 'rgba(245,234,216,0.75)', margin: '0 auto 36px', lineHeight: 1.7, maxWidth: 540 }}>
-            Watch Santa speak your child&apos;s name, mention their wishes, and acknowledge their kind deeds — in a magical HD video they&apos;ll watch over and over.
+            The idea: a magical HD video in which Santa would speak your child&apos;s name, mention their wishes, and acknowledge their kind deeds, one they could watch over and over.
           </p>
-
-          {/* Mock video preview frame */}
-          <div style={{ position: 'relative', maxWidth: 520, margin: '0 auto 44px', borderRadius: 8, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,170,90,0.25)' }}>
-            <div style={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #1a0f08 0%, #2c1810 50%, #1a0f08 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(212,170,90,0.15) 0%, transparent 60%)' }} />
-              <div style={{ position: 'relative', textAlign: 'center' }}>
-                <div style={{ fontSize: 96, marginBottom: 8, filter: 'drop-shadow(0 8px 24px rgba(200,56,43,0.6))' }}>🎅</div>
-                <div style={{ fontSize: 11, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(212,170,90,0.6)' }}>Preview coming soon</div>
-              </div>
-              <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(245,234,216,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'rgba(245,234,216,0.6)' }}>▶</div>
-                <div style={{ flex: 1, height: 3, background: 'rgba(245,234,216,0.2)', borderRadius: 2, position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, width: '20%', height: '100%', background: '#d4aa5a', borderRadius: 2 }} />
-                </div>
-                <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.5)' }}>0:18 / 1:30</div>
-              </div>
-            </div>
-          </div>
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 18px', background: 'rgba(212,170,90,0.08)', border: '1px solid rgba(212,170,90,0.25)', borderRadius: 100, fontSize: 13, color: '#d4aa5a' }}>
             <span style={{ fontSize: 14 }}>✦</span>
@@ -107,10 +90,10 @@ export default function VideoWaitlistPage() {
           <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, color: '#f5ead8', fontWeight: 400, margin: '0 0 36px', textAlign: 'center' }}>Made just for your child</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 18 }}>
             {[
-              { icon: '🎙️', title: 'Speaks their name', body: 'Santa addresses your child by name throughout, just like in the letters' },
-              { icon: '🎁', title: 'Mentions their wishes', body: 'A few things from their wishlist woven in, in Santa\'s warm voice' },
-              { icon: '⭐', title: 'Acknowledges kindness', body: 'A specific kind thing they did this year — tied to your details' },
-              { icon: '📥', title: 'HD download', body: 'Yours to keep, share with grandparents, or save as a yearly tradition' },
+              { icon: '🎙️', title: 'Speaks their name', body: 'Santa would address your child by name throughout, just like in the letters' },
+              { icon: '🎁', title: 'Mentions their wishes', body: 'A few things from their wishlist would be woven in, in Santa\'s warm voice' },
+              { icon: '⭐', title: 'Acknowledges kindness', body: 'Santa would mention a specific kind thing they did this year, based on the details you give' },
+              { icon: '📥', title: 'HD download', body: 'It would be yours to keep, share with grandparents, or save as a yearly tradition' },
             ].map((f) => (
               <div key={f.title} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,170,90,0.18)', borderRadius: 10, padding: '24px 22px' }}>
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
@@ -123,13 +106,13 @@ export default function VideoWaitlistPage() {
 
         {/* How it works */}
         <div style={{ marginBottom: 64 }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8, textAlign: 'center' }}>✦ how it works ✦</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 8, textAlign: 'center' }}>✦ how it would work ✦</div>
           <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, color: '#f5ead8', fontWeight: 400, margin: '0 0 36px', textAlign: 'center' }}>Three simple steps</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, textAlign: 'center' }}>
             {[
-              { n: '01', title: 'Tell Santa about them', body: 'Name, age, a wish or two, a kind thing they did' },
-              { n: '02', title: 'The elves film it', body: 'Personalised video produced in minutes' },
-              { n: '03', title: 'Watch the magic', body: 'Stream or download to share whenever you like' },
+              { n: '01', title: 'You\'d tell Santa about them', body: 'Their name, age, a wish or two, and a kind thing they did' },
+              { n: '02', title: 'The elves would film it', body: 'The personalised video would be produced in minutes' },
+              { n: '03', title: 'You\'d watch the magic', body: 'You could stream or download it to share whenever you like' },
             ].map((s) => (
               <div key={s.n}>
                 <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 44, color: 'rgba(212,170,90,0.18)', lineHeight: 1, marginBottom: 10 }}>{s.n}</div>
@@ -202,7 +185,7 @@ export default function VideoWaitlistPage() {
 
         {/* Footer */}
         <div style={{ borderTop: '1px solid rgba(212,170,90,0.12)', paddingTop: 32, textAlign: 'center', fontSize: 12, color: 'rgba(245,234,216,0.5)', lineHeight: 1.8 }}>
-          SantasLetter.ai · Made with ❤ in San Francisco · © 2026<br />
+          {COMPANY_POSTAL_ADDRESS} · © 2026<br />
           <Link href="/privacy" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Privacy Policy</Link>
           <Link href="/terms" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none', marginRight: 16 }}>Terms of Service</Link>
           <Link href="/" style={{ color: 'rgba(245,234,216,0.45)', textDecoration: 'none' }}>Back to letters</Link>
