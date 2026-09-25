@@ -38,8 +38,8 @@ const TIERS: Tier[] = [
     highlight: true,
     features: [
       'Everything in Premium PDF',
-      'Hand-stamped letter mailed in December',
-      'Arrives before Christmas, postmarked',
+      'Printed letter posted to your door',
+      'Mailed from November 22, on the date you choose',
       'Best value — save $3',
     ],
   },
@@ -49,10 +49,10 @@ const TIERS: Tier[] = [
     price: '$29',
     description: 'A real letter, mailed from the North Pole',
     features: [
-      'Printed on premium paper',
-      'Hand-stamped envelope',
-      'Mailed in December',
-      'Arrives in time for Christmas',
+      'Sent by First Class Mail',
+      'Printed and posted to your door',
+      'Mailed from November 22, on the date you choose',
+      'Usually arrives 5 to 10 business days after posting',
     ],
   },
 ]
