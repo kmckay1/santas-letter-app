@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         </div>
 
         <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, color: '#6B0F0F', fontWeight: 400, marginBottom: 8 }}>Privacy Policy</h1>
-        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: September 24, 2026</p>
+        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: September 28, 2026</p>
 
         <p style={{ fontSize: 15, lineHeight: 1.85, marginBottom: 24 }}>
           SantasLetter.ai (&ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) is committed to protecting the privacy of the families who use our service. This Privacy Policy explains how we collect, use, and safeguard your information when you visit santasletter.ai.
@@ -47,7 +47,7 @@ We do not sell your data to third parties under any circumstances. We may use li
             title: '3. Children\'s Privacy (COPPA)',
             content: `SantasLetter.ai is designed for parents and guardians to create letters on behalf of children. We do not knowingly collect personal information directly from children under the age of 13.
 
-All information about a child (name, age, interests) is entered by a parent or guardian and is used solely to generate that child's personalised letter. We do not store child information beyond what is necessary to fulfil your order.
+All information about a child (name, age, interests) is entered by a parent or guardian and is used solely to generate that child's personalised letter. We store child information for as long as your letters remain available, or until you request deletion.
 
 If you believe we have inadvertently collected information from a child without parental consent, please contact us immediately at privacy@santasletter.ai and we will delete it promptly.`
           },
@@ -61,6 +61,8 @@ If you believe we have inadvertently collected information from a child without 
   • Stannp — physical letter printing and mailing (receives the full letter content and the mailing address)
   • PDFShift — PDF rendering (receives the letter content and the child's name, and for physical orders also the mailing address)
   • Supabase — secure data storage
+  • Sentry — error monitoring (receives technical error reports, which may occasionally include an order's name or mailing address)
+  • Upstash — rate limiting (receives a hashed version of your email address and your IP address)
   • Vercel — website hosting and analytics
   • Meta (Facebook) — advertising measurement via the Meta Pixel, where applicable
 
@@ -68,9 +70,7 @@ All service providers are contractually required to protect your data and may no
           },
           {
             title: '5. Data Retention',
-            content: `We retain your email address and order history for as long as necessary to provide our service and comply with legal obligations. Letter content and child information is retained only as long as needed to fulfil your order.
-
-You may request deletion of your data at any time by emailing privacy@santasletter.ai.`
+            content: `We retain your email address and order history for as long as necessary to provide our service and comply with legal obligations. Letter content and child information may be retained for longer than the immediate order, including to support the free tier and for as long as your letters remain available, and we are working toward a defined deletion schedule. You may request deletion of your data at any time by emailing privacy@santasletter.ai, and we will delete it promptly upon request.`
           },
           {
             title: '6. Your Rights (California Residents)',
@@ -104,10 +104,14 @@ Please note: SantasLetter.ai is operated from the United States. By using the se
             content: `We use a limited set of cookies and similar technologies:
 
   • Session storage to remember your letter as you navigate between pages
+  • Local storage to remember a referral code from a friend's referral link, kept for 30 days so the friend can be credited if you create a letter later
+  • A consent cookie, kept for one year, recording whether you accepted or declined optional tracking
   • Vercel Analytics to measure aggregate website performance, page views, and traffic sources. This data is anonymised and is not used to identify individual users.
-  • Meta (Facebook) Pixel to measure the effectiveness of advertising campaigns we run on Facebook and Instagram. The Pixel records page visits and conversion events (such as completed purchases) and shares this data with Meta so we can understand which ads drive results. You can control how Meta uses this data through your Facebook ad preferences at facebook.com/adpreferences.
+  • Meta (Facebook) Pixel, loaded only if you accept the consent banner, to measure the effectiveness of advertising campaigns we run on Facebook and Instagram. The Pixel records page visits and conversion events (such as completed purchases) and shares this data with Meta so we can understand which ads drive results. You can control how Meta uses this data through your Facebook ad preferences at facebook.com/adpreferences.
+  • Sentry, to log technical errors so we can fix problems quickly. Sentry does not receive letter content, prompts, or session recordings. Error reports may occasionally include an order's name or mailing address.
+  • Upstash (Redis), to apply rate limits based on a hashed version of your email address (kept up to 24 hours) and your IP address (kept up to 1 hour).
 
-You can disable cookies in your browser settings. Disabling cookies may affect site functionality but you will still be able to use the core service.`
+You can decline optional cookies using the consent banner shown on your first visit, or by disabling cookies in your browser settings. Declining may affect some site functionality but you will still be able to use the core service.`
           },
           {
             title: '9. Security',

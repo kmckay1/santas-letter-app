@@ -11,7 +11,7 @@ export default function TermsPage() {
         </div>
 
         <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, color: '#6B0F0F', fontWeight: 400, marginBottom: 8 }}>Terms of Service</h1>
-        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: September 24, 2026</p>
+        <p style={{ fontSize: 13, color: 'rgba(44,26,14,0.5)', marginBottom: 40, fontStyle: 'italic' }}>Last updated: September 28, 2026</p>
 
         <p style={{ fontSize: 15, lineHeight: 1.85, marginBottom: 24 }}>
           Welcome to SantasLetter.ai. By using our website and services, you agree to these Terms of Service. Please read them carefully. If you do not agree, do not use our service.
@@ -60,7 +60,7 @@ Generated letters are for personal, non-commercial use only. You may not resell,
             title: '6. Intellectual Property',
             content: `The SantasLetter.ai website, brand, logo, and underlying technology are owned by us and protected by intellectual property laws.
 
-The personalised letter generated for your child is licensed to you for personal use. We retain the right to use anonymised letter content to improve our AI models.`
+The personalised letter generated for your child is licensed to you for personal use.`
           },
           {
             title: '7. Disclaimer of Warranties',
