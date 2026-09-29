@@ -8,6 +8,7 @@ import {
   claimWebhookSession,
   markSessionPremiumPdfSent,
   markSessionCompleted,
+  releaseWebhookSession,
   mergeTier,
 } from '@/lib/storage'
 import { sendOrderConfirmationEmail, sendAddressCheckEmail } from '@/lib/resend'
@@ -22,6 +23,27 @@ function getSupabaseAdmin() {
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
+}
+
+function tomorrowUtc(): string {
+  return new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+}
+
+// Records a posting row. Returns true when this call created it and false when a
+// row for the session already exists (an earlier attempt got this far), so the
+// caller never repeats the work that follows. Any other failure throws: a paid
+// order must not be acknowledged without its posting row.
+async function insertScheduledLetter(
+  supabase: ReturnType<typeof getSupabaseAdmin>,
+  row: Record<string, unknown>
+): Promise<boolean> {
+  const { error } = await supabase.from('scheduled_letters').insert(row)
+  if (!error) return true
+  if (error.code === '23505') {
+    console.log(`scheduled_letters row already exists for session ${String(row.stripe_session_id)} — skipping`)
+    return false
+  }
+  throw new Error(`scheduled_letters insert failed: ${error.message}`)
 }
 
 export async function POST(req: NextRequest) {
@@ -52,6 +74,10 @@ export async function POST(req: NextRequest) {
       // when nothing had been delivered. A 500 keeps it visible and retried.
       return NextResponse.json({ error: 'No recipient email' }, { status: 500 })
     }
+
+    // Set once this delivery holds the session's lease, so a failure releases
+    // only a lease it owns and never another delivery's.
+    let holdsClaim = false
 
     try {
       // Resolve letter via upgrade_token (upgrade flow) or letter_id (original purchase flow)
@@ -89,15 +115,29 @@ export async function POST(req: NextRequest) {
       // premium and later bought physical against the same letter produced a new,
       // distinct session that was silently acknowledged as a replay: charged, and
       // delivered nothing. Only the same session arriving twice is a replay.
-      const priorSession = await claimWebhookSession(session.id, resolvedLetterId, tier)
-      if (priorSession?.completedAt) {
+      //
+      // The claim is exclusive: one delivery at a time holds a lease on the
+      // session. A second delivery arriving while the first is still working gets
+      // 409, so Stripe retries later and finds it completed, rather than running
+      // the whole handler a second time alongside it.
+      const claim = await claimWebhookSession(session.id, resolvedLetterId, tier)
+      if (claim.outcome === 'completed') {
         console.log(
-          `Stripe session ${session.id} already processed at ${priorSession.completedAt} ` +
+          `Stripe session ${session.id} already processed at ${claim.session.completedAt} ` +
           `(letter ${resolvedLetterId}, ${childName}) — acknowledging replay`
         )
         return NextResponse.json({ received: true, replay: true })
       }
-      if (priorSession) {
+      if (claim.outcome === 'in_progress') {
+        console.log(
+          `Stripe session ${session.id} is being handled by another delivery — ` +
+          `returning 409 so Stripe retries later`
+        )
+        return NextResponse.json({ error: 'Session in progress' }, { status: 409 })
+      }
+      holdsClaim = true
+      const claimedSession = claim.session
+      if (claim.resumed) {
         console.log(
           `Stripe session ${session.id} was started but not completed — resuming; ` +
           `each step below is separately guarded`
@@ -110,10 +150,10 @@ export async function POST(req: NextRequest) {
         // PDF from an earlier purchase and pays for another premium-bearing tier
         // has bought a second delivery, so the letter-level stamp must not
         // suppress it. Within one session, the stamp still makes a retry safe.
-        if (priorSession?.premiumPdfSentAt) {
+        if (claimedSession.premiumPdfSentAt) {
           console.log(
             `Premium PDF already sent for session ${session.id} at ` +
-            `${priorSession.premiumPdfSentAt} — skipping`
+            `${claimedSession.premiumPdfSentAt} — skipping`
           )
         } else {
           console.log(`Generating premium PDF for ${childName}...`)
@@ -183,68 +223,116 @@ export async function POST(req: NextRequest) {
             // Clamp send date — physical letters never ship before December delivery window
             const sendAfter = customerRequested > earliestAllowed ? customerRequested : earliestAllowed
 
+            const scheduledRow = {
+              stripe_session_id: session.id,
+              letter_id: resolvedLetterId,
+              child_name: childName,
+              recipient_email: recipientEmail,
+              tier,
+              shipping: shippingData,
+              letter_content: letterData.letterText,
+              child_info: letterData.child,
+            }
+
             if (!addressCheck.ok) {
               // Undeliverable address. Record the order so it is not lost, leave it
               // unsent, and ask the customer to confirm. Deliberately not marked
               // fulfilled, so it stays visible as outstanding.
               addressNeedsConfirmation = true
 
-              await supabase.from('scheduled_letters').insert({
-                stripe_session_id: session.id,
-                letter_id: resolvedLetterId,
-                child_name: childName,
-                recipient_email: recipientEmail,
-                tier,
-                shipping: shippingData,
-                letter_content: letterData.letterText,
-                child_info: letterData.child,
+              const created = await insertScheduledLetter(supabase, {
+                ...scheduledRow,
                 send_after: sendAfter,
                 sent: false,
               })
-
-              await sendAddressCheckEmail(recipientEmail, childName, shippingData)
-              console.warn(
-                `⚠️  Address rejected by Stannp for ${childName} — order recorded unsent, ` +
-                `customer asked to confirm. session=${session.id}`
-              )
+              if (created) {
+                await sendAddressCheckEmail(recipientEmail, childName, shippingData)
+                console.warn(
+                  `⚠️  Address rejected by Stannp for ${childName} — order recorded unsent, ` +
+                  `customer asked to confirm. session=${session.id}`
+                )
+              }
             } else if (sendAfter <= today) {
-              // Same-day send (only fires after Nov 22, 2026 in production)
-              const result = await sendPhysicalLetter(
-                shippingData,
-                letterData.child,
-                { content: letterData.letterText, childName, createdAt: letterData.createdAt }
-              )
-              console.log(`✅ Physical letter sent immediately via Stannp for ${childName}`)
-
-              await supabase.from('scheduled_letters').insert({
-                stripe_session_id: session.id,
-                letter_id: resolvedLetterId,
-                child_name: childName,
-                recipient_email: recipientEmail,
-                tier,
-                shipping: shippingData,
-                letter_content: letterData.letterText,
-                child_info: letterData.child,
-                send_after: sendAfter,
-                sent: true,
-                sent_at: new Date().toISOString(),
-                lob_letter_id: result.id,
+              // Same-day send (only fires after Nov 22, 2026 in production).
+              //
+              // The order is recorded before it is mailed, and mailed only if this
+              // call created the record, so no retry or duplicate delivery can post
+              // it twice. While Stannp is called the row is held at tomorrow's date:
+              // the hourly cron sends every unsent row that is due and claims
+              // nothing, so a row due today could be mailed by the cron as well if a
+              // run landed during this call. If this request dies before Stannp
+              // answers, the hold also means the cron posts the letter tomorrow
+              // rather than never.
+              const created = await insertScheduledLetter(supabase, {
+                ...scheduledRow,
+                send_after: tomorrowUtc(),
+                sent: false,
               })
+
+              if (created) {
+                let result: Awaited<ReturnType<typeof sendPhysicalLetter>>
+                try {
+                  result = await sendPhysicalLetter(
+                    shippingData,
+                    letterData.child,
+                    { content: letterData.letterText, childName, createdAt: letterData.createdAt }
+                  )
+                } catch (err) {
+                  // Not mailed. Lift the hold so the next hourly cron run retries it
+                  // with its own alerting; Stripe's retry of this webhook then finds
+                  // the row and leaves the posting to the cron.
+                  const { error: releaseError } = await supabase
+                    .from('scheduled_letters')
+                    .update({ send_after: sendAfter })
+                    .eq('stripe_session_id', session.id)
+                    .eq('sent', false)
+                  if (releaseError) {
+                    console.error(
+                      `Could not lift the posting hold for session ${session.id}; the cron ` +
+                      `will post it tomorrow instead: ${releaseError.message}`
+                    )
+                  }
+                  throw err
+                }
+
+                const { error: markError } = await supabase
+                  .from('scheduled_letters')
+                  .update({
+                    send_after: sendAfter,
+                    sent: true,
+                    sent_at: new Date().toISOString(),
+                    lob_letter_id: result.id,
+                  })
+                  .eq('stripe_session_id', session.id)
+
+                if (markError) {
+                  // Stannp has the letter. Not thrown: a retry cannot mail it again
+                  // (the row exists), but the cron will once the hold date arrives
+                  // unless someone marks the row sent.
+                  console.error(
+                    `🚨 MAILED BUT NOT RECORDED — session ${session.id} went to Stannp as ` +
+                    `${result.id} but the row could not be marked sent: ${markError.message}`
+                  )
+                  Sentry.captureMessage(`Mailed but not recorded — session ${session.id}, Stannp ${result.id}`, 'fatal')
+                  await sendAlert(
+                    `🚨 MAILED BUT NOT RECORDED. Stripe session ${session.id} went to Stannp as ${result.id} ` +
+                    `but its scheduled_letters row could not be marked sent. Mark it sent manually ` +
+                    `or the cron mails it again tomorrow.`
+                  )
+                } else {
+                  console.log(`✅ Physical letter sent immediately via Stannp for ${childName}`)
+                }
+              }
             } else {
               // Scheduled send (default path during pre-holiday window)
-              await supabase.from('scheduled_letters').insert({
-                stripe_session_id: session.id,
-                letter_id: resolvedLetterId,
-                child_name: childName,
-                recipient_email: recipientEmail,
-                tier,
-                shipping: shippingData,
-                letter_content: letterData.letterText,
-                child_info: letterData.child,
+              const created = await insertScheduledLetter(supabase, {
+                ...scheduledRow,
                 send_after: sendAfter,
                 sent: false,
               })
-              console.log(`✅ Physical letter scheduled for ${sendAfter} for ${childName}`)
+              if (created) {
+                console.log(`✅ Physical letter scheduled for ${sendAfter} for ${childName}`)
+              }
             }
           }
         } else {
@@ -255,6 +343,7 @@ export async function POST(req: NextRequest) {
           console.error(`No shipping address found for physical order — session=${session.id}. Returning 500 so Stripe retries.`)
           Sentry.captureMessage(`Physical order with no shipping address — session=${session.id}`, 'error')
           await sendAlert(`🚨 Paid ${tier} order with no shipping address. Stripe session ${session.id}. Not fulfilled; returning 500 so Stripe retries.`)
+          await releaseWebhookSession(session.id)
           return NextResponse.json({ error: 'No shipping address' }, { status: 500 })
         }
       }
@@ -296,6 +385,9 @@ export async function POST(req: NextRequest) {
       console.error(`Fulfillment error for session ${session.id}:`, err)
       Sentry.captureException(err, { tags: { stripe_session: session.id } })
       await sendAlert(`🚨 Fulfillment error for Stripe session ${session.id}: ${err instanceof Error ? err.message : String(err)}. Returning 500 so Stripe retries.`)
+      // Free the session now so the retry can resume it without waiting for the
+      // lease to expire.
+      if (holdsClaim) await releaseWebhookSession(session.id)
       return NextResponse.json({ error: 'Fulfillment failed' }, { status: 500 })
     }
   }

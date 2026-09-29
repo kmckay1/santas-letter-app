@@ -285,45 +285,75 @@ function rowToWebhookSession(row: Record<string, unknown>): WebhookSession {
   }
 }
 
-// Claims a Stripe session for processing. Returns the row as it stood before this
-// call when the session has been seen before, or null when this call created it.
-//
-// A returned row with completedAt set means the handler already ran to completion
-// and the delivery is a replay. A returned row with completedAt null means an
-// earlier attempt started and did not finish; the caller should continue, because
-// each step is separately guarded.
+// How long one delivery holds a session. Must exceed the webhook's maxDuration in
+// vercel.json (60s): Vercel kills the function by then, so a live request can
+// never lose its lease to a second delivery, and a crashed one frees the session
+// shortly after.
+export const WEBHOOK_LEASE_SECONDS = 90
+
+export type WebhookClaim =
+  // This delivery holds the lease. resumed is true when an earlier attempt
+  // started the session and did not finish; each step is separately guarded.
+  | { outcome: 'claimed'; resumed: boolean; session: WebhookSession }
+  // Already fully handled: the delivery is a replay.
+  | { outcome: 'completed'; session: WebhookSession }
+  // Another delivery holds a live lease. The caller must not do any work.
+  | { outcome: 'in_progress' }
+
+// Claims a Stripe session for processing, exclusively. The claim is one atomic
+// statement (supabase/webhook_sessions_claim.sql): it creates the row, or takes
+// the lease on an unfinished and unleased one, and otherwise changes nothing.
+// Replaces a read-then-insert that let two simultaneous deliveries both run.
 export async function claimWebhookSession(
   stripeSessionId: string,
   letterId: string,
   tier: string
-): Promise<WebhookSession | null> {
-  const existing = await supabaseAdminFetch(
-    `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}&select=*`
-  )
-  if (!existing.ok) {
-    throw new Error(`webhook_sessions lookup failed: ${await existing.text()}`)
-  }
-  const found = await existing.json()
-  if (Array.isArray(found) && found.length > 0) return rowToWebhookSession(found[0])
-
-  const insert = await supabaseAdminFetch('/webhook_sessions', {
+): Promise<WebhookClaim> {
+  const res = await supabaseAdminFetch('/rpc/claim_webhook_session', {
     method: 'POST',
-    body: JSON.stringify({ stripe_session_id: stripeSessionId, letter_id: letterId, tier }),
+    headers: { 'Prefer': 'return=representation' },
+    body: JSON.stringify({
+      p_session_id: stripeSessionId,
+      p_letter_id: letterId,
+      p_tier: tier,
+      p_lease_seconds: WEBHOOK_LEASE_SECONDS,
+    }),
   })
-  if (insert.ok) return null
-
-  // 409 is the primary key rejecting a concurrent delivery of the same session.
-  // Re-read so the caller sees whatever that winner recorded.
-  if (insert.status === 409) {
-    const retry = await supabaseAdminFetch(
-      `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}&select=*`
-    )
-    if (retry.ok) {
-      const rows = await retry.json()
-      if (Array.isArray(rows) && rows.length > 0) return rowToWebhookSession(rows[0])
-    }
+  if (!res.ok) {
+    throw new Error(`claim_webhook_session failed: ${await res.text()}`)
   }
-  throw new Error(`webhook_sessions insert failed: ${await insert.text()}`)
+  const row = (await res.json()) as Record<string, unknown> | null
+
+  // Null means a concurrent delivery created the row after this statement began,
+  // so it is still working on it.
+  if (!row) return { outcome: 'in_progress' }
+
+  switch (row.outcome) {
+    case 'claimed_new':
+      return { outcome: 'claimed', resumed: false, session: rowToWebhookSession(row) }
+    case 'claimed_resume':
+      return { outcome: 'claimed', resumed: true, session: rowToWebhookSession(row) }
+    case 'completed':
+      return { outcome: 'completed', session: rowToWebhookSession(row) }
+    case 'in_progress':
+      return { outcome: 'in_progress' }
+    default:
+      throw new Error(`claim_webhook_session returned unexpected outcome: ${String(row.outcome)}`)
+  }
+}
+
+// Gives up the lease early after a failed attempt so Stripe's retry can resume
+// at once rather than waiting for expiry. Best effort: expiry frees it anyway.
+export async function releaseWebhookSession(stripeSessionId: string): Promise<void> {
+  try {
+    const res = await supabaseAdminFetch(
+      `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}&completed_at=is.null`,
+      { method: 'PATCH', body: JSON.stringify({ processing_until: null }) }
+    )
+    if (!res.ok) console.warn(`webhook_sessions release failed: ${await res.text()}`)
+  } catch (err) {
+    console.warn('webhook_sessions release failed:', err)
+  }
 }
 
 export async function markSessionPremiumPdfSent(stripeSessionId: string): Promise<void> {
@@ -337,7 +367,7 @@ export async function markSessionPremiumPdfSent(stripeSessionId: string): Promis
 export async function markSessionCompleted(stripeSessionId: string): Promise<void> {
   const res = await supabaseAdminFetch(
     `/webhook_sessions?stripe_session_id=eq.${encodeURIComponent(stripeSessionId)}`,
-    { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString() }) }
+    { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString(), processing_until: null }) }
   )
   if (!res.ok) throw new Error(`webhook_sessions completion stamp failed: ${await res.text()}`)
 }
