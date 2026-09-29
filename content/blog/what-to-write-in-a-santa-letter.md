@@ -123,6 +123,8 @@ Set aside 30 to 45 minutes. Put your detail set in front of you. Read one of the
 
 Read it aloud when you're done. If it sounds like you talking, revise. If it sounds like a letter your child would believe arrived from someone who loves them and has been paying attention, you're done.
 
+Once the words are right, the letter still has to hold up to being turned over, held to the light, and compared with the handwriting on last year's birthday card. Our guide on [how to make a Santa letter look real](https://www.santasletter.ai/blog/how-to-make-a-santa-letter-look-real) covers the paper, the handwriting, and the envelope.
+
 ---
 
 ## Frequently asked questions

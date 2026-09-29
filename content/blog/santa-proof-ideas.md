@@ -62,7 +62,7 @@ The compression mark is the underrated one. If the presents appear to have been 
 
 A partial piece of paper that looks like it fell from a pocket is one of the most examined pieces of physical evidence because it can be read, re-read, and shown to friends. It should look old, slightly crumpled, and handwritten in a style that isn't yours. What goes on it is important: your child's name and address, a small notation that could be a delivery note, and one other address (ideally a neighbor or a place your child recognizes) so it looks like part of a real route.
 
-Do not make this too legible or too complete. A full, neat list looks like someone made a prop. Faded ink, partial text, a few lines that run off the edge as if the paper was torn: these make it look found rather than fabricated.
+Do not make this too legible or too complete. A full, neat list looks like someone made a prop. Faded ink, partial text, a few lines that run off the edge as if the paper was torn: these make it look found rather than fabricated. The same thinking applies to Santa's letter itself, and we walk through paper, ink, and [disguising your handwriting](https://www.santasletter.ai/blog/how-to-make-a-santa-letter-look-real) in a separate guide.
 
 ### A note from the reindeer handler
 
