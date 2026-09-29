@@ -95,7 +95,7 @@ A [free letter from Santa](https://www.santasletter.ai/blog/free-letter-from-san
 
 The USPS program gives you the postmark. It asks you to supply everything else.
 
-If writing a genuinely personal Santa letter feels like one task too many in December, [SantasLetter.ai](https://www.santasletter.ai) takes the other half. You fill in the details about your child (their name, age, something they worked on this year, a pet, something they love) and the letter is written from those specifics. No invented scenes, no generic Christmas filler. For $29, the letter is printed, signed, and physically mailed with an actual postmark on the envelope.
+If writing a genuinely personal Santa letter feels like one task too many in December, [SantasLetter.ai](https://www.santasletter.ai) takes the other half. You fill in the details about your child (their name, age, something they worked on this year, a pet, something they love) and the letter is built around those real details, not generic Christmas filler. For $29, the letter is printed, signed, and physically mailed by First Class Mail.
 
 It's a different path to the same result: a real letter, in a real envelope, arriving in the mailbox.
 

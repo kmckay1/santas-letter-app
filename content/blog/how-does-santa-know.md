@@ -92,4 +92,4 @@ That is the standard we hold to when letters are written: everything specific in
 
 Answer with rules, not facts. Say less than you want to. Ask what they think before you tell them. Write down the answers so they stay the same next year. And keep what Santa knows tied to what the child chose to share, because that is a rule a child can live inside comfortably for years.
 
-If you want the letter itself to do some of that work, our [letter from Santa service](https://www.santasletter.ai) builds each letter only from the details you provide, which keeps Santa's knowledge exactly where your family's rules say it should be.
+If you want the letter itself to do some of that work, our [letter from Santa service](https://www.santasletter.ai) builds each letter around the real details you provide, and you read it before anything is printed, so you can make sure Santa's knowledge stays where your family's rules say it should.

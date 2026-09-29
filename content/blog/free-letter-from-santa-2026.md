@@ -42,7 +42,7 @@ Here's a short example of what a personalized letter for a six-year-old named Li
 >
 > *I also heard you were nervous about your school play. I want you to know I've watched a great many brave things, and stepping out on a stage when your stomach is full of butterflies is one of the bravest. You did wonderfully.*
 
-That's roughly half of what a good free letter looks like. Specific. Warm. Grounded entirely in what you, the parent, shared. Nothing invented, nothing that could feel off if your child read it.
+That's roughly half of what a good free letter looks like. Specific. Warm. Built around the real details you, the parent, shared, so nothing in it should feel off if your child read it.
 
 ## Digital, printed, or posted by mail?
 
