@@ -6,11 +6,17 @@
 // addresses out of messages; send ids that can be looked up instead.
 const ALERT_TIMEOUT_MS = 5000
 
-export async function sendAlert(message: string): Promise<void> {
+// What happened to one alert. Existing callers ignore it; it exists so a test
+// can report the webhook's response without the alert ever throwing.
+export type AlertResult =
+  | { sent: true; status: number }
+  | { sent: false; status?: number; reason: 'not_configured' | 'http_error' | 'network_error' }
+
+export async function sendAlert(message: string): Promise<AlertResult> {
   const url = process.env.ALERT_WEBHOOK_URL
   if (!url) {
     console.warn(`sendAlert: ALERT_WEBHOOK_URL not set, alert not sent: ${message}`)
-    return
+    return { sent: false, reason: 'not_configured' }
   }
 
   try {
@@ -22,8 +28,11 @@ export async function sendAlert(message: string): Promise<void> {
     })
     if (!res.ok) {
       console.warn(`sendAlert: webhook returned HTTP ${res.status}: ${message}`)
+      return { sent: false, status: res.status, reason: 'http_error' }
     }
+    return { sent: true, status: res.status }
   } catch (err) {
     console.warn('sendAlert: POST failed:', err)
+    return { sent: false, reason: 'network_error' }
   }
 }
