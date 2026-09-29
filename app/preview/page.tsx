@@ -650,6 +650,24 @@ export default function PreviewPage() {
                 </p>
               </div>
 
+              <figure style={{ margin: '0 auto 28px', maxWidth: 560 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/mailed-letter-charlotte.jpg"
+                  srcSet="/images/mailed-letter-charlotte-600.jpg 600w, /images/mailed-letter-charlotte.jpg 1200w"
+                  sizes="(max-width: 600px) 100vw, 560px"
+                  width={1200}
+                  height={624}
+                  alt="Photo of a real posted SantasLetter.ai letter: the North Pole Post Office cover page and the top of a letter to Charlotte, with a printed North Pole stamp design"
+                  loading="lazy"
+                  decoding="async"
+                  style={{ display: 'block', width: '100%', height: 'auto', borderRadius: 8, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+                />
+                <figcaption style={{ marginTop: 10, textAlign: 'center', fontSize: 12, color: 'rgba(245,234,216,0.5)', fontStyle: 'italic', lineHeight: 1.6 }}>
+                  A real letter we printed and posted, photographed after it arrived. The North Pole stamp is part of the printed design.
+                </figcaption>
+              </figure>
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14, marginBottom: 18 }}>
                 {[
                   { label: 'Premium PDF', price: '$9', emoji: '📄', desc: 'Illustrated parchment design, print-ready at home', highlight: false, cta: 'Select' },
@@ -665,7 +683,20 @@ export default function PreviewPage() {
                           Best value
                         </div>
                       )}
-                      <div style={{ fontSize: 28, marginBottom: 8 }}>{opt.emoji}</div>
+                      {opt.label === 'Premium PDF' ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src="/images/premium-pdf-oliver-thumb.jpg"
+                          width={240}
+                          height={550}
+                          alt="First page of a sample $9 premium PDF letter from Santa, addressed to Oliver"
+                          loading="lazy"
+                          decoding="async"
+                          style={{ display: 'block', height: 96, width: 'auto', marginBottom: 12, borderRadius: 3, boxShadow: '0 4px 14px rgba(0,0,0,0.45)' }}
+                        />
+                      ) : (
+                        <div style={{ fontSize: 28, marginBottom: 8 }}>{opt.emoji}</div>
+                      )}
                       <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, color: opt.highlight ? '#d4aa5a' : '#f5ead8', marginBottom: 3, lineHeight: 1 }}>{opt.price}</div>
                       <div style={{ fontSize: 13, color: opt.highlight ? 'rgba(245,234,216,0.9)' : 'rgba(245,234,216,0.7)', marginBottom: 6, fontWeight: 500 }}>{opt.label}</div>
                       <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.4)', marginBottom: 16, lineHeight: 1.55 }}>{opt.desc}</div>

@@ -249,11 +249,21 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 16 }}>
             {[
               { price: 'Free', label: 'Basic letter', sub: 'Read on screen and emailed to you' },
-              { price: '$9', label: 'Premium PDF', sub: 'Illustrated design' },
-              { price: '$29', label: 'Real mail', sub: 'Posted to your door' },
+              { price: '$9', label: 'Premium PDF', sub: 'Illustrated design',
+                img: { src: '/images/premium-pdf-oliver-thumb.jpg', width: 240, height: 550, style: { height: 110, width: 'auto' },
+                  alt: 'First page of a sample $9 premium PDF letter from Santa, addressed to Oliver' } },
+              { price: '$29', label: 'Real mail', sub: 'Posted to your door',
+                img: { src: '/images/mailed-letter-charlotte-600.jpg', width: 600, height: 312, style: { width: '100%', maxWidth: 200, height: 'auto' },
+                  alt: 'Photo of a real posted SantasLetter.ai letter: the North Pole Post Office cover page and the top of a letter to Charlotte, with a printed North Pole stamp design' } },
               { price: '$35', label: 'The bundle', sub: 'PDF + physical mail' },
             ].map(p => (
-              <div key={p.label} style={{ textAlign: 'center' }}>
+              // Bottom-aligned so the prices line up whether or not a column has an image.
+              <div key={p.label} style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                {p.img && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.img.src} width={p.img.width} height={p.img.height} alt={p.img.alt} loading="lazy" decoding="async"
+                    style={{ ...p.img.style, display: 'block', margin: '0 auto 12px', borderRadius: 3, boxShadow: '0 4px 14px rgba(0,0,0,0.45)' }} />
+                )}
                 <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, color: '#d4aa5a', marginBottom: 4 }}>{p.price}</div>
                 <div style={{ fontSize: 12, color: 'rgba(245,234,216,0.85)', marginBottom: 3 }}>{p.label}</div>
                 <div style={{ fontSize: 11, color: 'rgba(245,234,216,0.65)' }}>{p.sub}</div>
