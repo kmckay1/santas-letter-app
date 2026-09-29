@@ -85,7 +85,7 @@ You have a few options.
 
 You can print and handwrite it, which is the highest-effort version and the most personal. If you have time and enjoy that kind of thing, it is worth it.
 
-You can use the [letter from Santa service](https://www.santasletter.ai) to generate a formatted version from the details you supply. The free tier gets you a PDF you can print at home. It handles the layout and keeps the format consistent with the letters your child received in earlier years, which can make the continuity feel intentional.
+You can use the [letter from Santa service](https://www.santasletter.ai) to generate a formatted version from the details you supply. The free letter is read on screen and emailed to you, and the premium PDF gives you a version you can print at home. It handles the layout and keeps the format consistent with the letters your child received in earlier years, which can make the continuity feel intentional.
 
 You can also do a combination: generate the letter, then add a handwritten note at the bottom in your own handwriting. The transition from "Santa's voice" to "your family's voice" at the end can be exactly the right landing for the moment.
 

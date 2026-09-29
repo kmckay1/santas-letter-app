@@ -47,7 +47,7 @@ const TIERS: Tier[] = [
     id: 'physical',
     title: 'Physical Letter',
     price: '$29',
-    description: 'A real letter, mailed from the North Pole',
+    description: 'A real letter, posted to your door by First Class Mail',
     features: [
       'Sent by First Class Mail',
       'Printed and posted to your door',
@@ -127,7 +127,7 @@ export default function UpgradeButtons({ upgradeToken, owned }: Props) {
               borderRadius: 12,
               fontWeight: 600,
             }}>
-              Most popular
+              Best value
             </div>
           )}
 

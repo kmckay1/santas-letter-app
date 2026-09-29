@@ -171,7 +171,7 @@ function CreateForm() {
             Tell Santa about your child
           </h1>
           <p style={{ color: 'rgba(245,234,216,0.7)', fontSize: 15, margin: 0, fontStyle: 'italic' }}>
-            Takes 2 minutes · Letter ready instantly ✨
+            Takes 2 minutes · Letter ready in about 15 to 20 seconds ✨
           </p>
         </div>
 
@@ -340,7 +340,7 @@ function CreateForm() {
               ✦ Write my child&apos;s letter
             </button>
             <p style={{ textAlign: 'center', marginTop: 14, fontSize: 12, color: 'rgba(245,234,216,0.65)', lineHeight: 1.7 }}>
-              Free to generate · No credit card needed · Takes ~5 seconds
+              Free to generate · No credit card needed · Takes about 15 to 20 seconds
             </p>
           </form>
         </div>

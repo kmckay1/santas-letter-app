@@ -242,7 +242,7 @@ function GeneratingState({ name, genError, onRetry }: { name: string; genError: 
         {messages[msgIndex]}…
       </p>
       <p style={{ color: 'rgba(245,234,216,0.3)', fontSize: 12, margin: '0 0 44px' }}>
-        This takes a few seconds. Please keep this window open.
+        This takes about 15 to 20 seconds. Please keep this window open.
       </p>
 
       {genError && (
@@ -662,7 +662,7 @@ export default function PreviewPage() {
                     <div key={opt.label} style={{ border: `1px solid ${opt.highlight ? 'rgba(212,170,90,0.6)' : 'rgba(245,234,216,0.09)'}`, borderRadius: 10, padding: '24px 20px', background: opt.highlight ? 'linear-gradient(145deg, rgba(212,170,90,0.1) 0%, rgba(180,130,50,0.05) 100%)' : 'rgba(255,255,255,0.025)', position: 'relative' }}>
                       {opt.highlight && (
                         <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #d4aa5a, #a8802a)', color: '#0d1b2e', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', padding: '5px 16px', borderRadius: 20, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(212,170,90,0.4)' }}>
-                          Most popular
+                          Best value
                         </div>
                       )}
                       <div style={{ fontSize: 28, marginBottom: 8 }}>{opt.emoji}</div>

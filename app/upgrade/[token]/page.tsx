@@ -123,7 +123,7 @@ export default async function UpgradePage({ params }: PageProps) {
         />
 
         <p style={{ textAlign: 'center', marginTop: 40, fontSize: 11, color: 'rgba(245,234,216,0.25)' }}>
-          Secure checkout via Stripe · Money-back if you&rsquo;re not delighted
+          Secure checkout via Stripe · <a href="/refunds" style={{ color: 'inherit', textDecoration: 'underline' }}>Refund policy</a>
         </p>
       </div>
     </main>

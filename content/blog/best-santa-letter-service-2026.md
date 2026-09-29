@@ -74,13 +74,13 @@ For parents who want the personalization without the DIY project, that's where t
 
 **What it is:** An AI-written, deeply personalized Santa letter. You provide the details that matter: your child's name, age, an accomplishment they're proud of, a pet or a best friend, a hobby, something they're working on. The letter weaves all of that into Santa's voice, referencing what your child actually told you rather than generic holiday language. No invented scenes, no guessing about your family. The letter reflects the child you actually have.
 
-Available as a free email-gated PDF, a $9 premium PDF with polished formatting, or a $29 physical letter mailed directly to your child (or to you to hand-deliver). A $35 bundle includes both digital and physical. If you have more than one child, additional letters are $15 each.
+Available as a free letter you read on screen and receive by email, a $9 premium PDF with polished formatting, or a $29 physical letter mailed directly to your child (or to you to hand-deliver). A $35 bundle includes both digital and physical.
 
-**What it does well:** Depth of personalization. "Dear Emma, Santa heard you learned to ride your bike this year, and Mrs. Claus nearly fell off her rocking chair when the elves reported back" is a different letter than "Dear Emma, Santa has been watching and you've been so good this year." The AI drafts around the specifics you provide. For the $29 physical tier, the letter is mailed with enough lead time for guaranteed pre-Christmas delivery.
+**What it does well:** Depth of personalization. "Dear Emma, Santa heard you learned to ride your bike this year, and Mrs. Claus nearly fell off her rocking chair when the elves reported back" is a different letter than "Dear Emma, Santa has been watching and you've been so good this year." The AI drafts around the specifics you provide. For the $29 physical tier, the letter is posted by First Class Mail on the date you choose, from November 22, and usually arrives 5 to 10 business days after posting.
 
 **What it doesn't do as well:** No video option. No app. The North Pole postmark on the physical version is a printed design element, not a genuine Anchorage, AK postal mark the way Santa Claus House provides. As a newer service (launched spring 2026), there's less social proof and fewer reviews than the established players above.
 
-**Pricing:** Free (email-gated PDF), $9 (premium PDF), $29 (physical mail), $35 (bundle). Additional children at $15 each.
+**Pricing:** Free (read on screen and emailed to you), $9 (premium PDF), $29 (physical mail), $35 (bundle).
 
 **Best for:** Parents who want the letter to feel like it was written for their specific child, not a version of the same letter thousands of other kids received. Also the strongest option for instant delivery (premium PDF arrives via email within minutes) and for families who want both digital and physical.
 

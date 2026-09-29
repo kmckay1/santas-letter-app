@@ -225,8 +225,8 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, textAlign: 'center' }}>
             {[
               { num: '01', icon: '📝', title: 'Tell Santa about them', desc: 'Name, age, wishes, and a little about their year' },
-              { num: '02', icon: '✨', title: 'The elves get to work', desc: 'AI writes a warm, personal letter in seconds' },
-              { num: '03', icon: '🎁', title: 'Download or post it', desc: 'Free PDF, premium keepsake, or real mail' },
+              { num: '02', icon: '✨', title: 'The elves get to work', desc: 'AI writes a warm, personal letter in about 15 to 20 seconds' },
+              { num: '03', icon: '🎁', title: 'Download or post it', desc: 'Free letter on screen and by email, premium PDF, or real mail' },
             ].map(s => (
               <div key={s.num}>
                 <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 44, color: 'rgba(212,170,90,0.18)', lineHeight: 1, marginBottom: 8 }}>{s.num}</div>
@@ -248,7 +248,7 @@ export default function Home() {
           <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#d4aa5a', marginBottom: 20 }}>✦ simple pricing ✦</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 16 }}>
             {[
-              { price: 'Free', label: 'Basic letter', sub: 'PDF download' },
+              { price: 'Free', label: 'Basic letter', sub: 'Read on screen and emailed to you' },
               { price: '$9', label: 'Premium PDF', sub: 'Illustrated design' },
               { price: '$29', label: 'Real mail', sub: 'Posted to your door' },
               { price: '$35', label: 'The bundle', sub: 'PDF + physical mail' },
