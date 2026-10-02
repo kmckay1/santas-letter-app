@@ -3,6 +3,7 @@
 // $1 for a full run). Writes nothing to the database and sends no email.
 //
 //   set -a; source .env.local; set +a; npx tsx scripts/test-invention-check.ts [out.json]
+//   CASES=1,7 ... runs only those case numbers.
 //
 // Unlike production, it also runs the checker on the regenerated letter, so the
 // output shows whether regeneration removed the flagged details.
@@ -105,6 +106,8 @@ async function runOnce(c: Case, run: number) {
     letter2Check: secondCheck?.status ?? null,
     letter2Flags: flagsOf(secondCheck),
     deliveredBritish: c.language === 'en' ? britishWords(result.letterText) : null,
+    letter1Dashes: (result.firstLetter.match(/[\u2013\u2014]/g) ?? []).length,
+    deliveredDashes: (result.letterText.match(/[\u2013\u2014]/g) ?? []).length,
     // Sentences with a gendered word, for cases where the input shows no gender.
     deliveredGenderedSentences: UNGENDERED.has(c.name) ? genderedSentences(result.letterText, c.language) : null,
     timings: { ...result.timings, letter2CheckMs: secondCheck?.ms ?? null },
@@ -158,8 +161,11 @@ async function main() {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not set (source .env.local first)')
   const out = process.argv[2] ?? join(tmpdir(), `invention-check-${Date.now()}.json`)
 
+  const only = process.env.CASES?.split(',').map(s => s.trim()).filter(Boolean)
+  const cases = only ? CASES.filter(c => only.includes(c.name.split(' ')[0])) : CASES
+
   const runs = []
-  for (const c of CASES) {
+  for (const c of cases) {
     // The three runs of a case go in parallel; cases run one after another.
     const batch = await Promise.all(Array.from({ length: RUNS }, (_, i) => runOnce(c, i + 1)))
     for (const r of batch) {
@@ -170,6 +176,7 @@ async function main() {
         `${r.case} #${r.run}: regenerated=${r.regenerated} flags1=${n1} flags2=${n2} ` +
         `leak1=${r.letter1RatingLeak ?? '-'} leak2=${r.letter2RatingLeak ?? '-'} british=${r.deliveredBritish?.join(',') || '-'} ` +
         `gendered=${r.deliveredGenderedSentences === null ? 'n/a' : r.deliveredGenderedSentences.length} ` +
+        `dashes=${r.letter1Dashes}/${r.deliveredDashes} ` +
         `ms=${r.timings.firstLetterMs}/${r.timings.checkMs}/${r.timings.secondLetterMs ?? '-'} total=${r.timings.totalMs}`
       )
     }

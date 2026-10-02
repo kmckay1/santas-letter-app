@@ -77,7 +77,7 @@ async function sendVideoWaitlistEmail(email: string) {
     <div style="padding:40px 48px;">
 
       <p style="font-size:16px;color:#2c1a0e;line-height:1.8;margin:0 0 24px;font-style:italic;">
-        Ho ho ho! You're on the waitlist for an idea we're exploring: a personalised video message from Santa Claus, made just for your child.
+        Ho ho ho! You're on the waitlist for an idea we're exploring: a personalized video message from Santa Claus, made just for your child.
       </p>
 
       <div style="height:1px;background:rgba(200,146,42,0.3);margin:0 0 32px;"></div>
@@ -102,7 +102,7 @@ async function sendVideoWaitlistEmail(email: string) {
 
       <div style="text-align:center;margin-bottom:32px;">
         <p style="font-size:15px;color:#2c1a0e;line-height:1.8;margin:0 0 20px;font-style:italic;">
-          In the meantime, would your child love a free personalised letter from Santa? It's a perfect way to start the magic.
+          In the meantime, would your child love a free personalized letter from Santa? It's a perfect way to start the magic.
         </p>
         <a href="https://www.santasletter.ai/create" style="display:inline-block;background:#6B0F0F;color:#d4aa5a;padding:14px 36px;text-decoration:none;font-family:Georgia,serif;font-size:15px;letter-spacing:0.06em;border:1px solid #d4aa5a;">
           ✦ Create a free letter from Santa →
@@ -205,7 +205,7 @@ async function sendLeadMagnetEmail(email: string) {
           <div style="font-family:Georgia,serif;font-size:18px;color:#6B0F0F;font-style:italic;">4. The Christmas Kindness Countdown</div>
         </div>
         <p style="font-size:14px;color:#2c1a0e;line-height:1.8;margin:0 0 0 42px;">
-          Each day of December, do one small act of kindness as a family — leave cookies for a neighbour, donate a toy, call a grandparent. Write each one on a slip of paper and put it in a jar. Read them all together on Christmas morning.
+          Each day of December, do one small act of kindness as a family — leave cookies for a neighbor, donate a toy, call a grandparent. Write each one on a slip of paper and put it in a jar. Read them all together on Christmas morning.
         </p>
       </div>
 
@@ -223,7 +223,7 @@ async function sendLeadMagnetEmail(email: string) {
 
       <div style="text-align:center;margin-bottom:32px;">
         <p style="font-size:15px;color:#2c1a0e;line-height:1.8;margin:0 0 20px;font-style:italic;">
-          Want to make Christmas even more magical? Give your child a personalised letter from Santa — written just for them, mentioning their name, their kind deeds, and their wishes.
+          Want to make Christmas even more magical? Give your child a personalized letter from Santa — written just for them, mentioning their name, their kind deeds, and their wishes.
         </p>
         <a href="https://www.santasletter.ai/create" style="display:inline-block;background:#6B0F0F;color:#d4aa5a;padding:14px 36px;text-decoration:none;font-family:Georgia,serif;font-size:15px;letter-spacing:0.06em;border:1px solid #d4aa5a;">
           ✦ Create your child's free letter →

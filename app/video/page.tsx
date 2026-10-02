@@ -71,7 +71,7 @@ export default function VideoWaitlistPage() {
           <div style={{ fontSize: 64, marginBottom: 20, filter: 'drop-shadow(0 12px 32px rgba(200,56,43,0.5))' }}>🎬</div>
 
           <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(36px, 7vw, 60px)', lineHeight: 1.1, color: '#f5ead8', margin: '0 0 20px', fontWeight: 400 }}>
-            A personalised video<br /><em style={{ color: '#d4aa5a', fontStyle: 'italic' }}>from Santa himself</em>
+            A personalized video<br /><em style={{ color: '#d4aa5a', fontStyle: 'italic' }}>from Santa himself</em>
           </h1>
 
           <p style={{ fontSize: 18, color: 'rgba(245,234,216,0.75)', margin: '0 auto 36px', lineHeight: 1.7, maxWidth: 540 }}>
@@ -111,7 +111,7 @@ export default function VideoWaitlistPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, textAlign: 'center' }}>
             {[
               { n: '01', title: 'You\'d tell Santa about them', body: 'Their name, age, a wish or two, and a kind thing they did' },
-              { n: '02', title: 'The elves would film it', body: 'The personalised video would be produced in minutes' },
+              { n: '02', title: 'The elves would film it', body: 'The personalized video would be produced in minutes' },
               { n: '03', title: 'You\'d watch the magic', body: 'You could stream or download it to share whenever you like' },
             ].map((s) => (
               <div key={s.n}>
@@ -170,7 +170,7 @@ export default function VideoWaitlistPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {[
               { q: 'When does the video product launch?', a: 'There\'s no confirmed launch. Whether we build it depends on how this Christmas season goes, and joining the waitlist helps us see how much interest there is. If it does go ahead, everyone on the waitlist will hear about it first.' },
-              { q: 'How is the video personalised?', a: 'You provide your child\'s name, age, a wish or two, and something kind they did this year. We use this to create a custom video where Santa speaks directly to them, by name.' },
+              { q: 'How is the video personalized?', a: 'You provide your child\'s name, age, a wish or two, and something kind they did this year. We use this to create a custom video where Santa speaks directly to them, by name.' },
               { q: 'Will I be charged when I join the waitlist?', a: 'No — joining the waitlist is completely free. You\'ll only pay if and when you decide to order a video after launch, and if it happens, waitlist members will get first access and the best early pricing we can offer.' },
               { q: 'Can I still order a letter today?', a: 'Yes! Letters are available now at SantasLetter.ai/create. The video is a separate idea we\'re still exploring.' },
               { q: 'What if I change my mind?', a: 'You can unsubscribe from the waitlist anytime — no questions asked, no spam.' },

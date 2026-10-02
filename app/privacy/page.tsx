@@ -34,7 +34,7 @@ We also collect limited technical data automatically: IP address, browser type, 
             title: '2. How We Use Your Information',
             content: `We use the information we collect to:
 
-  • Generate and deliver your personalised Santa letter
+  • Generate and deliver your personalized Santa letter
   • Send your purchased PDF or physical letter
   • Send transactional emails related to your order
   • Send marketing emails about our products, only if you opt in, whether by ticking the checkbox when you create a letter or by signing up for one of our email lists. You can unsubscribe at any time using the link in any email.
@@ -47,7 +47,7 @@ We do not sell your data to third parties under any circumstances. We may use li
             title: '3. Children\'s Privacy (COPPA)',
             content: `SantasLetter.ai is designed for parents and guardians to create letters on behalf of children. We do not knowingly collect personal information directly from children under the age of 13.
 
-All information about a child (name, age, interests) is entered by a parent or guardian and is used solely to generate that child's personalised letter. We store child information for as long as your letters remain available, or until you request deletion.
+All information about a child (name, age, interests) is entered by a parent or guardian and is used solely to generate that child's personalized letter. We store child information for as long as your letters remain available, or until you request deletion.
 
 If you believe we have inadvertently collected information from a child without parental consent, please contact us immediately at privacy@santasletter.ai and we will delete it promptly.`
           },

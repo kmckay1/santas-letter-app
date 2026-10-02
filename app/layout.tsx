@@ -4,12 +4,12 @@ import { Analytics } from '@vercel/analytics/next'
 import ConsentBanner from '@/components/ConsentBanner'
 
 export const metadata: Metadata = {
-  title: "SantasLetter.ai — A personalised letter from Santa for your child",
-  description: "Get a magical, personalised letter from Santa Claus for your child. Free to generate, beautiful to keep. From the Official North Pole Post Office.",
-  keywords: "Santa letter, letter from Santa, personalised Santa letter, Christmas letter, Santa Claus letter, kids Christmas",
+  title: "SantasLetter.ai | A personalized letter from Santa for your child",
+  description: "Get a magical, personalized letter from Santa Claus for your child. Free to generate, beautiful to keep. From the Official North Pole Post Office.",
+  keywords: "Santa letter, letter from Santa, personalized Santa letter, Christmas letter, Santa Claus letter, kids Christmas",
   openGraph: {
-    title: "SantasLetter.ai — A letter from Santa, written just for them",
-    description: "Magical, personalised letters from the North Pole. Free to read, beautiful to keep, delivered from the Official North Pole Post Office.",
+    title: "SantasLetter.ai | A letter from Santa, written just for them",
+    description: "Magical, personalized letters from the North Pole. Free to read, beautiful to keep, delivered from the Official North Pole Post Office.",
     url: "https://www.santasletter.ai",
     siteName: "SantasLetter.ai",
     images: [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         url: "https://www.santasletter.ai/og-image.png",
         width: 1200,
         height: 630,
-        alt: "SantasLetter.ai — Official North Pole Post Office",
+        alt: "SantasLetter.ai | Official North Pole Post Office",
       },
     ],
     locale: "en_US",
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SantasLetter.ai — A letter from Santa, written just for them",
-    description: "Magical, personalised letters from the North Pole. Free to generate.",
+    title: "SantasLetter.ai | A letter from Santa, written just for them",
+    description: "Magical, personalized letters from the North Pole. Free to generate.",
     images: ["https://www.santasletter.ai/og-image.png"],
   },
   icons: {

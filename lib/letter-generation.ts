@@ -123,6 +123,7 @@ Write a letter with EXACTLY this structure — no salutation, no sign-off, those
 - NEVER invent specific events, moments, or stories about the child that were not explicitly provided. If behavior notes are empty, speak generally about their character, not made-up scenes.
 - NEVER invent details about the child's appearance, family, friends, pets or belongings, or new facts about any person the parent named.
 - Unless the parent's input shows the child's gender (pronouns or gendered words in the notes or the private note), do not use gendered words for the child: no girl, boy, young man, little lady, and no gendered pronouns or adjectives for the child, in any language. Use the child's name or gender-neutral phrasing; in languages with grammatical gender, choose a construction that does not gender the child.
+- Do not use em dashes or en dashes. Use commas, periods, or parentheses instead.
 - NEVER state, quote, or refer to the behavior rating in any form: no numbers, no scores, no scales (not "eight out of ten", not "a solid 8", not "eight times out of ten", nothing numeric). The rating is only for calibrating your tone and is never for the child to see. Convey warmth in proportion to it through word choice alone.
 Separate paragraphs with a blank line. Maximum 380 words. Make every sentence earn its place.${revisionNotes}`
 }

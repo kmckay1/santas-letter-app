@@ -20,7 +20,7 @@ export default function TermsPage() {
         {[
           {
             title: '1. The Service',
-            content: `SantasLetter.ai provides AI-generated personalised letters written in the style of Santa Claus for entertainment and family enjoyment purposes. Letters are fictional creative content and are not affiliated with, endorsed by, or connected to any official Santa Claus organisation, the United States Postal Service, or any other entity.
+            content: `SantasLetter.ai provides AI-generated personalized letters written in the style of Santa Claus for entertainment and family enjoyment purposes. Letters are fictional creative content and are not affiliated with, endorsed by, or connected to any official Santa Claus organization, the United States Postal Service, or any other entity.
 
 We offer free letter previews, premium downloadable PDF letters, and physical letters mailed to your address.`
           },
@@ -42,7 +42,7 @@ If you experience a technical issue that prevents delivery of your digital produ
           },
           {
             title: '4. Delivery',
-            content: `Physical letters are printed and mailed via USPS First Class Mail through our fulfilment partner Stannp. Estimated delivery is 5–10 business days within the United States. Physical letters are held until late November and mailed on the posting date you choose at checkout (November 22 at the earliest), so this delivery window counts from the date your letter is mailed, not the date you place your order.
+            content: `Physical letters are printed and mailed via USPS First Class Mail through our fulfillment partner Stannp. Estimated delivery is 5–10 business days within the United States. Physical letters are held until late November and mailed on the posting date you choose at checkout (November 22 at the earliest), so this delivery window counts from the date your letter is mailed, not the date you place your order.
 
 International delivery times vary. We are not responsible for delays caused by postal services, customs, or circumstances beyond our control.
 
@@ -60,7 +60,7 @@ Generated letters are for personal, non-commercial use only. You may not resell,
             title: '6. Intellectual Property',
             content: `The SantasLetter.ai website, brand, logo, and underlying technology are owned by us and protected by intellectual property laws.
 
-The personalised letter generated for your child is licensed to you for personal use.`
+The personalized letter generated for your child is licensed to you for personal use.`
           },
           {
             title: '7. Disclaimer of Warranties',

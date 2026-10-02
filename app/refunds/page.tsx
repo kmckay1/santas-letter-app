@@ -60,7 +60,7 @@ export default function RefundsPage() {
   
   hello@santasletter.ai
   
-  We aim to respond to all enquiries within 24 hours.`,
+  We aim to respond to all inquiries within 24 hours.`,
             },
           ].map(({ title, content }) => (
             <div key={title} style={{ marginBottom: 36 }}>

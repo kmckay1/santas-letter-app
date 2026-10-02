@@ -306,7 +306,7 @@ export async function sendAddressCheckEmail(
         <div style="max-width:500px;margin:0 auto;text-align:center;">
           <p style="font-size:48px;margin:0 0 20px;">📬</p>
           <h1 style="font-size:24px;color:#f5ead8;font-weight:400;margin:0 0 12px;">One small thing before we post</h1>
-          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">Your order for ${escapeHtml(childName)} is safe and paid for — but the postal service didn't recognise the delivery address, so we've paused it rather than risk the letter going astray.</p>
+          <p style="color:rgba(245,234,216,0.6);font-size:15px;margin:0 0 28px;">Your order for ${escapeHtml(childName)} is safe and paid for — but the postal service didn't recognize the delivery address, so we've paused it rather than risk the letter going astray.</p>
 
           <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,170,90,0.2);border-radius:6px;padding:24px;text-align:left;margin-bottom:24px;">
             <p style="color:#d4aa5a;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 10px;">Address we have</p>

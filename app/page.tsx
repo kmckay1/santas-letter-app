@@ -64,10 +64,10 @@ function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const faqs = [
     { q: 'Is the letter really free?', a: 'Yes, completely free. Enter your child\'s details, generate their letter, and read the full thing at no cost. We\'ll send it to your email too. Paid options are available if you\'d like a beautifully designed PDF or a real printed letter posted to your door.' },
-    { q: 'Is this AI-generated?', a: 'Yes. Each letter is written by AI, trained to write in the warm, magical voice of Santa Claus. Every letter is unique and personalised using the details you provide. We review our prompts carefully to ensure the letters feel genuinely special, not generic.' },
+    { q: 'Is this AI-generated?', a: 'Yes. Each letter is written by AI, trained to write in the warm, magical voice of Santa Claus. Every letter is unique and personalized using the details you provide. We review our prompts carefully to ensure the letters feel genuinely special, not generic.' },
     { q: 'When will my physical letter arrive?', a: 'Physical letters are held until late November, then posted via USPS First Class Mail on the date you choose at checkout (November 22 at the earliest). Delivery usually takes 5 to 10 business days within the US from that posting date. We recommend ordering as early as possible, as we can\'t guarantee Christmas delivery for late orders.' },
     { q: 'What countries do you ship to?', a: 'We currently ship physical letters to the US, UK, Canada, Australia, Ireland, Netherlands, Germany, France, Belgium, Spain, Italy, Portugal, Sweden, Norway, Denmark, Finland, and Poland. Digital PDFs are available worldwide.' },
-    { q: 'Can I order for more than one child?', a: 'Yes. Fill in the letter form once for each child, and each one gets their own fully personalised letter mentioning their name, age, interests, and good deeds. You can then choose a PDF or posted letter for each child separately.' },
+    { q: 'Can I order for more than one child?', a: 'Yes. Fill in the letter form once for each child, and each one gets their own fully personalized letter mentioning their name, age, interests, and good deeds. You can then choose a PDF or posted letter for each child separately.' },
     { q: 'Is my child\'s information safe?', a: 'Absolutely. We take privacy seriously, especially when it comes to children\'s data. We only collect the information needed to write the letter, and we comply with COPPA. Read our full Privacy Policy for details.' },
   ]
   return (
@@ -157,7 +157,7 @@ export default function Home() {
         </h1>
 
         <p style={{ fontSize: 17, color: 'rgba(245,234,216,0.75)', margin: '0 0 14px', lineHeight: 1.75, maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
-          Personalised letters from the North Pole. Free to read, beautiful to keep, magical to receive.
+          Personalized letters from the North Pole. Free to read, beautiful to keep, magical to receive.
         </p>
 
         {/* AI-trust line: pre-empts the parent's quiet "will it feel robotic" worry */}
