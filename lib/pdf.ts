@@ -1,7 +1,8 @@
 import { ChildInfo } from '@/types'
 import { DANCING_SCRIPT_400, DANCING_SCRIPT_700, PINYON_SCRIPT } from './font-data'
+import { printedLetterDate } from './letter-html'
 
-function buildLetterHTML(child: ChildInfo, letterText: string): string {
+function buildLetterHTML(child: ChildInfo, letterText: string, language?: string): string {
   const year = new Date().getFullYear()
 
   const paragraphs = letterText
@@ -111,7 +112,7 @@ html, body {
             </div>
             <div style="font-family:Georgia,serif; font-size:8.5px; color:#5A2000; margin-top:3px;">Dec 25 &middot; ${year}</div>
           </div>
-          <div style="font-family:Georgia,serif; font-size:14px; font-style:italic; color:#1C0A00; margin-top:5px;">25th December, ${year}</div>
+          <div style="font-family:Georgia,serif; font-size:14px; font-style:italic; color:#1C0A00; margin-top:5px;">${printedLetterDate(year, language)}</div>
         </div>
       </div>
 
@@ -178,9 +179,10 @@ html, body {
 
 export async function generatePremiumPDF(
   child: ChildInfo,
-  letterText: string
+  letterText: string,
+  language?: string
 ): Promise<Buffer> {
-  const html = buildLetterHTML(child, letterText)
+  const html = buildLetterHTML(child, letterText, language)
 
   const apiKey = process.env.PDFSHIFT_API_KEY
   if (!apiKey) throw new Error('PDFSHIFT_API_KEY env var not set')

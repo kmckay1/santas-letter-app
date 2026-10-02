@@ -189,12 +189,12 @@ async function uploadPdfToSupabase(pdf: Buffer, fileName: string): Promise<strin
 export async function sendPhysicalLetter(
   toAddress: MailAddress,
   child: ChildInfo,
-  letter: { content: string; childName: string; createdAt: string }
+  letter: { content: string; childName: string; createdAt: string; language?: string }
 ): Promise<{ id: string; expectedDelivery: string; filePath: string }> {
   const apiKey = process.env.STANNP_API_KEY
   if (!apiKey) throw new Error('STANNP_API_KEY env var not set')
 
-  const html = buildLetterHtml(child, letter.content, toAddress)
+  const html = buildLetterHtml(child, letter.content, toAddress, letter.language)
   const pdf = await renderHtmlToPdf(html)
   const slug = child.name.toLowerCase().replace(/\s+/g, '-')
   // The cron sends several letters concurrently, so a timestamp alone is not

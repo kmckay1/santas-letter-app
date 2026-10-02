@@ -23,7 +23,7 @@ export default function PrivacyPage() {
             content: `We collect information you provide directly to us, including:
 
   • Email address (required to deliver your free letter and any paid products)
-  • Child information you enter into the letter form: first name, age, interests, and behaviour notes you choose to share
+  • Child information you enter into the letter form: first name, age, interests, and behavior notes you choose to share
   • Payment information processed securely through Stripe — we never store card details
   • Shipping address when you order a physical letter (processed via Stannp)
   • Letter content, which is sent to PDFShift to render the PDF version of your letter
@@ -56,7 +56,7 @@ If you believe we have inadvertently collected information from a child without 
             content: `We share your information only with trusted service providers necessary to operate our service:
 
   • Stripe — payment processing
-  • Anthropic — AI letter generation (receives the child's first name, age, behaviour rating and notes, wishes, and any private note you add, in order to write the letter)
+  • Anthropic — AI letter generation (receives the child's first name, age, behavior rating and notes, wishes, and any private note you add, in order to write the letter)
   • Resend — transactional and marketing email delivery
   • Stannp — physical letter printing and mailing (receives the full letter content and the mailing address)
   • PDFShift — PDF rendering (receives the letter content and the child's name, and for physical orders also the mailing address)

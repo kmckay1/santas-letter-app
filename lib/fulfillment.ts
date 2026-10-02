@@ -20,7 +20,7 @@ export async function deliverPremiumPdf(
   letter: StoredLetter,
   recipientEmail: string
 ): Promise<void> {
-  const pdfBuffer = await generatePremiumPDF(letter.child, letter.letterText)
+  const pdfBuffer = await generatePremiumPDF(letter.child, letter.letterText, letter.language)
   await sendPremiumPDFEmail(recipientEmail, letter.child.name, pdfBuffer)
   await markPremiumPdfSent(letter.id)
 }

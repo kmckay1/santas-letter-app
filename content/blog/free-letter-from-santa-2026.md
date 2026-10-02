@@ -24,7 +24,7 @@ If you've never made one before, here's the short version of the process you'll 
 
 **You fill in a few details about your child.** Their first name, age, one or two things they care about (a sport, a hobby, a pet, a sibling), what they're hoping for this year, and optionally something kind or brave they've done. The form takes a minute or two. No payment, no account creation.
 
-**The letter is written and shown to you in about 15 to 20 seconds.** Modern Santa letter services use AI trained on the warm, slightly old-fashioned voice of Santa Claus to weave your child's details into a complete, original letter. No two letters are alike, because no two children are.
+**The letter is written and shown to you, usually in 15 to 20 seconds.** Modern Santa letter services use AI trained on the warm, slightly old-fashioned voice of Santa Claus to weave your child's details into a complete, original letter. No two letters are alike, because no two children are.
 
 **You get the letter to keep.** Most free tiers give you the letter on screen and email a copy to you. You can read it to your child, print it at home on nice paper, or simply share it from your phone. That's the whole free experience. No catch, no upgrade required.
 

@@ -185,7 +185,7 @@ async function sendLeadMagnetEmail(email: string) {
           <div style="font-family:Georgia,serif;font-size:18px;color:#6B0F0F;font-style:italic;">2. Make Reindeer Food</div>
         </div>
         <p style="font-size:14px;color:#2c1a0e;line-height:1.8;margin:0 0 0 42px;">
-          Mix oats and glitter in a small bag — this is Rudolph's favourite! On Christmas Eve, sprinkle it on the lawn so the reindeer can find your house from the sky. Simple, free, and absolutely enchanting for little ones.
+          Mix oats and glitter in a small bag — this is Rudolph's favorite! On Christmas Eve, sprinkle it on the lawn so the reindeer can find your house from the sky. Simple, free, and absolutely enchanting for little ones.
         </p>
       </div>
 

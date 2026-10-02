@@ -14,7 +14,14 @@ export interface MailAddress {
   address_country: string
 }
 
-export function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAddress): string {
+// The date printed under the salutation. English letters use the US form; other
+// languages keep the form every letter used before (an unknown language too, so
+// a letter whose language could not be looked up is printed exactly as before).
+export function printedLetterDate(year: number, language?: string): string {
+  return language === 'en' ? `December 25, ${year}` : `25th December, ${year}`
+}
+
+export function buildLetterHtml(child: ChildInfo, letterText: string, toAddress: MailAddress, language?: string): string {
   const paragraphs = letterText
     .split('\n\n')
     .filter(p => p.trim())
@@ -142,7 +149,7 @@ export function buildLetterHtml(child: ChildInfo, letterText: string, toAddress:
           '</div>' +
         '</div>' +
 
-        '<div class="p2-date">25th December, ' + year + '</div>' +
+        '<div class="p2-date">' + printedLetterDate(year, language) + '</div>' +
         '<hr class="p2-divider" />' +
 
         paragraphs +

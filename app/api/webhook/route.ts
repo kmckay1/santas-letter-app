@@ -275,7 +275,7 @@ export async function POST(req: NextRequest) {
                   result = await sendPhysicalLetter(
                     shippingData,
                     letterData.child,
-                    { content: letterData.letterText, childName, createdAt: letterData.createdAt }
+                    { content: letterData.letterText, childName, createdAt: letterData.createdAt, language: letterData.language }
                   )
                 } catch (err) {
                   // Not mailed. Lift the hold so the next hourly cron run retries it

@@ -156,7 +156,7 @@ const EARLIEST_MAIL_DATE = '2026-11-22'
 // injected <style> tag below.
 function GeneratingState({ name, genError, onRetry }: { name: string; genError: boolean; onRetry: () => void }) {
   const messages = [
-    'Settling into his favourite chair by the fire',
+    'Settling into his favorite chair by the fire',
     `Reading what this year has held for ${name}`,
     'Dipping the quill in North Pole ink',
     'Choosing the words with care',
@@ -168,6 +168,17 @@ function GeneratingState({ name, genError, onRetry }: { name: string; genError: 
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name])
+
+  // A letter that fails its checks is written a second time, which can take the
+  // wait past the 20 seconds the page promises. Say so rather than look stuck.
+  // Restarts when a failed attempt is retried.
+  const [overTime, setOverTime] = useState(false)
+  useEffect(() => {
+    setOverTime(false)
+    if (genError) return
+    const id = setTimeout(() => setOverTime(true), 20000)
+    return () => clearTimeout(id)
+  }, [name, genError])
 
   return (
     <div style={{ textAlign: 'center', padding: '56px 24px' }}>
@@ -238,11 +249,11 @@ function GeneratingState({ name, genError, onRetry }: { name: string; genError: 
       <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(22px, 5vw, 30px)', color: '#f5ead8', fontWeight: 400, margin: '0 0 18px', lineHeight: 1.3 }}>
         Santa is writing {name}&apos;s letter
       </h1>
-      <p key={msgIndex} className="sl-msg" style={{ color: 'rgba(245,234,216,0.6)', fontSize: 15, margin: '0 0 8px', fontStyle: 'italic', minHeight: 24 }}>
-        {messages[msgIndex]}…
+      <p key={overTime ? 'over-time' : msgIndex} className="sl-msg" style={{ color: 'rgba(245,234,216,0.6)', fontSize: 15, margin: '0 0 8px', fontStyle: 'italic', minHeight: 24 }}>
+        {overTime ? 'Santa is reading his letter over once more' : messages[msgIndex]}…
       </p>
       <p style={{ color: 'rgba(245,234,216,0.3)', fontSize: 12, margin: '0 0 44px' }}>
-        This takes about 15 to 20 seconds. Please keep this window open.
+        This usually takes 15 to 20 seconds. Please keep this window open.
       </p>
 
       {genError && (
@@ -540,7 +551,7 @@ export default function PreviewPage() {
     )
   })
 
-  const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  const today = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
     <main style={{ minHeight: '100vh', background: 'radial-gradient(ellipse at top, #0d1f3c 0%, #060e1c 60%)', fontFamily: "'Lora', Georgia, serif", position: 'relative', overflow: 'hidden' }}>

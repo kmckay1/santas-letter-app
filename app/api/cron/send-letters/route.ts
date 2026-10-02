@@ -45,6 +45,7 @@ function positiveIntEnv(name: string, fallback: number): number {
 // taken from sendPhysicalLetter itself so they cannot drift from lib/stannp.
 type ScheduledLetter = {
   id: string
+  letter_id: string | null
   child_name: string
   recipient_email: string | null
   shipping: Parameters<typeof sendPhysicalLetter>[0]
@@ -126,6 +127,28 @@ export async function GET(req: NextRequest) {
   }
 
   const batch: ScheduledLetter[] = letters
+
+  // The letter's language decides the printed date format. scheduled_letters
+  // does not store it, so it is read from letters for the whole batch at once.
+  // A failed lookup only means the date is printed in the format used before.
+  const languageByLetter = new Map<string, string>()
+  const letterIds = batch.map(l => l.letter_id).filter((id): id is string => Boolean(id))
+  if (letterIds.length > 0) {
+    try {
+      const { data: languages, error: languageError } = await supabase
+        .from('letters')
+        .select('id, language')
+        .in('id', letterIds)
+      if (languageError) {
+        console.warn(`Letter language lookup failed, printing default dates: ${languageError.message}`)
+      } else {
+        for (const row of languages ?? []) languageByLetter.set(row.id, row.language)
+      }
+    } catch (err) {
+      // Never let a date-format lookup stop letters from being sent.
+      console.warn('Letter language lookup threw, printing default dates:', err)
+    }
+  }
 
   console.log(
     `Found ${batch.length} letters to send ` +
@@ -211,6 +234,7 @@ export async function GET(req: NextRequest) {
           content: letter.letter_content,
           childName: letter.child_name,
           createdAt: new Date().toISOString(),
+          language: letter.letter_id ? languageByLetter.get(letter.letter_id) : undefined,
         }
       )
 

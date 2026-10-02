@@ -198,7 +198,7 @@ export default function Home() {
               <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, color: '#150800', marginBottom: 18 }}>Dear {displayName},</div>
               <hr style={{ border: 'none', borderTop: '1px solid rgba(139,90,43,0.12)', marginBottom: 20 }} />
               <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: '0 0 16px', fontFamily: "'Lora', Georgia, serif" }}>
-                My elves told me something wonderful, that this year you learned to share your favourite toys with your little brother, even when it was hard. I see everything, you know, and that made my heart as warm as fresh cookies from Mrs. Claus&apos;s oven.
+                My elves told me something wonderful, that this year you learned to share your favorite toys with your little brother, even when it was hard. I see everything, you know, and that made my heart as warm as fresh cookies from Mrs. Claus&apos;s oven.
               </p>
               <div style={{ filter: 'blur(5px)', userSelect: 'none' }}>
                 <p style={{ fontSize: 15, lineHeight: 1.9, color: '#2a1508', margin: 0, fontFamily: "'Lora', Georgia, serif" }}>
@@ -225,7 +225,7 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, textAlign: 'center' }}>
             {[
               { num: '01', icon: '📝', title: 'Tell Santa about them', desc: 'Name, age, wishes, and a little about their year' },
-              { num: '02', icon: '✨', title: 'The elves get to work', desc: 'AI writes a warm, personal letter in about 15 to 20 seconds' },
+              { num: '02', icon: '✨', title: 'The elves get to work', desc: 'AI writes a warm, personal letter, usually in 15 to 20 seconds' },
               { num: '03', icon: '🎁', title: 'Download or post it', desc: 'Free letter on screen and by email, premium PDF, or real mail' },
             ].map(s => (
               <div key={s.num}>
