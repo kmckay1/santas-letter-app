@@ -72,7 +72,7 @@ For parents who want the personalization without the DIY project, that's where t
 
 ### SantasLetter.ai
 
-**What it is:** An AI-written, deeply personalized Santa letter. You provide the details that matter: your child's name, age, an accomplishment they're proud of, a pet or a best friend, a hobby, something they're working on. The letter weaves all of that into Santa's voice, referencing what your child actually told you rather than generic holiday language. It is built around the real details you provide, so it reflects the child you actually have.
+**What it is:** An AI-written, deeply personalized Santa letter. You provide the details that matter: your child's name, age, an accomplishment they're proud of, a pet or a best friend, a hobby, something they're working on. The letter weaves all of that into Santa's voice, referencing what your child actually told you rather than generic holiday language. The details about your child come only from what you provide, and each letter is checked for invented details, so it reflects the child you actually have.
 
 Available as a free letter you read on screen and receive by email, a $9 premium PDF with polished formatting, or a $29 physical letter mailed directly to your child (or to you to hand-deliver). A $35 bundle includes both digital and physical.
 
@@ -116,7 +116,7 @@ Yes. Portable North Pole is still operating as of 2026. The service is video-bas
 
 ### How is SantasLetter.ai different from other personalized Santa letter services?
 
-The main difference is the depth of personalization. Most services personalize with a child's name, age, and maybe a toy wish. SantasLetter.ai writes around the specific details you provide: an accomplishment, a named pet, a hobby, a friend, something your child is working on. The letter reads like someone actually knows your child, because it was written around who they are rather than a template. Every letter is built around the real details you provide, and you can read the whole thing before you pay for anything.
+The main difference is the depth of personalization. Most services personalize with a child's name, age, and maybe a toy wish. SantasLetter.ai writes around the specific details you provide: an accomplishment, a named pet, a hobby, a friend, something your child is working on. The letter reads like someone actually knows your child, because it was written around who they are rather than a template. Everything the letter says about your child comes only from the details you provide, it is checked for invented details before you see it, and you can read the whole thing before you pay for anything.
 
 ### Does the physical letter from SantasLetter.ai have a North Pole postmark?
 

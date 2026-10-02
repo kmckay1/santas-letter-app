@@ -56,7 +56,7 @@ If that is your situation, the detail worth giving the letter is not the move it
 
 This also applies to the sibling dynamic, because a move usually hits an older child harder than a younger one, and their letters should reflect that difference rather than both mentioning the new house.
 
-If you want to see how a letter reads when it is built around real supplied details, you can [get a free personalized letter](https://www.santasletter.ai/blog/free-letter-from-santa-2026) before deciding whether to order a physical one.
+If you want to see how a letter reads when everything about the child comes from details you supply, you can [get a free personalized letter](https://www.santasletter.ai/blog/free-letter-from-santa-2026) before deciding whether to order a physical one.
 
 ## Practical arrangements that help
 

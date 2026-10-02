@@ -86,7 +86,7 @@ A letter that references the specific thing your child was proud of this year, i
 
 This is also where homemade letters have a real advantage over anything bought, because you know the details and nobody else does. Use them. The one rule worth holding to is that Santa should only reference things your child actually told someone. Inventing a scene inside your house, or describing what your child looks like, tends to unsettle rather than delight, and it puts you in the position of maintaining a detail you made up.
 
-If you want to see how a letter reads when it is built around real details, you can [get a free personalized letter](https://www.santasletter.ai/blog/free-letter-from-santa-2026) and use it as a reference for your own, even if you write the final version by hand yourself.
+If you want to see how a letter reads when everything about the child comes from real details, you can [get a free personalized letter](https://www.santasletter.ai/blog/free-letter-from-santa-2026) and use it as a reference for your own, even if you write the final version by hand yourself.
 
 ## If you would rather not do all of this
 

@@ -50,7 +50,7 @@ There is a failure mode in the other direction that matters more than generic ou
 
 Some generators invent. They add scenes inside your home, describe what your child looks like, or reference events that never happened, because invented specifics feel more personal than general praise. This backfires. A child who reads that Santa watched them playing in their bedroom, when nobody said anything about a bedroom, does not feel seen. They feel surveilled. And you are now responsible for maintaining a detail you did not choose.
 
-The rule worth holding any tool to, ours included, is simple: the letter should be built around details a parent actually provided. If you did not mention the dog, Santa should not mention the dog. If you did not describe the house, Santa has never been inside it. Whatever you use, read the letter before your child does and cut anything specific that does not trace back to something you typed.
+The rule we hold to when generating letters is simple: the letter should be built only from details a parent actually provided. If you did not mention the dog, Santa should not mention the dog. If you did not describe the house, Santa has never been inside it. Our letters are checked for invented details before you see them, but whatever tool you use, read the letter before your child does and cut anything specific that does not trace back to something you typed.
 
 That constraint sounds limiting. In practice it is the thing that makes the letters work, because every specific detail is one you already know is true and already know your child will recognize.
 
